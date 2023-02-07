@@ -381,8 +381,8 @@ def fwi(isi, bui):
     Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
     """
     # Eqs. 28b, 28a, 29
-    bb = (0.1 * isi * (1000 / (25 + 108.64 / exp(0.023 * bui)))) if (bui > 80) else (
-            0.1 * isi * (0.626 * (bui ** 0.809) + 2))
+    bb = (0.1 * isi * (1000 / (25 + 108.64 / exp(0.023 * bui)))) if (
+            bui > 80) else (0.1 * isi * (0.626 * (bui ** 0.809) + 2))
     # Eqs. 30b, 30a
-    fwi = bb if (bb <= 1) else exp(2.72 * ((0.434 * log(bb)) ** 0.647))
+    fwi = bb if (bb <= 1.0) else exp(2.72 * ((0.434 * log(bb)) ** 0.647))
     return fwi

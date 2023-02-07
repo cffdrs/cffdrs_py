@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cffdrs"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
   { name="Jordan Evens", email="jordan.evens@nrcan-rncan.gc.ca" },
 ]
