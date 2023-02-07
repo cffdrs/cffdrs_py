@@ -1,37 +1,47 @@
 from math import exp, log, sqrt
 
 
-#############################################################################
-# Description: Fine Fuel Moisture Code Calculation. All code
-#              is based on a C code library that was written by Canadian
-#              Forest Service Employees, which was originally based on
-#              the Fortran code listed in the reference below. All equations
-#              in this code refer to that document.
-#
-#              Equations and FORTRAN program for the Canadian Forest Fire
-#              Weather Index System. 1985. Van Wagner, C.E.; Pickett, T.L.
-#              Canadian Forestry Service, Petawawa National Forestry
-#              Institute, Chalk River, Ontario. Forestry Technical Report 33.
-#              18 p.
-#
-#              Additional reference on FWI system
-#
-#              Development and structure of the Canadian Forest Fire Weather
-#              Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
-#              Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
-#
-#
-# Args: ffmc_yda:   The Fine Fuel Moisture Code from previous iteration
-#           temp:   Temperature (centigrade)
-#             rh:   Relative Humidity (%)
-#           prec:   Precipitation (mm)
-#             ws:   Wind speed (km/h)
-#
-#
-# Returns: A single ffmc value
-#
-#############################################################################
 def ffmc(ffmc_yda, temp, rh, ws, prec):
+    """
+    Fine Fuel Moisture Code Calculation
+
+    Parameters
+    ----------
+    ffmc_yda : float
+        The Fine Fuel Moisture Code from previous iteration
+   temp : float
+      Temperature (centigrade)
+    rh : float
+      Relative Humidity (%)
+    prec : float
+       Precipitation (mm)
+    ws : float
+       Wind speed (km/h)
+
+    Returns
+    -------
+    float
+        Fine Fuel Moisture Code
+
+    Notes
+    -----
+    All code is based on a C code library that was written by Canadian
+    Forest Service Employees, which was originally based on
+    the Fortran code listed in the reference below. All equations
+    in this code refer to that document.
+
+    Equations and FORTRAN program for the Canadian Forest Fire
+    Weather Index System. 1985. Van Wagner, C.E.; Pickett, T.L.
+    Canadian Forestry Service, Petawawa National Forestry
+    Institute, Chalk River, Ontario. Forestry Technical Report 33.
+    18 p.
+
+    Additional reference on FWI system
+
+    Development and structure of the Canadian Forest Fire Weather
+    Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
+    Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
+    """
     # Eq. 1
     wmo = 147.2 * (101 - ffmc_yda) / (59.5 + ffmc_yda)
     # Eq. 2 Rain reduction to allow for loss in
@@ -76,39 +86,51 @@ def ffmc(ffmc_yda, temp, rh, ws, prec):
     return ffmc1
 
 
-#############################################################################
-# Description: Duff Moisture Code Calculation. All code
-#              is based on a C code library that was written by Canadian
-#              Forest Service Employees, which was originally based on
-#              the Fortran code listed in the reference below. All equations
-#              in this code refer to that document.
-#
-#              Equations and FORTRAN program for the Canadian Forest Fire
-#              Weather Index System. 1985. Van Wagner, C.E.; Pickett, T.L.
-#              Canadian Forestry Service, Petawawa National Forestry
-#              Institute, Chalk River, Ontario. Forestry Technical Report 33.
-#              18 p.
-#
-#              Additional reference on FWI system
-#
-#              Development and structure of the Canadian Forest Fire Weather
-#              Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
-#              Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
-#
-#
-# Args:  dmc_yda:   The Duff Moisture Code from previous iteration
-#           temp:   Temperature (centigrade)
-#             rh:   Relative Humidity (%)
-#           prec:   Precipitation(mm)
-#            lat:   Latitude (decimal degrees)
-#            mon:   Month (1-12)
-#     lat.adjust:   Latitude adjustment (TRUE, FALSE, default=TRUE)
-#
-#
-# Returns: A single dmc value
-#
-#############################################################################
 def dmc(dmc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
+    """
+    Duff Moisture Code Calculation
+
+    Parameters
+    ----------
+    dmc_yda : float
+       The Duff Moisture Code from previous iteration
+    temp : float
+       Temperature (centigrade)
+    rh : flat
+       Relative Humidity (%)
+    prec : float
+       Precipitation(mm)
+    lat : float
+       Latitude (decimal degrees)
+    mon : {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
+       Month
+    lat_adjust : bool, default=True
+       Latitude adjustment
+
+    Returns
+    -------
+    float
+        Duff Moisture Code
+
+    Notes
+    -----
+    All code is based on a C code library that was written by Canadian
+    Forest Service Employees, which was originally based on
+    the Fortran code listed in the reference below. All equations
+    in this code refer to that document.
+
+    Equations and FORTRAN program for the Canadian Forest Fire
+    Weather Index System. 1985. Van Wagner, C.E.; Pickett, T.L.
+    Canadian Forestry Service, Petawawa National Forestry
+    Institute, Chalk River, Ontario. Forestry Technical Report 33.
+    18 p.
+
+    Additional reference on FWI system
+
+    Development and structure of the Canadian Forest Fire Weather
+    Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
+    Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
+    """
     # Reference latitude for DMC day length adjustment
     # 46N: Canadian standard, latitude >= 30N   (Van Wagner 1987)
     ell01 = [6.5, 7.5, 9, 12.8, 13.9, 13.9, 12.4, 10.9, 9.4, 8, 7, 6]
@@ -153,38 +175,51 @@ def dmc(dmc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     return dmc1
 
 
-#############################################################################
-# Description: Drought Code Calculation. All code
-#              is based on a C code library that was written by Canadian
-#              Forest Service Employees, which was originally based on
-#              the Fortran code listed in the reference below. All equations
-#              in this code refer to that document.
-#
-#              Equations and FORTRAN program for the Canadian Forest Fire
-#              Weather Index System. 1985. Van Wagner, C.E.; Pickett, T.L.
-#              Canadian Forestry Service, Petawawa National Forestry
-#              Institute, Chalk River, Ontario. Forestry Technical Report 33.
-#              18 p.
-#
-#              Additional reference on FWI system
-#
-#              Development and structure of the Canadian Forest Fire Weather
-#              Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
-#              Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
-#
-#
-# Args:   dc_yda:   The Drought Code from previous iteration
-#           temp:   Temperature (centigrade)
-#             rh:   Relative Humidity (%)
-#           prec:   Precipitation(mm)
-#            lat:   Latitude (decimal degrees)
-#            mon:   Month (1-12)
-#     lat.adjust:   Latitude adjustment (TRUE, FALSE, default=TRUE)
-#
-# Returns: A single dc value
-#
-#############################################################################
 def dc(dc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
+    """
+    Drought Code Calculation
+
+    Parameters
+    ----------
+    dc_yda : float
+       The Drought Code from previous iteration
+    temp : float
+       Temperature (centigrade)
+    rh : float
+       Relative Humidity (%)
+    prec : float
+       Precipitation(mm)
+    lat : float
+       Latitude (decimal degrees)
+    mon : {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
+       Month
+    lat_adjust : bool, default=True
+       Latitude adjustment
+
+    Returns
+    -------
+    float
+        Drought Code
+
+    Notes
+    -----
+    All code is based on a C code library that was written by Canadian
+    Forest Service Employees, which was originally based on
+    the Fortran code listed in the reference below. All equations
+    in this code refer to that document.
+
+    Equations and FORTRAN program for the Canadian Forest Fire
+    Weather Index System. 1985. Van Wagner, C.E.; Pickett, T.L.
+    Canadian Forestry Service, Petawawa National Forestry
+    Institute, Chalk River, Ontario. Forestry Technical Report 33.
+    18 p.
+
+    Additional reference on FWI system
+
+    Development and structure of the Canadian Forest Fire Weather
+    Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
+    Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
+    """
     # Day length factor for DC Calculations
     # 20N: North of 20 degrees N
     fl01 = [-1.6, -1.6, -1.6, 0.9, 3.8, 5.8, 6.4, 5, 2.4, 0.4, -1.6, -1.6]
@@ -217,38 +252,45 @@ def dc(dc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     return dc1
 
 
-#############################################################################
-# Description:
-#   Computes the Initial Spread Index From the FWI System. Equations are from
-#   Van Wagner (1985) as listed below, except for the modification for fbp
-#   takene from FCFDG (1992).
+def isi(ffmc, ws, fbp_mod=False):
+    """
+    Initial Spread Index Calculation
 
-#   Equations and FORTRAN program for the Canadian Forest Fire
-#   Weather Index System. 1985. Van Wagner, C.E.; Pickett, T.L.
-#   Canadian Forestry Service, Petawawa National Forestry
-#   Institute, Chalk River, Ontario. Forestry Technical Report 33.
-#   18 p.
-#
-#   Forestry Canada  Fire Danger Group (FCFDG) (1992). Development and
-#   Structure of the Canadian Forest Fire Behavior Prediction System."
-#   Technical ReportST-X-3, Forestry Canada, Ottawa, Ontario.
-#
-# Args:
-#   ffmc:   Fine Fuel Moisture Code
-#     ws:   Wind Speed (km/h)
-# fbpMod:   TRUE/FALSE if using the fbp modification at the extreme end
-#
-# Returns:
-#   ISI:    Intial Spread Index
-#
-#############################################################################
-def isi(ffmc, ws, fbpMod=False):
+    Parameters
+    ----------
+    ffmc : float
+       Fine Fuel Moisture Code
+    ws : float
+       Wind Speed (km/h)
+    fbp_mod : bool, default=False
+       Use the fbp modification at the extreme end
+
+    Returns
+    -------
+    float
+        Intial Spread Index
+
+    Notes
+    -----
+    Equations are from Van Wagner (1985) as listed below, except for the modification for fbp
+    taken from FCFDG (1992).
+
+    Equations and FORTRAN program for the Canadian Forest Fire
+    Weather Index System. 1985. Van Wagner, C.E.; Pickett, T.L.
+    Canadian Forestry Service, Petawawa National Forestry
+    Institute, Chalk River, Ontario. Forestry Technical Report 33.
+    18 p.
+
+    Forestry Canada  Fire Danger Group (FCFDG) (1992). Development and
+    Structure of the Canadian Forest Fire Behavior Prediction System."
+    Technical ReportST-X-3, Forestry Canada, Ottawa, Ontario.
+    """
     # Eq. 10 - Moisture content
     fm = 147.2 * (101 - ffmc) / (59.5 + ffmc)
     # Eq. 24 - Wind Effect
     # the ifelse, also takes care of the ISI modification for the fbp functions
     # This modification is Equation 53a in FCFDG (1992)
-    fW = (12 * (1 - exp(-0.0818 * (ws - 28)))) if (ws >= 40 and fbpMod) else exp(0.05039 * ws)
+    fW = (12 * (1 - exp(-0.0818 * (ws - 28)))) if (ws >= 40 and fbp_mod) else exp(0.05039 * ws)
     # Eq. 25 - Fine Fuel Moisture
     fF = 91.9 * exp(-0.1386 * fm) * (1 + (fm ** 5.31) / 49300000)
     # Eq. 26 - Spread Index Equation
@@ -256,33 +298,41 @@ def isi(ffmc, ws, fbpMod=False):
     return isi
 
 
-#############################################################################
-# Description: Buildup Index Calculation. All code
-#              is based on a C code library that was written by Canadian
-#              Forest Service Employees, which was originally based on
-#              the Fortran code listed in the reference below. All equations
-#              in this code refer to that document.
-#
-#              Equations and FORTRAN program for the Canadian Forest Fire
-#              Weather Index System. 1985. Van Wagner, C.E.; Pickett, T.L.
-#              Canadian Forestry Service, Petawawa National Forestry
-#              Institute, Chalk River, Ontario. Forestry Technical Report 33.
-#              18 p.
-#
-#              Additional reference on FWI system
-#
-#              Development and structure of the Canadian Forest Fire Weather
-#              Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
-#              Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
-#
-#
-# Args:   dc:   Drought Code
-#        dmc:   Duff Moisture Code
-#
-# Returns: A single bui value
-#
-#############################################################################
 def bui(dmc, dc):
+    """
+    Buildup Index Calculation
+
+    Parameters
+    ----------
+    dc : float
+       Drought Code
+    dmc : float
+       Duff Moisture Code
+
+    Returns
+    -------
+    float
+        Buildup Index
+
+    Notes
+    -----
+    All code is based on a C code library that was written by Canadian
+    Forest Service Employees, which was originally based on
+    the Fortran code listed in the reference below. All equations
+    in this code refer to that document.
+
+    Equations and FORTRAN program for the Canadian Forest Fire
+    Weather Index System. 1985. Van Wagner, C.E.; Pickett, T.L.
+    Canadian Forestry Service, Petawawa National Forestry
+    Institute, Chalk River, Ontario. Forestry Technical Report 33.
+    18 p.
+
+    Additional reference on FWI system
+
+    Development and structure of the Canadian Forest Fire Weather
+    Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
+    Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
+    """
     # Eq. 27a
     bui1 = 0 if (dmc == 0 and dc == 0) else (0.8 * dc * dmc / (dmc + 0.4 * dc))
     # Eq. 27b - next 3 lines
@@ -295,33 +345,41 @@ def bui(dmc, dc):
     return bui1
 
 
-#############################################################################
-# Description: Fire Weather Index Calculation. All code
-#              is based on a C code library that was written by Canadian
-#              Forest Service Employees, which was originally based on
-#              the Fortran code listed in the reference below. All equations
-#              in this code refer to that document.
-#
-#              Equations and FORTRAN program for the Canadian Forest Fire
-#              Weather Index System. 1985. Van Wagner, C.E.; Pickett, T.L.
-#              Canadian Forestry Service, Petawawa National Forestry
-#              Institute, Chalk River, Ontario. Forestry Technical Report 33.
-#              18 p.
-#
-#              Additional reference on FWI system
-#
-#              Development and structure of the Canadian Forest Fire Weather
-#              Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
-#              Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
-#
-#
-# Args:   isi:    Initial Spread Index
-#         bui:    Buildup Index
-#
-# Returns: A single fwi value
-#
-#############################################################################
 def fwi(isi, bui):
+    """
+    Fire Weather Index Calculation
+
+    Parameters
+    ----------
+    isi : float
+        Initial Spread Index
+    bui : float
+        Buildup Index
+
+    Returns
+    -------
+    float
+        Fire Weather Index
+
+    Notes
+    -----
+    All code is based on a C code library that was written by Canadian
+    Forest Service Employees, which was originally based on
+    the Fortran code listed in the reference below. All equations
+    in this code refer to that document.
+
+    Equations and FORTRAN program for the Canadian Forest Fire
+    Weather Index System. 1985. Van Wagner, C.E.; Pickett, T.L.
+    Canadian Forestry Service, Petawawa National Forestry
+    Institute, Chalk River, Ontario. Forestry Technical Report 33.
+    18 p.
+
+    Additional reference on FWI system
+
+    Development and structure of the Canadian Forest Fire Weather
+    Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
+    Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
+    """
     # Eqs. 28b, 28a, 29
     bb = (0.1 * isi * (1000 / (25 + 108.64 / exp(0.023 * bui)))) if (bui > 80) else (
             0.1 * isi * (0.626 * (bui ** 0.809) + 2))
