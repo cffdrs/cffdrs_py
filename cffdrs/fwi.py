@@ -1,4 +1,5 @@
-import math
+from math import exp, log, sqrt
+
 
 #############################################################################
 # Description: Fine Fuel Moisture Code Calculation. All code
@@ -38,33 +39,33 @@ def ffmc(ffmc_yda, temp, rh, ws, prec):
     ra = (prec - 0.5) if (prec > 0.5) else prec
     # Eqs. 3a and 3b
     wmo = ((wmo + 0.0015 * (wmo - 150) * (wmo - 150) *
-            math.sqrt(ra) + 42.5 * ra * math.exp(-100 / (251 - wmo))
-            * (1 - math.exp(-6.93 / ra))) if (wmo > 150) else
-           (wmo + 42.5 * ra * math.exp(-100 / (251 - wmo)) *
-            (1 - math.exp(-6.93 / ra)))) if (prec > 0.5) else wmo
+            sqrt(ra) + 42.5 * ra * exp(-100 / (251 - wmo))
+            * (1 - exp(-6.93 / ra))) if (wmo > 150) else
+           (wmo + 42.5 * ra * exp(-100 / (251 - wmo)) *
+            (1 - exp(-6.93 / ra)))) if (prec > 0.5) else wmo
     # The real moisture content of pine litter ranges up to about 250 percent,
     # so we cap it at 250
     wmo = 250 if (wmo > 250) else wmo
     # Eq. 4 Equilibrium moisture content from drying
-    ed = (0.942 * (rh ** 0.679) + (11 * math.exp((rh - 100) / 10)) + 0.18 *
-          (21.1 - temp) * (1 - 1 / math.exp(rh * 0.115)))
+    ed = (0.942 * (rh ** 0.679) + (11 * exp((rh - 100) / 10)) + 0.18 *
+          (21.1 - temp) * (1 - 1 / exp(rh * 0.115)))
     # Eq. 5 Equilibrium moisture content from wetting
-    ew = (0.618 * (rh ** 0.753) + (10 * math.exp((rh - 100) / 10)) + 0.18 *
-          (21.1 - temp) * (1 - 1 / math.exp(rh * 0.115)))
+    ew = (0.618 * (rh ** 0.753) + (10 * exp((rh - 100) / 10)) + 0.18 *
+          (21.1 - temp) * (1 - 1 / exp(rh * 0.115)))
     # Eq. 6a (ko) Log drying rate at the normal
     #  termperature of 21.1 C
     z = (0.424 * (1 - (((100 - rh) / 100) ** 1.7)) + 0.0694 *
-         math.sqrt(ws) * (1 - ((100 - rh) / 100) ** 8)) if (wmo < ed and wmo < ew) else 0
+         sqrt(ws) * (1 - ((100 - rh) / 100) ** 8)) if (wmo < ed and wmo < ew) else 0
     # Eq. 6b Affect of temperature on  drying rate
-    x = z * 0.581 * math.exp(0.0365 * temp)
+    x = z * 0.581 * exp(0.0365 * temp)
     # Eq. 8
     wm = (ew - (ew - wmo) / (10 ** x)) if (wmo < ed and wmo < ew) else wmo
     # Eq. 7a (ko) Log wetting rate at the normal
     #  termperature of 21.1 C
-    z = (0.424 * (1 - (rh / 100) ** 1.7) + 0.0694 * math.sqrt(ws) *
+    z = (0.424 * (1 - (rh / 100) ** 1.7) + 0.0694 * sqrt(ws) *
          (1 - (rh / 100) ** 8)) if (wmo > ed) else z
     # Eq. 7b Affect of temperature on  wetting rate
-    x = z * 0.581 * math.exp(0.0365 * temp)
+    x = z * 0.581 * exp(0.0365 * temp)
     # Eq. 9
     wm = (ed + (wmo - ed) / (10 ** x)) if (wmo > ed) else wm
     # Eq. 10 Final ffmc calculation
@@ -136,15 +137,15 @@ def dmc(dmc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
         # Eq. 11 - Net rain amount
         rw = 0.92 * ra - 1.27
         # Alteration to Eq. 12 to calculate more accurately
-        wmi = 20 + 280 / math.exp(0.023 * dmc_yda)
+        wmi = 20 + 280 / exp(0.023 * dmc_yda)
         # Eqs. 13a, 13b, 13c
         b = (100 / (0.5 + 0.3 * dmc_yda)) if (dmc_yda <= 33) else (
-            (14 - 1.3 * math.log(dmc_yda)) if (dmc_yda <= 65) else
-            (6.2 * math.log(dmc_yda) - 17.2))
+            (14 - 1.3 * log(dmc_yda)) if (dmc_yda <= 65) else
+            (6.2 * log(dmc_yda) - 17.2))
         # Eq. 14 - Moisture content after rain
         wmr = wmi + 1000 * rw / (48.77 + b * rw)
         # Alteration to Eq. 15 to calculate more accurately
-        pr = 43.43 * (5.6348 - math.log(wmr - 20))
+        pr = 43.43 * (5.6348 - log(wmr - 20))
     pr = 0 if (pr < 0) else pr
     # Calculate final P (DMC)
     dmc1 = pr + rk
@@ -204,9 +205,9 @@ def dc(dc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     # Eq. 18 - Effective Rainfall
     rw = 0.83 * ra - 1.27
     # Eq. 19
-    smi = 800 * math.exp(-1 * dc_yda / 400)
+    smi = 800 * exp(-1 * dc_yda / 400)
     # Alteration to Eq. 21
-    dr0 = dc_yda - 400 * math.log(1 + 3.937 * rw / smi)
+    dr0 = dc_yda - 400 * log(1 + 3.937 * rw / smi)
     dr0 = 0 if (dr0 < 0) else dr0
     # if precip is less than 2.8 then use yesterday's DC
     dr = dc_yda if (prec <= 2.8) else dr0
@@ -247,9 +248,9 @@ def isi(ffmc, ws, fbpMod=False):
     # Eq. 24 - Wind Effect
     # the ifelse, also takes care of the ISI modification for the fbp functions
     # This modification is Equation 53a in FCFDG (1992)
-    fW = (12 * (1 - exp(-0.0818 * (ws - 28)))) if (ws >= 40 and fbpMod) else math.exp(0.05039 * ws)
+    fW = (12 * (1 - exp(-0.0818 * (ws - 28)))) if (ws >= 40 and fbpMod) else exp(0.05039 * ws)
     # Eq. 25 - Fine Fuel Moisture
-    fF = 91.9 * math.exp(-0.1386 * fm) * (1 + (fm ** 5.31) / 49300000)
+    fF = 91.9 * exp(-0.1386 * fm) * (1 + (fm ** 5.31) / 49300000)
     # Eq. 26 - Spread Index Equation
     isi = 0.208 * fW * fF
     return isi
@@ -322,8 +323,8 @@ def bui(dmc, dc):
 #############################################################################
 def fwi(isi, bui):
     # Eqs. 28b, 28a, 29
-    bb = (0.1 * isi * (1000 / (25 + 108.64 / math.exp(0.023 * bui)))) if (bui > 80) else (
-                0.1 * isi * (0.626 * (bui ** 0.809) + 2))
+    bb = (0.1 * isi * (1000 / (25 + 108.64 / exp(0.023 * bui)))) if (bui > 80) else (
+            0.1 * isi * (0.626 * (bui ** 0.809) + 2))
     # Eqs. 30b, 30a
-    fwi = bb if (bb <= 1) else math.exp(2.72 * ((0.434 * math.log(bb)) ** 0.647))
+    fwi = bb if (bb <= 1) else exp(2.72 * ((0.434 * log(bb)) ** 0.647))
     return fwi
