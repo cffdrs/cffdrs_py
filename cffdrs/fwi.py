@@ -42,6 +42,14 @@ def ffmc(ffmc_yda, temp, rh, ws, prec):
     Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
     Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
     """
+    if ffmc_yda < 0 or ffmc_yda > 101:
+        raise ValueError(f'Invalid ffmc_yda: {ffmc_yda}')
+    if rh < 0 or rh > 100:
+        raise ValueError(f'Invalid rh: {rh}')
+    if prec < 0:
+        raise ValueError(f'Invalid prec: {prec}')
+    if ws < 0:
+        raise ValueError(f'Invalid ws: {ws}')
     # Eq. 1
     wmo = 147.2 * (101 - ffmc_yda) / (59.5 + ffmc_yda)
     # Eq. 2 Rain reduction to allow for loss in
@@ -131,6 +139,16 @@ def dmc(dmc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
     Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
     """
+    if dmc_yda < 0:
+        raise ValueError(f'Invalid dc_yda: {dmc_yda}')
+    if rh < 0 or rh > 100:
+        raise ValueError(f'Invalid rh: {rh}')
+    if prec < 0:
+        raise ValueError(f'Invalid prec: {prec}')
+    if ws < 0:
+        raise ValueError(f'Invalid ws: {ws}')
+    if mon < 1 or mon > 12 or not isinstance(mon, int):
+        raise ValueError(f'Invalid mon: {mon}')
     # Reference latitude for DMC day length adjustment
     # 46N: Canadian standard, latitude >= 30N   (Van Wagner 1987)
     ell01 = [6.5, 7.5, 9, 12.8, 13.9, 13.9, 12.4, 10.9, 9.4, 8, 7, 6]
@@ -220,6 +238,16 @@ def dc(dc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
     Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
     """
+    if dc_yda < 0:
+        raise ValueError(f'Invalid dc_yda: {dc_yda}')
+    if rh < 0 or rh > 100:
+        raise ValueError(f'Invalid rh: {rh}')
+    if prec < 0:
+        raise ValueError(f'Invalid prec: {prec}')
+    if ws < 0:
+        raise ValueError(f'Invalid ws: {ws}')
+    if mon < 1 or mon > 12 or not isinstance(mon, int):
+        raise ValueError(f'Invalid mon: {mon}')
     # Day length factor for DC Calculations
     # 20N: North of 20 degrees N
     fl01 = [-1.6, -1.6, -1.6, 0.9, 3.8, 5.8, 6.4, 5, 2.4, 0.4, -1.6, -1.6]
@@ -285,6 +313,10 @@ def isi(ffmc, ws, fbp_mod=False):
     Structure of the Canadian Forest Fire Behavior Prediction System."
     Technical ReportST-X-3, Forestry Canada, Ottawa, Ontario.
     """
+    if ffmc < 0 or ffmc > 101:
+        raise ValueError(f'Invalid ffmc: {ffmc}')
+    if ws < 0:
+        raise ValueError(f'Invalid ws: {ws}')
     # Eq. 10 - Moisture content
     fm = 147.2 * (101 - ffmc) / (59.5 + ffmc)
     # Eq. 24 - Wind Effect
@@ -333,6 +365,10 @@ def bui(dmc, dc):
     Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
     Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
     """
+    if dmc < 0:
+        raise ValueError(f'Invalid dmc: {dmc}')
+    if dc < 0:
+        raise ValueError(f'Invalid dc: {dc}')
     # Eq. 27a
     bui1 = 0 if (dmc == 0 and dc == 0) else (0.8 * dc * dmc / (dmc + 0.4 * dc))
     # Eq. 27b - next 3 lines
@@ -380,6 +416,10 @@ def fwi(isi, bui):
     Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
     Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
     """
+    if isi < 0:
+        raise ValueError(f'Invalid isi: {isi}')
+    if bui < 0:
+        raise ValueError(f'Invalid bui: {bui}')
     # Eqs. 28b, 28a, 29
     bb = (0.1 * isi * (1000 / (25 + 108.64 / exp(0.023 * bui)))) if (
             bui > 80) else (0.1 * isi * (0.626 * (bui ** 0.809) + 2))
