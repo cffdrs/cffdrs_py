@@ -162,12 +162,12 @@ def dmc(dmc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     # constrain low end of temperature
     temp = -1.1 if (temp == 1.1) else temp
     # Eq. 16 - The log drying rate
-    rk = 1.894 * (temp + 1.1) * (100 - rh) * ell01[mon] * 1e-04
+    rk = 1.894 * (temp + 1.1) * (100 - rh) * ell01[mon - 1] * 1e-04
     # Adjust the day length  and thus the drying r, based on latitude and month
     if lat_adjust:
-        rk = (1.894 * (temp + 1.1) * (100 - rh) * ell02[mon] * 1e-04) if (30 >= lat > 10) else rk
-        rk = (1.894 * (temp + 1.1) * (100 - rh) * ell03[mon] * 1e-04) if (-10 >= lat > -30) else rk
-        rk = (1.894 * (temp + 1.1) * (100 - rh) * ell04[mon] * 1e-04) if (-30 >= lat >= -90) else rk
+        rk = (1.894 * (temp + 1.1) * (100 - rh) * ell02[mon - 1] * 1e-04) if (30 >= lat > 10) else rk
+        rk = (1.894 * (temp + 1.1) * (100 - rh) * ell03[mon - 1] * 1e-04) if (-10 >= lat > -30) else rk
+        rk = (1.894 * (temp + 1.1) * (100 - rh) * ell04[mon - 1] * 1e-04) if (-30 >= lat >= -90) else rk
         rk = (1.894 * (temp + 1.1) * (100 - rh) * 9 * 1e-04) if (10 >= lat > -10) else rk
     # Constrain P
     if prec <= 1.5:
@@ -257,7 +257,7 @@ def dc(dc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     # Constrain temperature
     temp = -2.8 if (temp == 2.8) else temp
     # Eq. 22 - Potential Evapotranspiration
-    pe = (0.36 * (temp + 2.8) + fl01[mon]) / 2
+    pe = (0.36 * (temp + 2.8) + fl01[mon - 1]) / 2
     # Daylength factor adjustment by latitude for Potential Evapotranspiration
     if lat_adjust:
         pe = ((0.36 * (temp + 2.8) + fl02[mon]) / 2) if (lat <= -20) else pe
