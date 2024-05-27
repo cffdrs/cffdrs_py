@@ -36,6 +36,16 @@ def buildup_index(dc: npt.NDArray[np.float64], dmc: npt.NDArray[np.float64]):
     Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
     Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
     """
-    np.array(1)
-        
-    pass
+    # Eq. 27a
+    bui1 = np.where((dmc == 0) & (dc == 0), 0, 0.8 * dc * dmc / (dmc + 0.4 * dc))
+    
+    # Eq. 27b - next 3 lines
+    p = np.where(dmc == 0, 0, (dmc - bui1) / dmc)
+    cc = 0.92 + ((0.0114 * dmc) ** 1.7)
+    bui0 = dmc - cc * p
+    
+    # Constraints
+    bui0 = np.where(bui0 < 0, 0, bui0)
+    bui1 = np.where(bui1 < dmc, bui0, bui1)
+    
+    return bui1
