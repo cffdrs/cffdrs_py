@@ -1,22 +1,27 @@
-[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
-
-[project]
-name = "cffdrs"
-version = "0.1.2"
-authors = [
-  { name="Jordan Evens", email="jordan.evens@nrcan-rncan.gc.ca" },
-]
+[tool.poetry]
+name = "cffdrs-py"
+version = "0.1.0"
 description = ""
+authors = ["Jordan Evens <jordan.evens@nrcan-rncan.gc.ca>"]
 readme = "README.md"
-requires-python = ">=3.7"
 classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
-    "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+  "Operating System :: OS Independent",
 ]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^1.26.4"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.1"
 
 [project.urls]
 "Homepage" = "https://github.com/nrcan-cfs-fire/cffdrs_py"
 "Bug Tracker" = "https://github.com/nrcan-cfs-fire/cffdrs_py/issues"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
