@@ -1,5 +1,8 @@
 from math import exp, log, sqrt
 
+# used in conversion between FFMC and moisture content
+FFMC_COEFFICIENT = 250.0 * 59.5 / 101.0
+
 
 def ffmc(ffmc_yda, temp, rh, ws, prec):
     """
@@ -51,7 +54,7 @@ def ffmc(ffmc_yda, temp, rh, ws, prec):
     if ws < 0:
         raise ValueError(f'Invalid ws: {ws}')
     # Eq. 1
-    wmo = 147.2 * (101 - ffmc_yda) / (59.5 + ffmc_yda)
+    wmo = FFMC_COEFFICIENT * (101 - ffmc_yda) / (59.5 + ffmc_yda)
     # Eq. 2 Rain reduction to allow for loss in
     #  overhead canopy
     ra = (prec - 0.5) if (prec > 0.5) else prec
@@ -87,7 +90,7 @@ def ffmc(ffmc_yda, temp, rh, ws, prec):
     # Eq. 9
     wm = (ed + (wmo - ed) / (10 ** x)) if (wmo > ed) else wm
     # Eq. 10 Final ffmc calculation
-    ffmc1 = (59.5 * (250 - wm)) / (147.2 + wm)
+    ffmc1 = (59.5 * (250 - wm)) / (FFMC_COEFFICIENT + wm)
     # Constraints
     ffmc1 = 101 if (ffmc1 > 101) else ffmc1
     ffmc1 = 0 if (ffmc1 < 0) else ffmc1
@@ -318,7 +321,7 @@ def isi(ffmc, ws, fbp_mod=False):
     if ws < 0:
         raise ValueError(f'Invalid ws: {ws}')
     # Eq. 10 - Moisture content
-    fm = 147.2 * (101 - ffmc) / (59.5 + ffmc)
+    fm = FFMC_COEFFICIENT * (101 - ffmc) / (59.5 + ffmc)
     # Eq. 24 - Wind Effect
     # the ifelse, also takes care of the ISI modification for the fbp functions
     # This modification is Equation 53a in FCFDG (1992)
