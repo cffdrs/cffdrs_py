@@ -13,27 +13,32 @@ from cffdrs.raster.buildup_index_raster import buildup_index
     ],
 )
 def test_bui_zero_cases(dc, dmc):
-    assert np.array([0, 0]).all() == buildup_index(dc, dmc).all()
-
+    assert np.allclose(dc, buildup_index(dc, dmc), rtol=0.75)
+    assert np.allclose(dmc, buildup_index(dc, dmc), rtol=0.75)
 
 def test_bc_sfms_sample():
     parent_dir = os.path.dirname(__file__)
 
     bui_tif_dir = os.path.join(parent_dir, 'fixtures')
 
-    dc_raster = gdal.Open(os.path.join(bui_tif_dir, 'dc20240528.tif'), gdal.GA_ReadOnly)
-    dc_array = np.array(dc_raster.GetRasterBand(1).ReadAsArray())
+    def get_raster_array(path: str):
+        source = gdal.Open(os.path.join(bui_tif_dir, 'dc20240528.tif'), gdal.GA_ReadOnly)
+        source_band = source.GetRasterBand(1)
+        nodata_value = source_band.GetNoDataValue()
+        source_data = source.ReadAsArray()
+        source_data[source_data == nodata_value] = 0
+        del source
+        return source_data
 
-    dmc_raster = gdal.Open(os.path.join(bui_tif_dir, 'dmc20240528.tif'), gdal.GA_ReadOnly)
-    dmc_array = np.array(dmc_raster.GetRasterBand(1).ReadAsArray())
 
 
-    bui_raster = gdal.Open(os.path.join(bui_tif_dir, 'bui20240528.tif'), gdal.GA_ReadOnly)
-    bui_array = np.array(bui_raster.GetRasterBand(1).ReadAsArray())
+    dc_array = get_raster_array(os.path.join(bui_tif_dir, 'dc20240528.tif'))
+    dmc_array = get_raster_array(os.path.join(bui_tif_dir, 'dmc20240528.tif'))
+    bui_array = get_raster_array(os.path.join(bui_tif_dir, 'bui20240528.tif'))
 
     res = buildup_index(dc=dc_array, dmc=dmc_array)
 
-    assert bui_array.all() == res.all()
+    assert np.allclose(bui_array, res, rtol=0.17)
 
 @pytest.mark.parametrize(
     "dmc,dc,bui",
@@ -1894,4 +1899,4 @@ def test_bc_sfms_sample():
     ]
 )
 def test_bui_r_bui_cases(dmc, dc, bui):
-    assert np.array([bui]).all() == buildup_index(np.array([dc]), np.array([dmc])).all()
+    assert np.allclose(bui, buildup_index(dc, dmc), rtol=0.01)

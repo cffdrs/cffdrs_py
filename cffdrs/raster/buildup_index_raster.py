@@ -37,7 +37,12 @@ def buildup_index(dc: npt.NDArray[np.float64], dmc: npt.NDArray[np.float64]):
     Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
     """
     # Eq. 27a
-    bui1 = np.where((dmc == 0) & (dc == 0), 0, 0.8 * dc * dmc / (dmc + 0.4 * dc))
+    # Calculate the numerator and denominator
+    numerator = 0.8 * dc * dmc
+    denominator = dmc + 0.4 * dc 
+
+   # Perform the division with np.divide and specify the condition with where clause to avoid division by zero
+    bui1 = np.divide(numerator, denominator, where=denominator != 0, out=np.zeros_like(numerator, dtype=float))
     
     # Eq. 27b - next 3 lines
     p = np.where(dmc == 0, 0, (dmc - bui1) / dmc)
