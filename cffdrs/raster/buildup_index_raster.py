@@ -7,14 +7,14 @@ def buildup_index(dc: npt.NDArray[np.float64], dmc: npt.NDArray[np.float64]):
 
     Parameters
     ----------
-    dc : numpy array of float
+    dc : numpy array of float64
        The Drought Code raster
-    dmc : numpy array of float
+    dmc : numpy array of float64
        The Duff Moisture Code raster
 
     Returns
     -------
-    numpy array of float
+    numpy array of float64
         Buildup Index
 
     Notes

@@ -1,7 +1,8 @@
-
+import os
 import pytest
 import numpy as np
-from cffdrs.buildup_index_raster import buildup_index
+from osgeo import gdal
+from cffdrs.raster.buildup_index_raster import buildup_index
 
 @pytest.mark.parametrize(
     "dc,dmc",
@@ -14,6 +15,25 @@ from cffdrs.buildup_index_raster import buildup_index
 def test_bui_zero_cases(dc, dmc):
     assert np.array([0, 0]).all() == buildup_index(dc, dmc).all()
 
+
+def test_bc_sfms_sample():
+    parent_dir = os.path.dirname(__file__)
+
+    bui_tif_dir = os.path.join(parent_dir, 'fixtures')
+
+    dc_raster = gdal.Open(os.path.join(bui_tif_dir, 'dc20240528.tif'), gdal.GA_ReadOnly)
+    dc_array = np.array(dc_raster.GetRasterBand(1).ReadAsArray())
+
+    dmc_raster = gdal.Open(os.path.join(bui_tif_dir, 'dmc20240528.tif'), gdal.GA_ReadOnly)
+    dmc_array = np.array(dmc_raster.GetRasterBand(1).ReadAsArray())
+
+
+    bui_raster = gdal.Open(os.path.join(bui_tif_dir, 'bui20240528.tif'), gdal.GA_ReadOnly)
+    bui_array = np.array(bui_raster.GetRasterBand(1).ReadAsArray())
+
+    res = buildup_index(dc=dc_array, dmc=dmc_array)
+
+    assert bui_array.all() == res.all()
 
 @pytest.mark.parametrize(
     "dmc,dc,bui",
