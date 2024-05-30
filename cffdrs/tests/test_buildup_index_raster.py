@@ -22,7 +22,7 @@ def test_bc_sfms_sample():
     bui_tif_dir = os.path.join(parent_dir, 'fixtures')
 
     def get_raster_array(path: str):
-        source = gdal.Open(os.path.join(bui_tif_dir, 'dc20240528.tif'), gdal.GA_ReadOnly)
+        source = gdal.Open(path, gdal.GA_ReadOnly)
         source_band = source.GetRasterBand(1)
         nodata_value = source_band.GetNoDataValue()
         source_data = source.ReadAsArray()
@@ -38,7 +38,7 @@ def test_bc_sfms_sample():
 
     res = buildup_index(dc=dc_array, dmc=dmc_array)
 
-    assert np.allclose(bui_array, res, rtol=0.17)
+    assert np.allclose(bui_array, res)
 
 @pytest.mark.parametrize(
     "dmc,dc,bui",
