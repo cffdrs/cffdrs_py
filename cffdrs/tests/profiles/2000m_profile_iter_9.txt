@@ -1,0 +1,24 @@
+         19 function calls in 0.008 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.007    0.007    0.008    0.008 buildup_index_raster.py:6(buildup_index)
+        1    0.000    0.000    0.000    0.000 {built-in method io.open}
+        1    0.000    0.000    0.000    0.000 numeric.py:67(zeros_like)
+        1    0.000    0.000    0.000    0.000 pstats.py:107(__init__)
+        1    0.000    0.000    0.000    0.000 pstats.py:117(init)
+        1    0.000    0.000    0.000    0.000 pstats.py:136(load_stats)
+        1    0.000    0.000    0.000    0.000 cProfile.py:50(create_stats)
+        1    0.000    0.000    0.000    0.000 {built-in method numpy.zeros}
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}
+        1    0.000    0.000    0.000    0.000 codecs.py:186(__init__)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.hasattr}
+        3    0.000    0.000    0.000    0.000 multiarray.py:346(where)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 multiarray.py:1080(copyto)
+        1    0.000    0.000    0.000    0.000 numeric.py:63(_zeros_like_dispatcher)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.len}
+        1    0.000    0.000    0.000    0.000 multiarray.py:85(empty_like)
+
+

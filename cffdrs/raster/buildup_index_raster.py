@@ -1,6 +1,8 @@
 import numpy as np
 import numpy.typing as npt
 
+from cffdrs.fwi import bui
+
 def buildup_index(dc: npt.NDArray[np.float64], dmc: npt.NDArray[np.float64]):
     """
     Buildup Index Raster Calculation
@@ -54,3 +56,8 @@ def buildup_index(dc: npt.NDArray[np.float64], dmc: npt.NDArray[np.float64]):
     bui1 = np.where(bui1 < dmc, bui0, bui1)
     
     return bui1
+
+
+# Vectorized scalar bui calculation
+buildup_index_vectorized = np.vectorize(bui)
+    

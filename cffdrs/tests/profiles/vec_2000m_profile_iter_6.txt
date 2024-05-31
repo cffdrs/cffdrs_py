@@ -1,0 +1,32 @@
+         531407 function calls in 0.736 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.735    0.735 function_base.py:2367(__call__)
+        1    0.006    0.006    0.735    0.735 function_base.py:2337(_call_as_normal)
+        1    0.404    0.404    0.729    0.729 function_base.py:2443(_vectorize_call)
+   531375    0.305    0.000    0.305    0.000 fwi.py:333(bui)
+        3    0.020    0.007    0.020    0.007 {built-in method numpy.asanyarray}
+        1    0.000    0.000    0.012    0.012 function_base.py:2453(<listcomp>)
+        1    0.001    0.001    0.001    0.001 {built-in method io.open}
+        1    0.000    0.000    0.000    0.000 function_base.py:2374(_get_ufunc_and_otypes)
+        1    0.000    0.000    0.000    0.000 pstats.py:107(__init__)
+        1    0.000    0.000    0.000    0.000 pstats.py:117(init)
+        1    0.000    0.000    0.000    0.000 pstats.py:136(load_stats)
+        1    0.000    0.000    0.000    0.000 {built-in method numpy.frompyfunc}
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.any}
+        1    0.000    0.000    0.000    0.000 function_base.py:2409(<listcomp>)
+        1    0.000    0.000    0.000    0.000 function_base.py:2404(<listcomp>)
+        1    0.000    0.000    0.000    0.000 function_base.py:2433(<listcomp>)
+        2    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}
+        3    0.000    0.000    0.000    0.000 function_base.py:2405(<genexpr>)
+        1    0.000    0.000    0.000    0.000 cProfile.py:50(create_stats)
+        3    0.000    0.000    0.000    0.000 {built-in method numpy.asarray}
+        2    0.000    0.000    0.000    0.000 {built-in method builtins.len}
+        1    0.000    0.000    0.000    0.000 codecs.py:186(__init__)
+        1    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.hasattr}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+
+
