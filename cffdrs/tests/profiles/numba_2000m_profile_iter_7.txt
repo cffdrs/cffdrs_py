@@ -1,34 +1,20 @@
-         2125532 function calls in 1.416 seconds
+         14 function calls in 0.005 seconds
 
    Ordered by: cumulative time
 
    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-        1    0.000    0.000    1.415    1.415 function_base.py:2367(__call__)
-        1    0.007    0.007    1.415    1.415 function_base.py:2337(_call_as_normal)
-        1    0.429    0.429    1.408    1.408 function_base.py:2443(_vectorize_call)
-   531375    0.776    0.000    0.963    0.000 dufunc.py:189(__call__)
-  1062750    0.173    0.000    0.173    0.000 {built-in method builtins.getattr}
-        3    0.016    0.005    0.016    0.005 {built-in method numpy.asanyarray}
-   531375    0.014    0.000    0.014    0.000 {method 'values' of 'dict' objects}
-        1    0.000    0.000    0.012    0.012 function_base.py:2453(<listcomp>)
-        1    0.001    0.001    0.001    0.001 {built-in method io.open}
-        1    0.000    0.000    0.000    0.000 function_base.py:2374(_get_ufunc_and_otypes)
+        1    0.005    0.005    0.005    0.005 dufunc.py:189(__call__)
+        1    0.000    0.000    0.000    0.000 {built-in method io.open}
         1    0.000    0.000    0.000    0.000 pstats.py:107(__init__)
         1    0.000    0.000    0.000    0.000 pstats.py:117(init)
         1    0.000    0.000    0.000    0.000 pstats.py:136(load_stats)
-        1    0.000    0.000    0.000    0.000 {built-in method builtins.any}
-        1    0.000    0.000    0.000    0.000 function_base.py:2409(<listcomp>)
-        1    0.000    0.000    0.000    0.000 {built-in method numpy.frompyfunc}
-        1    0.000    0.000    0.000    0.000 function_base.py:2404(<listcomp>)
         1    0.000    0.000    0.000    0.000 cProfile.py:50(create_stats)
-        1    0.000    0.000    0.000    0.000 function_base.py:2433(<listcomp>)
-        3    0.000    0.000    0.000    0.000 function_base.py:2405(<genexpr>)
-        3    0.000    0.000    0.000    0.000 {built-in method numpy.asarray}
-        2    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}
-        1    0.000    0.000    0.000    0.000 codecs.py:186(__init__)
         1    0.000    0.000    0.000    0.000 {built-in method builtins.hasattr}
+        1    0.000    0.000    0.000    0.000 codecs.py:186(__init__)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}
+        2    0.000    0.000    0.000    0.000 {built-in method builtins.getattr}
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.len}
         1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
-        2    0.000    0.000    0.000    0.000 {built-in method builtins.len}
-        1    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {method 'values' of 'dict' objects}
 
 

@@ -2,6 +2,7 @@ import cProfile
 import os
 import pstats
 from osgeo import gdal
+from cffdrs.fwi import bui
 from cffdrs.raster.buildup_index_raster import buildup_index, buildup_index_vectorized
 
 def get_raster_array(path: str):
@@ -66,7 +67,7 @@ def profile_numba_25m_tif(bui_tif_dir):
 
     for i in range(10):
         with cProfile.Profile() as pr:
-            buildup_index_vectorized(dmc_array, dc_array)
+            bui(dmc_array, dc_array)
             with open(f"{profile_dir}/numba_2000m_profile_iter_{i}.txt", 'w') as f:
                 pstats.Stats( pr, stream=f ).strip_dirs().sort_stats("cumtime").print_stats()
 
