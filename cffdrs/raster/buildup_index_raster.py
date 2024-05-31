@@ -3,16 +3,18 @@ import numpy.typing as npt
 
 from cffdrs.fwi import bui
 
-def buildup_index(dc: npt.NDArray[np.float64], dmc: npt.NDArray[np.float64]):
+def buildup_index(dmc: npt.NDArray[np.float64], dc: npt.NDArray[np.float64]):
     """
     Buildup Index Raster Calculation
 
     Parameters
     ----------
-    dc : numpy array of float64
-       The Drought Code raster
     dmc : numpy array of float64
        The Duff Moisture Code raster
+
+    dc : numpy array of float64
+       The Drought Code raster
+
 
     Returns
     -------
@@ -60,4 +62,3 @@ def buildup_index(dc: npt.NDArray[np.float64], dmc: npt.NDArray[np.float64]):
 
 # Vectorized scalar bui calculation
 buildup_index_vectorized = np.vectorize(bui)
-    

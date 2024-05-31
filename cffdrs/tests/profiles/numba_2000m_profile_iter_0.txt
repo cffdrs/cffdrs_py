@@ -1,0 +1,62 @@
+         2125650 function calls in 1.433 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    1.432    1.432 function_base.py:2367(__call__)
+        1    0.007    0.007    1.432    1.432 function_base.py:2337(_call_as_normal)
+        1    0.432    0.432    1.425    1.425 function_base.py:2443(_vectorize_call)
+   531375    0.784    0.000    0.975    0.000 dufunc.py:189(__call__)
+  1062750    0.177    0.000    0.177    0.000 {built-in method builtins.getattr}
+        3    0.017    0.006    0.017    0.006 {built-in method numpy.asanyarray}
+   531375    0.014    0.000    0.014    0.000 {method 'values' of 'dict' objects}
+        1    0.000    0.000    0.012    0.012 function_base.py:2453(<listcomp>)
+        2    0.000    0.000    0.002    0.001 warnings.py:96(_showwarnmsg)
+        2    0.000    0.000    0.002    0.001 warnings.py:20(_showwarnmsg_impl)
+        2    0.000    0.000    0.002    0.001 warnings.py:117(_formatwarnmsg)
+        2    0.000    0.000    0.002    0.001 warnings.py:35(_formatwarnmsg_impl)
+        2    0.000    0.000    0.002    0.001 linecache.py:26(getline)
+        2    0.000    0.000    0.002    0.001 linecache.py:36(getlines)
+        2    0.000    0.000    0.002    0.001 linecache.py:80(updatecache)
+        3    0.001    0.000    0.001    0.000 {built-in method io.open}
+        2    0.000    0.000    0.001    0.000 tokenize.py:390(open)
+        1    0.000    0.000    0.001    0.001 function_base.py:2374(_get_ufunc_and_otypes)
+        2    0.000    0.000    0.000    0.000 {method 'readlines' of '_io._IOBase' objects}
+        2    0.000    0.000    0.000    0.000 {built-in method posix.stat}
+        2    0.000    0.000    0.000    0.000 tokenize.py:297(detect_encoding)
+        2    0.000    0.000    0.000    0.000 {method '__exit__' of '_io._IOBase' objects}
+       30    0.000    0.000    0.000    0.000 codecs.py:319(decode)
+        1    0.000    0.000    0.000    0.000 pstats.py:107(__init__)
+       30    0.000    0.000    0.000    0.000 {built-in method _codecs.utf_8_decode}
+        1    0.000    0.000    0.000    0.000 pstats.py:117(init)
+        2    0.000    0.000    0.000    0.000 {method 'write' of '_io.TextIOWrapper' objects}
+        2    0.000    0.000    0.000    0.000 tokenize.py:321(read_or_stop)
+        2    0.000    0.000    0.000    0.000 {method 'readline' of '_io.BufferedReader' objects}
+        2    0.000    0.000    0.000    0.000 tokenize.py:327(find_cookie)
+        1    0.000    0.000    0.000    0.000 pstats.py:136(load_stats)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.any}
+        4    0.000    0.000    0.000    0.000 {method 'match' of 're.Pattern' objects}
+        2    0.000    0.000    0.000    0.000 codecs.py:309(__init__)
+        1    0.000    0.000    0.000    0.000 function_base.py:2433(<listcomp>)
+        1    0.000    0.000    0.000    0.000 {built-in method numpy.frompyfunc}
+        2    0.000    0.000    0.000    0.000 warnings.py:403(__init__)
+        3    0.000    0.000    0.000    0.000 {built-in method numpy.asarray}
+        1    0.000    0.000    0.000    0.000 function_base.py:2404(<listcomp>)
+        1    0.000    0.000    0.000    0.000 function_base.py:2409(<listcomp>)
+        2    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}
+        2    0.000    0.000    0.000    0.000 {method 'startswith' of 'bytes' objects}
+        1    0.000    0.000    0.000    0.000 cProfile.py:50(create_stats)
+        3    0.000    0.000    0.000    0.000 function_base.py:2405(<genexpr>)
+        2    0.000    0.000    0.000    0.000 {method 'decode' of 'bytes' objects}
+        2    0.000    0.000    0.000    0.000 {method 'endswith' of 'str' objects}
+        2    0.000    0.000    0.000    0.000 {method 'seek' of '_io.BufferedReader' objects}
+        2    0.000    0.000    0.000    0.000 {method 'strip' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 codecs.py:186(__init__)
+        2    0.000    0.000    0.000    0.000 {method 'startswith' of 'str' objects}
+        2    0.000    0.000    0.000    0.000 codecs.py:260(__init__)
+        4    0.000    0.000    0.000    0.000 {built-in method builtins.len}
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.hasattr}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}
+
+

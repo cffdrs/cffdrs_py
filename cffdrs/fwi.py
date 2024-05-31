@@ -1,4 +1,5 @@
 from math import exp, log, sqrt
+from numba import vectorize, float64
 
 
 def ffmc(ffmc_yda, temp, rh, ws, prec):
@@ -329,17 +330,17 @@ def isi(ffmc, ws, fbp_mod=False):
     isi = 0.208 * fW * fF
     return isi
 
-
+@vectorize([float64(float64, float64)])
 def bui(dmc, dc):
     """
     Buildup Index Calculation
 
     Parameters
     ----------
-    dc : float
-       Drought Code
     dmc : float
        Duff Moisture Code
+    dc : float
+       Drought Code
 
     Returns
     -------
