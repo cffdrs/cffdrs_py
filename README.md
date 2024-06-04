@@ -10,4 +10,5 @@ This project provides a group of new functions to calculate the outputs of the t
 2. Verify your Python version is version 3.10 or greater with `python --version`
 3. Activate the poetry shell with `poetry shell`; this will create a `venv` if not run before, or else activate an existing `venv`.
 4. Install dependencies with `poetry install`; at the current time of writing the only runtime dependency is `numba` used for vectorizing scalar FWI calculations, and the only dev dependency is `pytest` for running tests.
+   - GDAL is also a dev dependency only needed to run some tests and needs to be installed with: `pip install gdal==$(gdal-config --version)` which assumes you have the GDAL binary in your `PATH`.
 5. Verify tests run by running `pytest` in the root `cffdrs` directory.
