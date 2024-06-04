@@ -3,7 +3,6 @@ import pytest
 import numpy as np
 from osgeo import gdal
 from cffdrs.fwi import bui
-from cffdrs.raster.buildup_index_raster import buildup_index
 
 @pytest.mark.parametrize(
     "dmc,dc",
