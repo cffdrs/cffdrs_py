@@ -161,7 +161,7 @@ def dmc(dmc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     ell04 = [11.5, 10.5, 9.2, 7.9, 6.8, 6.2, 6.5, 7.4, 8.7, 10, 11.2, 11.8]
     # For latitude near the equator, we simple use a factor of 9 for all months
     # constrain low end of temperature
-    temp = -1.1 if (temp == 1.1) else temp
+    temp = -1.1 if (temp < 1.1) else temp
     # Eq. 16 - The log drying rate
     rk = 1.894 * (temp + 1.1) * (100 - rh) * ell01[mon - 1] * 1e-04
     # Adjust the day length  and thus the drying r, based on latitude and month
