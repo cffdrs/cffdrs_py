@@ -259,7 +259,7 @@ def dc(dc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     pe = (0.36 * (temp + 2.8) + fl01[mon - 1]) / 2
     # Daylength factor adjustment by latitude for Potential Evapotranspiration
     if lat_adjust:
-        pe = ((0.36 * (temp + 2.8) + fl02[mon]) / 2) if (lat <= -20) else pe
+        pe = ((0.36 * (temp + 2.8) + fl02[mon - 1]) / 2) if (lat <= -20) else pe
         pe = ((0.36 * (temp + 2.8) + 1.4) / 2) if (-20 < lat <= 20) else pe
     # Cap potential evapotranspiration at 0 for negative winter DC values
     pe = 0 if (pe < 0) else pe
