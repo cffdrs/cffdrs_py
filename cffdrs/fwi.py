@@ -254,7 +254,7 @@ def dc(dc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     fl02 = [6.4, 5, 2.4, 0.4, -1.6, -1.6, -1.6, -1.6, -1.6, 0.9, 3.8, 5.8]
     # Near the equator, we just use 1.4 for all months.
     # Constrain temperature
-    temp = -2.8 if (temp == 2.8) else temp
+    temp = -2.8 if (temp < 2.8) else temp
     # Eq. 22 - Potential Evapotranspiration
     pe = (0.36 * (temp + 2.8) + fl01[mon - 1]) / 2
     # Daylength factor adjustment by latitude for Potential Evapotranspiration
