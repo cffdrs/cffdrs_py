@@ -147,7 +147,7 @@ def dmc(dmc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     if rh < 0 or rh > 100:
         raise ValueError(f'Invalid rh: {rh}')
     if prec < 0:
-        raise ValueError(f"Invalid prec: {prec}")
+        raise ValueError(f'Invalid prec: {prec}')
     if mon < 1 or mon > 12 or not isinstance(mon, int):
         raise ValueError(f'Invalid mon: {mon}')
     # Reference latitude for DMC day length adjustment
@@ -244,7 +244,7 @@ def dc(dc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     if rh < 0 or rh > 100:
         raise ValueError(f'Invalid rh: {rh}')
     if prec < 0:
-        raise ValueError(f"Invalid prec: {prec}")
+        raise ValueError(f'Invalid prec: {prec}')
     if mon < 1 or mon > 12 or not isinstance(mon, int):
         raise ValueError(f'Invalid mon: {mon}')
     # Day length factor for DC Calculations
