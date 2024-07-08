@@ -16,6 +16,9 @@ def hourly_fine_fuel_moisture_code(temp, rh, ws, prec, fo=85, t0=1):
         Wind speed (km/h)
     fo: float, default=85
         FFMC at the previous time step
+    t0: float, default=1
+        Time (in hours) between the previous value of FFMC and the current time at which we want to
+        calculate a new value of the FFMC.
 
     Returns
     -------
@@ -30,7 +33,7 @@ def hourly_fine_fuel_moisture_code(temp, rh, ws, prec, fo=85, t0=1):
     In its simplest typical use this current routine calculates a value of FFMC based on a series of
     uninterrupted hourly weather observations of screen level (~1.4 m) temperature, relative humidity, 10 m
     wind speed, and 1-hour rainfall. This implementation of the function
-    includes an optional time_step input which is defaulted to one hour, but can
+    includes an optional time step input which is defaulted to one hour, but can
     be reduced if sub-hourly calculation of the code is needed.  The FFMC is in
     essence a bookkeeping system for moisture content and thus it needs to use
     the last time step's value of FFMC in its calculation as well.
