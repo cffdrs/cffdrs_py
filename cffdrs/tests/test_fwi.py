@@ -8,11 +8,11 @@ def test_ffmc(fwi_test_data):
     current_ffmc = initial_ffmc
 
     for row in fwi_test_data:
-        temp = float(row["TEMP"])
-        rh = float(row["RH"])
-        ws = float(row["WS"])
-        prec = float(row["PREC"])
-        expected_ffmc = float(row["FFMC"])
+        temp = row["TEMP"]
+        rh = row["RH"]
+        ws = row["WS"]
+        prec = row["PREC"]
+        expected_ffmc = row["FFMC"]
 
         result = ffmc(current_ffmc, temp, rh, ws, prec)
         # Use a small tolerance for floating point comparison
