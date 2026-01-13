@@ -29,3 +29,22 @@ def fwi_test_data():
             row["DSR"] = float(row["DSR"])
             data.append(row)
         return data
+
+
+@pytest.fixture
+def hffmc_test_data():
+   """Fixture to load test data from hffmc_test_data.csv"""
+   with open("cffdrs/data/hffmc_test_data.csv", "r") as f:
+       reader = csv.DictReader(f)
+       data = []
+       for row in reader:
+           # convert all numeric columns to float
+           row["temp"] = float(row["temp"])
+           row["rh"] = float(row["rh"])
+           row["ws"] = float(row["ws"])
+           row["prec"] = float(row["prec"])
+           row["ffmc_old"] = float(row["ffmc_old"])
+           row["time_step"] = float(row["time_step"])
+           row["expected_hffmc"] = float(row["expected_hffmc"])
+           data.append(row)
+       return data
