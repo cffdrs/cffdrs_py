@@ -279,7 +279,7 @@ def dc(dc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     return dc1
 
 
-def isi(ffmc, ws, fbp_mod=False):
+def initial_spread_index(ffmc, ws, fbp_mod=False):
     """
     Initial Spread Index Calculation
 

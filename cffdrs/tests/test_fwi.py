@@ -1,5 +1,5 @@
 import pytest
-from cffdrs.fwi import ffmc, dmc, dc, isi, bui, fwi
+from cffdrs.fwi import ffmc, dmc, dc, initial_spread_index, bui, fwi
 
 
 '''
@@ -100,7 +100,7 @@ def test_isi(fwi_test_data):
         expected_isi = row["ISI"]
 
         result_ffmc = ffmc(current_ffmc, temp, rh, ws, prec)
-        result = isi(result_ffmc, ws)
+        result = initial_spread_index(result_ffmc, ws)
         # Use a small tolerance for floating point comparison
         assert pytest.approx(result, abs=0.1) == expected_isi, (
             f"Failed for row: {row}, got {result}, expected {expected_isi}"
@@ -156,7 +156,7 @@ def test_fwi(fwi_test_data):
         result_ffmc = ffmc(current_ffmc, temp, rh, ws, prec)
         result_dmc = dmc(current_dmc, temp, rh, prec, lat, mon)
         result_dc = dc(current_dc, temp, rh, prec, lat, mon)
-        result_isi = isi(result_ffmc, ws)
+        result_isi = initial_spread_index(result_ffmc, ws)
         result_bui = bui(result_dmc, result_dc)
         result = fwi(result_isi, result_bui)
         # Use a small tolerance for floating point comparison

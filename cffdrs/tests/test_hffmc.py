@@ -40,5 +40,6 @@ def test_hourly_fine_fuel_moisture_code_cases(
         ffmc_old = row["ffmc_old"]
         time_step = row["time_step"]
         expected_hffmc = row["expected_hffmc"]
-    result = hourly_fine_fuel_moisture_code(temp, rh, ws, prec, ffmc_old, time_step)
-    assert pytest.approx(expected_hffmc, abs=0.01) == result
+        
+        result = hourly_fine_fuel_moisture_code(temp, rh, ws, prec, ffmc_old, time_step)
+        assert pytest.approx(expected_hffmc, abs=0.01) == result

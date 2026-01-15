@@ -1,11 +1,32 @@
 import csv
+import math
 import pytest
+
+def float_or_nan(value: str) -> float:
+    value = value.strip()
+    if value.upper() == "NA":
+        return math.nan
+    return float(value)
+
+@pytest.fixture
+def load_csv():
+    def _load_csv(path, schema):
+        rows = []
+        with open(path, newline="") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                rows.append({
+                    key: schema[key](value)
+                    for key, value in row.items()
+                })
+        return rows
+    return _load_csv
 
 
 @pytest.fixture
 def fwi_test_data():
     """Fixture to load test data from fwi_test_data.csv"""
-    with open("cffdrs/data/fwi_test_data.csv", "r") as f:
+    with open("cffdrs/tests/data/fwi_test_data.csv", "r") as f:
         reader = csv.DictReader(f)
         data = []
         for row in reader:
@@ -34,7 +55,7 @@ def fwi_test_data():
 @pytest.fixture
 def hffmc_test_data():
    """Fixture to load test data from hffmc_test_data.csv"""
-   with open("cffdrs/data/hffmc_test_data.csv", "r") as f:
+   with open("cffdrs/tests/data/hffmc_test_data.csv", "r") as f:
        reader = csv.DictReader(f)
        data = []
        for row in reader:
