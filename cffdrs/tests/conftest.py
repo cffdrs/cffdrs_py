@@ -4,8 +4,16 @@ import pytest
 
 def float_or_nan(value: str) -> float:
     value = value.strip()
-    if value.upper() == "NA":
+
+    if not value or value.upper() == "NA":
         return math.nan
+
+    if value.upper() == "INF":
+        return math.inf
+
+    if value.upper() == "-INF":
+        return -math.inf
+
     return float(value)
 
 @pytest.fixture
@@ -69,3 +77,28 @@ def hffmc_test_data():
            row["expected_hffmc"] = float(row["expected_hffmc"])
            data.append(row)
        return data
+
+
+#############
+# cfb_calc test data fixture
+
+cfb_calc_csv_schema = {
+    "fuel_type": str,
+    "fmc": float,
+    "sfc": float,
+    "ros": float,
+    "cbh": float,
+    "expected_cfb": float_or_nan,
+    "expected_critical_surface_intensity": float_or_nan,
+    "expected_critical_surface_rate_of_spread": float_or_nan
+}
+
+@pytest.fixture
+def cfb_calc_test_data(load_csv):
+    """Fixture to load test data from crown_fraction_burned.csv"""
+    return load_csv(
+        "cffdrs/tests/data/cfb_calc_data.csv",
+        cfb_calc_csv_schema,
+    )
+
+###########

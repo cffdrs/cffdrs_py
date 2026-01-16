@@ -19,21 +19,23 @@ def surface_fire_rate_of_spread(csi, sfc):
     """
     Surface Fire Rate of Spread Calculator
 
+    Follows R rules:
+    - x / 0     ->  Inf or -Inf
+    - 0 / 0     ->  NaN
+    - NaN propagates
+
     :param csi: Critical surface intensity
     :param sfc: Surface Fuel Consumption
 
     :returns: RSO Surface fire rate of spread (m/min)
     """
-    try:
-        if sfc == 0:
-            if csi == 0:
-                return math.nan  # 0 / 0 -> NA
-            else:
-                return math.inf  # x / 0 -> Inf
-        RSO = csi / (300 * sfc)
-        return RSO
-    except Exception:
-        return math.nan
+    if sfc == 0:
+        if csi == 0:
+            return math.nan
+        return math.inf
+
+    # Eq. 57 (FCFDG 1992) Surface fire rate of spread (m/min)
+    return csi / (300 * sfc)
 
 
 def crown_fraction_burned(ros, rso):
