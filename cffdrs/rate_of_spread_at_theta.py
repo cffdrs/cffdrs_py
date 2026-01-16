@@ -1,5 +1,7 @@
 import math
 
+from cffdrs.r_helpers import safe_div
+
 
 def rate_of_spread_at_theta(ros, fros, bros, theta):
     """
@@ -28,10 +30,10 @@ def rate_of_spread_at_theta(ros, fros, bros, theta):
     ROStheta = (
         ((ros - bros) / (2 * c1) + (ros + bros) / (2 * c1))
         * (
-            (fros * c1 * math.sqrt(fros * fros * c1 * c1 + (ros * bros) * s1 * s1)
-              - ((ros * ros - bros * bros) / 4) * s1 * s1)
-            / (fros * fros * c1 * c1
-                + ((ros + bros) / 2) * ((ros + bros) / 2) * s1 * s1)
+            safe_div((fros * c1 * math.sqrt(fros * fros * c1 * c1 + (ros * bros) * s1 * s1)
+              - ((ros * ros - bros * bros) / 4) * s1 * s1),
+            (fros * fros * c1 * c1
+                + ((ros + bros) / 2) * ((ros + bros) / 2) * s1 * s1))
           )
     )
     return ROStheta
