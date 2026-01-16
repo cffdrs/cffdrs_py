@@ -1,5 +1,6 @@
 import math
 from cffdrs.constants import FuelType
+from cffdrs.r_helpers import safe_power
 
 
 def length_to_breadth(fuel_type: FuelType, wsv):
@@ -34,5 +35,5 @@ def length_to_breadth(fuel_type: FuelType, wsv):
         else:
             LB = 1.0  # Eq. 80/81
     else:
-        LB = 1.0 + 8.729 * (1 - math.exp(-0.030 * wsv))**2.155  # Eq. 79
+        LB = 1.0 + 8.729 * safe_power(1 - math.exp(-0.030 * wsv), 2.155)  # Eq. 79
     return LB
