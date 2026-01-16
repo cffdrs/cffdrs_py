@@ -16,5 +16,5 @@ def crown_fuel_load(fuel_type: FuelType, cfl):
         "D1": 0, "M1": 0.8, "M2": 0.8, "M3": 0.8, "M4": 0.8, "S1": 0, "S2": 0, "S3": 0, "O1A": 0, "O1B": 0
     }
     if cfl <= 0 or cfl > 2 or math.isnan(cfl):
-        cfl = CFLs[fuel_type]
+        cfl = CFLs.get(fuel_type, math.nan)
     return cfl
