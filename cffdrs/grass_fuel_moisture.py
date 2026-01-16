@@ -2,7 +2,7 @@ import math
 from cffdrs.constants import FFMC_COEFFICIENT
 
 
-def grass_fuel_moisture(temp, rh, ws, prec, isol, gfmcold, rofl=0.3, time_step=1):
+def grass_fuel_moisture(temp, rh, ws, prec, isol, gfmc_old, rofl=0.3, time_step=1):
     """
     Moisture content Calculation
 
@@ -20,7 +20,7 @@ def grass_fuel_moisture(temp, rh, ws, prec, isol, gfmcold, rofl=0.3, time_step=1
     :returns: MC0
     """
     # Eq. 13 - Calculate previous moisture code
-    MCold = FFMC_COEFFICIENT * ((101 - gfmcold) / (59.5 + gfmcold))
+    MCold = FFMC_COEFFICIENT * ((101 - gfmc_old) / (59.5 + gfmc_old))
     # Eq. 11 - Calculate the moisture content of the layer in % after rainfall
     MCr = MCold + 100 * (prec / rofl) if prec > 0 else MCold
     # Constrain to 250
@@ -44,9 +44,15 @@ def grass_fuel_moisture(temp, rh, ws, prec, isol, gfmcold, rofl=0.3, time_step=1
     Rf = RH_f / 100 if MCold > EMC_D else rh
     # RH in terms of 1-RH/100 for absorption
     Rf = (100 - RH_f) / 100 if MCold < EMC_W else Rf
+
     # Eq. 10 - Calculate Inverse Response time of grass (hours)
-    K_GRASS = 0.389633 * math.exp(0.0365 * Tf) * (0.424 * (1 - Rf**1.7) + 0.0694 *
+    try:
+        exp_term = math.exp(0.0365 * Tf)
+    except OverflowError: # this can create a very large number and error out
+        exp_term = math.inf # tests pass by setting to infinity
+    K_GRASS = 0.389633 * exp_term * (0.424 * (1 - Rf**1.7) + 0.0694 *
                 math.sqrt(ws) * (1 - Rf**8))
+    
     # Fuel is drying, calculate Moisture Content
     MC0 = (EMC_D + (MCold - EMC_D) * math.exp(-1.0 * math.log(10.0) * K_GRASS * time_step)
            if MCold > EMC_D else MCold)
