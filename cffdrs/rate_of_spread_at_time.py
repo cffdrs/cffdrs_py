@@ -1,5 +1,6 @@
 import math
 from cffdrs.constants import FuelType
+from cffdrs.r_helpers import safe_power
 
 
 def rate_of_spread_at_time(fuel_type: FuelType, roseq, hr, cfb):
@@ -28,5 +29,5 @@ def rate_of_spread_at_time(fuel_type: FuelType, roseq, hr, cfb):
     else:
         alpha = 0.115 - 18.8 * (cfb**2.5) * math.exp(-8 * cfb)
     # Eq. 70 - Rate of Spread at time since ignition
-    ROSt = roseq * (1 - math.exp(-alpha * hr))
+    ROSt = roseq * (1 - safe_power(-alpha, hr))
     return ROSt
