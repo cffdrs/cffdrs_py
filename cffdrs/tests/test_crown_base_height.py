@@ -1,5 +1,3 @@
-import math
-
 import pytest
 from cffdrs.crown_base_height import crown_base_height
 from cffdrs.tests.conftest import float_or_nan
