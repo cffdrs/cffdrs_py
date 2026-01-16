@@ -1,5 +1,6 @@
 import math
 from cffdrs.constants import FuelType
+from cffdrs.r_helpers import safe_power
 
 
 def distance_at_time(fuel_type: FuelType, roseq, hr, cfb):
@@ -26,7 +27,7 @@ def distance_at_time(fuel_type: FuelType, roseq, hr, cfb):
     if fuel_type in ["C1", "O1A", "O1B", "S1", "S2", "S3", "D1"]:
         alpha = 0.115
     else:
-        alpha = 0.115 - 18.8 * (cfb**2.5) * math.exp(-8 * cfb)
+        alpha = 0.115 - 18.8 * safe_power(cfb, 2.5) * math.exp(-8 * cfb)
     # Eq. 71 (FCFDG 1992) Calculate Head fire spread distance
     DISTt = roseq * (hr + math.exp(-alpha * hr) / alpha - 1 / alpha)
     return DISTt

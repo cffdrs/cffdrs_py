@@ -1,5 +1,7 @@
 import math
 
+from cffdrs.r_helpers import safe_div
+
 
 def critical_surface_intensity(fmc, cbh):
     """
@@ -29,13 +31,9 @@ def surface_fire_rate_of_spread(csi, sfc):
 
     :returns: RSO Surface fire rate of spread (m/min)
     """
-    if sfc == 0:
-        if csi == 0:
-            return math.nan
-        return math.inf
-
     # Eq. 57 (FCFDG 1992) Surface fire rate of spread (m/min)
-    return csi / (300 * sfc)
+    rso = safe_div(csi, (300 * sfc))
+    return rso
 
 
 def crown_fraction_burned(ros, rso):
