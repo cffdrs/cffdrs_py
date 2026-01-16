@@ -102,3 +102,31 @@ def cfb_calc_test_data(load_csv):
     )
 
 ###########
+# c6_calc test data fixture
+
+c6_calc_csv_schema = {
+    "fuel_type": str,
+    "isi": float,
+    "bui": float,
+    "fmc": float,
+    "sfc": float,
+    "cbh": float,
+    "ros": float,
+    "cfb": float_or_nan,
+    "rsc": float,
+    "option": str,
+    "exp_intermediate_ros": float,
+    "exp_surface_ros": float,
+    "exp_crown_ros": float,
+    "exp_cfb": float_or_nan,
+}
+
+@pytest.fixture
+def c6_calc_test_data(load_csv):
+    """Fixture to load test data from c6_calc_test_data.csv"""
+    return load_csv(
+        "cffdrs/tests/data/c6_calc_test_data.csv",
+        c6_calc_csv_schema,
+    )
+
+###########
