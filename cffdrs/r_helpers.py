@@ -4,18 +4,27 @@ def safe_power(base, exponent):
     """
     Raise a number to a power in a way that mimics R's numeric behavior.
 
-    This function returns NaN if the base is negative and the exponent is 
-    fractional, or if the base is NaN or None. Otherwise, it returns base ** exponent.
+    Returns NaN if:
+      - the base is negative and exponent is fractional
+      - the base is NaN or None
+      - the base is complex
 
-    Useful for porting R calculations that produce NaN instead of complex numbers 
-    for invalid fractional powers.
+    Otherwise returns base ** exponent.
 
     :param base: The number to be raised to a power.
     :param exponent: The exponent to raise the base to.
     :return: The result of base ** exponent, or NaN if the operation is invalid.
     """
-    if base is None or math.isnan(base) or (base < 0 and not exponent.is_integer()):
+    try:
+        base = float(base)
+    except (TypeError, ValueError):
         return math.nan
+
+    if base < 0 and not float(exponent).is_integer():
+        return math.nan
+    if math.isnan(base) or math.isnan(exponent):
+        return math.nan
+
     return base ** exponent
 
 def safe_div(numerator, denominator):

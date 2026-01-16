@@ -1,5 +1,6 @@
 import math
 from cffdrs.constants import FuelType
+from cffdrs.r_helpers import safe_power
 
 
 def length_to_breadth_at_time(fuel_type: FuelType, lb, hr, cfb):
@@ -33,5 +34,5 @@ def length_to_breadth_at_time(fuel_type: FuelType, lb, hr, cfb):
     else:
         alpha = 0.115 - 18.8 * (cfb**2.5) * math.exp(-8 * cfb)
     # Eq. 81 (Wotton et.al. 2009) - LB at time since ignition
-    LBt = (lb - 1) * (1 - math.exp(-alpha * hr)) + 1
+    LBt = (lb - 1) * (1 - safe_power(-alpha, hr)) + 1
     return LBt
