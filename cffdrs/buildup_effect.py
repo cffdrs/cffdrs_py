@@ -16,10 +16,11 @@ def buildup_effect(fuel_type: FuelType, bui):
     :returns: BE Build up effect
     """
     # Eq. 54 (FCFDG 1992) The Buildup Effect
-    # Non-fuel or unknown fuel types → no buildup effect
     fuel = FUEL_TYPE_DEFAULTS.get(fuel_type)
+
     if fuel is None:
-        return math.nan
+        # R behavior: if fuel unknown and BUI > 0 -> NA, else -> 1
+        return math.nan if bui > 0 else 1.0
 
     buio = fuel["BUIo"]
     q = fuel["Q"]

@@ -26,7 +26,4 @@ def test_buildup_effect(load_csv):
 
         result = buildup_effect(fuel_type, bui)
 
-        if math.isnan(expected):
-            assert math.isnan(result)
-        else:
-            assert pytest.approx(result, 0.01) == expected
+        assert pytest.approx(result, 0.01, nan_ok=True) == expected, f"Failed for row: {row} - BE: {result}"
