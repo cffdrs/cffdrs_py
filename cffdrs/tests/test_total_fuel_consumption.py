@@ -32,4 +32,4 @@ def test_total_fuel_consumption(load_csv):
             fuel_type, cfl, cfb, sfc, pc, pdf, option
         )
 
-        assert pytest.approx(expected_consumption, 0.01) == calculated_consumption, f"Failed for row: {row} - Consumption: {calculated_consumption}"
+        assert pytest.approx(expected_consumption, abs=0.01) == calculated_consumption, f"Failed for row: {row} - Consumption: {calculated_consumption}"

@@ -26,4 +26,4 @@ def test_foliar_moisture_content(load_csv):
 
         calculated_fmc = foliar_moisture_content(lat, long, elv, dj, d0)
 
-        assert pytest.approx(expected_fmc, 0.01) == calculated_fmc, f"Failed for row: {row} - FMC: {calculated_fmc}"
+        assert pytest.approx(expected_fmc, abs=0.01) == calculated_fmc, f"Failed for row: {row} - FMC: {calculated_fmc}"

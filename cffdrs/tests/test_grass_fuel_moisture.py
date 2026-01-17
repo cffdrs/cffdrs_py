@@ -35,5 +35,5 @@ def test_grass_fuel_moisture(load_csv):
 
         calculated_gfmc = grass_fuel_moisture_code(mc)
 
-        assert pytest.approx(expected_gfm, 0.01) == mc, f"Failed GFM for row: {row} - GFM: {mc}"
-        assert pytest.approx(expected_gfmc, 0.01) == calculated_gfmc, f"Failed GFMC for row: {row} - GFMC: {calculated_gfmc}"
+        assert pytest.approx(expected_gfm, abs=0.01) == mc, f"Failed GFM for row: {row} - GFM: {mc}"
+        assert pytest.approx(expected_gfmc, abs=0.01) == calculated_gfmc, f"Failed GFMC for row: {row} - GFMC: {calculated_gfmc}"

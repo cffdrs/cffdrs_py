@@ -28,4 +28,4 @@ def test_rate_of_spread_at_theta(load_csv):
 
         calculated_ros_at_theta = rate_of_spread_at_theta(ROS, FROS, BROS, THETA)
 
-        assert pytest.approx(expected_ros_at_theta, 0.01, nan_ok=True) == calculated_ros_at_theta, f"Failed for row: {row} - ROS at Theta: {calculated_ros_at_theta}"
+        assert pytest.approx(expected_ros_at_theta, abs=0.01, nan_ok=True) == calculated_ros_at_theta, f"Failed for row: {row} - ROS at Theta: {calculated_ros_at_theta}"

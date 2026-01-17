@@ -26,4 +26,4 @@ def test_rate_of_spread_at_time(load_csv):
 
         calculated_ros_at_time = rate_of_spread_at_time(fuel_type, roseq, hr, cfb)
 
-        assert pytest.approx(expected_ros_at_time, 0.01, nan_ok=True) == calculated_ros_at_time, f"Failed for row: {row} - ROS at Time: {calculated_ros_at_time}"
+        assert pytest.approx(expected_ros_at_time, abs=0.01, nan_ok=True) == calculated_ros_at_time, f"Failed for row: {row} - ROS at Time: {calculated_ros_at_time}"

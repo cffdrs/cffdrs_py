@@ -17,7 +17,7 @@ def test_intermediate_surface_rate_of_spread_c6(c6_calc_test_data):
 
         expected_rsi = row["exp_intermediate_ros"]
         rsi = intermediate_surface_rate_of_spread_c6(isi)
-        assert pytest.approx(expected_rsi, 0.01) == rsi, f"Failed for row: {row} - RSI: {rsi}"
+        assert pytest.approx(expected_rsi, abs=0.01) == rsi, f"Failed for row: {row} - RSI: {rsi}"
 
 def test_surface_rate_of_spread_c6(c6_calc_test_data):
     """Test the surface_rate_of_spread_c6 function with test data from CSV."""
@@ -30,7 +30,7 @@ def test_surface_rate_of_spread_c6(c6_calc_test_data):
 
         expected_rss = row["exp_surface_ros"]
         rss = surface_rate_of_spread_c6(rsi, bui)
-        assert pytest.approx(expected_rss, 0.01) == rss, f"Failed for row: {row} - RSS: {rss}"
+        assert pytest.approx(expected_rss, abs=0.01) == rss, f"Failed for row: {row} - RSS: {rss}"
 
 def test_crown_rate_of_spread_c6(c6_calc_test_data):
     """Test the crown_rate_of_spread_c6 function with test data from CSV."""
@@ -41,7 +41,7 @@ def test_crown_rate_of_spread_c6(c6_calc_test_data):
 
         expected_rsc = row["exp_crown_ros"]
         rsc = crown_rate_of_spread_c6(isi, fmc)
-        assert pytest.approx(expected_rsc, 0.01) == rsc, f"Failed for row: {row} - RSC: {rsc}"
+        assert pytest.approx(expected_rsc, abs=0.01) == rsc, f"Failed for row: {row} - RSC: {rsc}"
 
 @pytest.mark.skip(reason="Issue with NaN/0 handling in crown_fraction_burned_c6")
 def test_crown_fraction_burned_c6(c6_calc_test_data):

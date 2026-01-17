@@ -22,4 +22,4 @@ def test_length_to_breadth(load_csv):
 
         calculated_ratio = length_to_breadth(fuel_type, wsv)
 
-        assert pytest.approx(expected_ratio, 0.01, nan_ok=True) == calculated_ratio, f"Failed for row: {row} - Length to Breadth Ratio: {calculated_ratio}"
+        assert pytest.approx(expected_ratio, abs=0.01, nan_ok=True) == calculated_ratio, f"Failed for row: {row} - Length to Breadth Ratio: {calculated_ratio}"

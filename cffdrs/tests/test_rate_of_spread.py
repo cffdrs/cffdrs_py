@@ -46,4 +46,4 @@ def test_rate_of_spread(load_csv):
             cbh
         )
 
-        assert pytest.approx(expected_ros, 0.01, nan_ok=True) == calculated_ros, f"Failed for row: {row} - ROS: {calculated_ros}"
+        assert pytest.approx(expected_ros, abs=0.01, nan_ok=True) == calculated_ros, f"Failed for row: {row} - ROS: {calculated_ros}"

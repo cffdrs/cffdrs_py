@@ -25,4 +25,4 @@ def test_crown_base_height(load_csv):
 
         calculated_cbh = crown_base_height(fuel_type, cbh, sd, sh)
 
-        assert pytest.approx(expected_cbh, 0.01, nan_ok=True) == calculated_cbh, f"Failed for row: {row} - CBH: {calculated_cbh}"
+        assert pytest.approx(expected_cbh, abs=0.01, nan_ok=True) == calculated_cbh, f"Failed for row: {row} - CBH: {calculated_cbh}"
