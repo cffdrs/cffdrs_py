@@ -61,7 +61,6 @@ def test_slope_calc(load_csv):
         calculated_wsv = result["WSV"]
         calculated_raz = result["RAZ"]
 
-        # Use a small tolerance first; you can tighten later
         tol = 0.1
 
         wsv_ok = pytest.approx(expected_wsv, abs=tol, nan_ok=True) == calculated_wsv
