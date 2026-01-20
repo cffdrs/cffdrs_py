@@ -1,6 +1,5 @@
 import math
 from cffdrs.constants import FuelType
-from cffdrs.r_helpers import safe_power
 
 
 def length_to_breadth_at_time(fuel_type: FuelType, lb, hr, cfb):
@@ -29,10 +28,17 @@ def length_to_breadth_at_time(fuel_type: FuelType, lb, hr, cfb):
     :returns: Length to Breadth ratio at time since ignition
     """
     # Eq. 72 (FCFDG 1992) - alpha constant value, dependent on fuel type
+
     if fuel_type in ["C1", "O1A", "O1B", "S1", "S2", "S3", "D1"]:
         alpha = 0.115
     else:
-        alpha = 0.115 - 18.8 * (cfb**2.5) * math.exp(-8 * cfb)
+        # In R, negative base ** non-integer exponent → NaN
+        # Replicate that behavior for test consistency when cfb < 0
+        if cfb < 0:
+            alpha = math.nan
+        else:
+            alpha = 0.115 - 18.8 * (cfb**2.5) * math.exp(-8 * cfb)
+
     # Eq. 81 (Wotton et.al. 2009) - LB at time since ignition
-    LBt = (lb - 1) * (1 - safe_power(-alpha, hr)) + 1
+    LBt = (lb - 1) * (1 - math.exp(-alpha * hr)) + 1
     return LBt
