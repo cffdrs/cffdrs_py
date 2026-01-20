@@ -1,6 +1,5 @@
 import math
 from cffdrs.constants import FuelType
-from cffdrs.r_helpers import safe_power
 
 
 def rate_of_spread_at_time(fuel_type: FuelType, roseq, hr, cfb):
@@ -24,10 +23,17 @@ def rate_of_spread_at_time(fuel_type: FuelType, roseq, hr, cfb):
     :returns: ROSt Rate of Spread at time since ignition value
     """
     # Eq. 72 - alpha constant value, dependent on fuel type
-    if fuel_type in ["C1", "O1A", "O1B", "S1", "S2", "S3", "D1"]:
+    
+    if fuel_type in ("C1", "O1A", "O1B", "S1", "S2", "S3", "D1"):
         alpha = 0.115
     else:
-        alpha = 0.115 - 18.8 * (cfb**2.5) * math.exp(-8 * cfb)
+        # In R, negative base ** non-integer exponent → NaN
+        # replicate that behavior here for test consistency
+        if cfb < 0:
+            alpha = math.nan
+        else:
+            alpha = 0.115 - 18.8 * (cfb ** 2.5) * math.exp(-8 * cfb)
+    
     # Eq. 70 - Rate of Spread at time since ignition
-    ROSt = roseq * (1 - safe_power(-alpha, hr))
+    ROSt = roseq * (1 - math.exp(-alpha * hr))
     return ROSt
