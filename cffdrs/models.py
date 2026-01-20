@@ -1,5 +1,7 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, get_args
+import warnings
+
 
 from cffdrs.constants import FuelType
 
@@ -24,7 +26,7 @@ class FBPInput:
     cbh: float = 0.0
     cfl: float = 0.0
     isi: float = 0.0
-    fmc: Optional[float] = None
+    fmc: float = 0.0
     theta: float = 0.0
     accel: int = 0
     aspect: float = 0.0
@@ -32,6 +34,19 @@ class FBPInput:
     id: Optional[str] = None
     sd: float = 0.0
     sh: float = 0.0
+
+    def __post_init__(self):
+        # Fuel type normalization and validation
+        original = self.fuel_type
+        self.fuel_type = self.fuel_type.upper().replace("-", "").replace(" ", "") if self.fuel_type else "C2"
+        if not self.fuel_type:
+            warnings.warn("FuelType not provided, using C2 (default) in the calculation")
+            self.fuel_type = "C2"
+        
+        # Validate against allowed fuel types
+        allowed_fuel_types = get_args(FuelType)
+        if self.fuel_type not in allowed_fuel_types:
+            raise ValueError(f"Invalid fuel type '{original}' (normalized to '{self.fuel_type}'). Must be one of: {', '.join(allowed_fuel_types)}")
 
 @dataclass
 class FBPPrimaryOutput:

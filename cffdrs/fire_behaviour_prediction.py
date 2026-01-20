@@ -36,6 +36,8 @@ from cffdrs.total_fuel_consumption import total_fuel_consumption
 
 
 def fire_behaviour_prediction(input: FBPInput, output: Literal["Primary", "Secondary", "All"] = "Primary"):
+    if not isinstance(input, FBPInput):
+        input = FBPInput()
     # Unpack input
     fuel_type = input.fuel_type
     ffmc = input.ffmc
@@ -63,7 +65,7 @@ def fire_behaviour_prediction(input: FBPInput, output: Literal["Primary", "Secon
     theta = input.theta
     accel = input.accel
     buieff = input.bui_eff
-    id = input.id or "1"
+    id = input.id or 1
     output = output.upper()
     # Convert Wind Direction from degrees to radians
     wd_rad = math.radians(wd)
@@ -111,11 +113,6 @@ def fire_behaviour_prediction(input: FBPInput, output: Literal["Primary", "Secon
     sd = 0 if math.isnan(sd) else sd
     sh = -999 if sh < 0 or sh > 100 else sh
     sh = 0 if math.isnan(sh) else sh
-
-    fuel_type = fuel_type.upper().replace("-", "").replace(" ", "")
-    if fuel_type == "" or fuel_type is None:
-        warnings.warn("FuelType contains NA, using C2 (default) in the calculation")
-        fuel_type = "C2"
 
     # Convert hours to minutes
     hr_min = hr * 60
