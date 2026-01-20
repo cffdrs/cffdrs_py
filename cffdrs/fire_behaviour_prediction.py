@@ -14,7 +14,6 @@ further.
 
 import math
 from typing import Literal
-import warnings
 from cffdrs.fwi import initial_spread_index
 from cffdrs.rate_of_spread import rate_of_spread_extended
 from cffdrs.slope_calc import slope_adjustment
@@ -38,14 +37,14 @@ from cffdrs.total_fuel_consumption import total_fuel_consumption
 def fire_behaviour_prediction(input: FBPInput, output: Literal["Primary", "Secondary", "All"] = "Primary"):
     if not isinstance(input, FBPInput):
         input = FBPInput()
-    # Unpack input
+    # Unpack input (already validated and converted in FBPInput.__post_init__)
     fuel_type = input.fuel_type
     ffmc = input.ffmc
     bui = input.bui
     ws = input.ws
-    wd = input.wd
+    wd_rad = input.wd  # Already in radians
     gs = input.gs
-    aspect = input.aspect
+    aspect_rad = input.aspect  # Already in radians
     pc = input.pc
     pdf = input.pdf
     cc = input.cc
@@ -55,64 +54,18 @@ def fire_behaviour_prediction(input: FBPInput, output: Literal["Primary", "Secon
     fmc = input.fmc
     isi = input.isi
     lat = input.lat
-    long = input.lon
+    long = input.lon  # Already adjusted for negative longitudes
     elv = input.elv
     dj = input.dj
     d0 = input.d0
     sd = input.sd
     sh = input.sh
     hr = input.hr
-    theta = input.theta
+    theta_rad = input.theta  # Already in radians
     accel = input.accel
     buieff = input.bui_eff
-    id = input.id or 1
+    id = input.id or "1"
     output = output.upper()
-    # Convert Wind Direction from degrees to radians
-    wd_rad = math.radians(wd)
-    # Convert Theta from degrees to radians
-    theta_rad = math.radians(theta)
-    aspect = 0 if math.isnan(aspect) else aspect
-    aspect = aspect + 360 if aspect < 0 else aspect
-    # Convert Aspect from degrees to radians
-    aspect_rad = math.radians(aspect)
-    accel = 0 if math.isnan(accel) or accel < 0 else accel
-    if accel not in [0, 1]:
-        warnings.warn("Input variable Accel is out of range, will be assigned to 1")
-        accel = 1
-    dj = 0 if dj < 0 or dj > 366 else dj
-    dj = 180 if math.isnan(dj) else dj
-    d0 = 0 if math.isnan(d0) or d0 < 0 or d0 > 366 else d0
-    elv = 0 if elv < 0 or elv > 10000 else elv
-    elv = 0 if math.isnan(elv) else elv
-    buieff = 0 if buieff <= 0 else 1
-    buieff = 1 if math.isnan(buieff) else buieff
-    hr = -hr if hr < 0 else hr
-    hr = 24 if hr > 366 * 24 else hr
-    hr = 0 if math.isnan(hr) else hr
-    ffmc = 0 if ffmc < 0 or ffmc > 101 else ffmc
-    ffmc = 90 if math.isnan(ffmc) else ffmc
-    isi = 0 if math.isnan(isi) or isi < 0 or isi > 300 else isi
-    bui = 0 if bui < 0 or bui > 1000 else bui
-    bui = 60 if math.isnan(bui) else bui
-    ws = 0 if ws < 0 or ws > 300 else ws
-    ws = 10 if math.isnan(ws) else ws
-    wd_rad = 0 if math.isnan(wd_rad) or wd_rad < -2 * math.pi or wd_rad > 2 * math.pi else wd_rad
-    gs = 0 if math.isnan(gs) or gs < 0 or gs > 200 else gs
-    gs = 0 if aspect_rad < -2 * math.pi or aspect_rad > 2 * math.pi else gs
-    pc = 50 if math.isnan(pc) or pc < 0 or pc > 100 else pc
-    pdf = 35 if math.isnan(pdf) or pdf < 0 or pdf > 100 else pdf
-    cc = 95 if cc <= 0 or cc > 100 else cc
-    cc = 80 if math.isnan(cc) else cc
-    gfl = 0.35 if math.isnan(gfl) or gfl <= 0 or gfl > 100 else gfl
-    lat = 0 if lat < -90 or lat > 90 else lat
-    lat = 55 if math.isnan(lat) else lat
-    long = 0 if long < -180 or long > 360 else long
-    long = -120 if math.isnan(long) else long
-    theta_rad = 0 if math.isnan(theta_rad) or theta_rad < -2 * math.pi or theta_rad > 2 * math.pi else theta_rad
-    sd = -999 if sd < 0 or sd > 1e5 else sd
-    sd = 0 if math.isnan(sd) else sd
-    sh = -999 if sh < 0 or sh > 100 else sh
-    sh = 0 if math.isnan(sh) else sh
 
     # Convert hours to minutes
     hr_min = hr * 60
@@ -121,9 +74,6 @@ def fire_behaviour_prediction(input: FBPInput, output: Literal["Primary", "Secon
     waz = waz - 2 * math.pi if waz > 2 * math.pi else waz
     saz = aspect_rad + math.pi
     saz = saz - 2 * math.pi if saz > 2 * math.pi else saz
-    # Any negative longitudes (western hemisphere) are translated to positive
-    #  longitudes
-    long = -long if long < 0 else long
 
     # Initializing variables
     sfc = tfc = hfi = cfb = ros = 0
