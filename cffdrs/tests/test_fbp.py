@@ -170,7 +170,7 @@ def test_fbp_07(fbp_input_data, load_csv):
 # fbp_08 and fbp_09 not included as the same data exists in other csv tests
 ############
 
-@pytest.mark.xfail(reason="I believe default CFL should be 0, not 1 as currently coded")
+@pytest.mark.xfail(reason="I believe default CFL should be 0, not 1 as it's currently written")
 def test_fbp_10(load_csv):
     """Test FBP function with no input (uses default FBPInput)"""
 

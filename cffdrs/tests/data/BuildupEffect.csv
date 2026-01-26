@@ -1,4 +1,4 @@
-fuel_type,bui,expected_buildup_effect
+FUELTYPE,BUI,BuildupEffect
 NF,0,1
 C2,0,1
 C5,0,1

@@ -4,43 +4,43 @@ from cffdrs.back_rate_of_spread import back_rate_of_spread
 from cffdrs.tests.conftest import float_or_nan
 
 csv_schema = {
-    "fuel_type": str,
-    "ffmc": float,
-    "bui": float,
-    "wsv": float,
-    "fmc": float,
-    "sfc": float,
-    "pc": float,
-    "pdf": float,
-    "cc": float,    
-    "cbh": float,
-    "expected_back_rate_of_spread": float_or_nan,
+    "FUELTYPE": str,
+    "FFMC": float,
+    "BUI": float,
+    "WSV": float,
+    "FMC": float,
+    "SFC": float,
+    "PC": float,
+    "PDF": float,
+    "CC": float,    
+    "CBH": float,
+    "BackRateOfSpread": float_or_nan,
 }
 
 def test_back_rate_of_spread(load_csv):
-    """Test back_rate_of_spread function with data from back_rate_of_spread.csv"""
+    """Test back_rate_of_spread function with data from BackRateOfSpread.csv"""
     test_data = load_csv(
-        "cffdrs/tests/data/back_rate_of_spread.csv",
+        "cffdrs/tests/data/BackRateOfSpread.csv",
         csv_schema
     )
 
     for row in test_data:
         result = back_rate_of_spread(
-            fuel_type=row["fuel_type"],
-            ffmc=row["ffmc"],
-            bui=row["bui"],
-            wsv=row["wsv"],
-            fmc=row["fmc"],
-            sfc=row["sfc"],
-            pc=row["pc"],
-            pdf=row["pdf"],
-            cc=row["cc"],
-            cbh=row["cbh"]
+            fuel_type=row["FUELTYPE"],
+            ffmc=row["FFMC"],
+            bui=row["BUI"],
+            wsv=row["WSV"],
+            fmc=row["FMC"],
+            sfc=row["SFC"],
+            pc=row["PC"],
+            pdf=row["PDF"],
+            cc=row["CC"],
+            cbh=row["CBH"]
         )
-        assert pytest.approx(result, abs=0.01, nan_ok=True) == row["expected_back_rate_of_spread"], (
-            f"Failed for fuel_type={row['fuel_type']}, "
-            f"ffmc={row['ffmc']}, bui={row['bui']}, wsv={row['wsv']}, "
-            f"fmc={row['fmc']}, sfc={row['sfc']}, pc={row['pc']}, "
-            f"pdf={row['pdf']}, cc={row['cc']}, cbh={row['cbh']}. "
-            f"Expected {row['expected_back_rate_of_spread']}, got {result}."
+        assert pytest.approx(result, abs=0.01, nan_ok=True) == row["BackRateOfSpread"], (
+            f"Failed for fuel_type={row['FUELTYPE']}, "
+            f"ffmc={row['FFMC']}, bui={row['BUI']}, wsv={row['WSV']}, "
+            f"fmc={row['FMC']}, sfc={row['SFC']}, pc={row['PC']}, "
+            f"pdf={row['PDF']}, cc={row['CC']}, cbh={row['CBH']}. "
+            f"Expected {row['BackRateOfSpread']}, got {result}."
         )

@@ -1,4 +1,4 @@
-fuel_type,ffmc,bui,wsv,fmc,sfc,pc,pdf,cc,cbh,expected_back_rate_of_spread
+FUELTYPE,FFMC,BUI,WSV,FMC,SFC,PC,PDF,CC,CBH,BackRateOfSpread
 NF,0,0,-10,0,0,0,0,0,0,1e-06
 M2,21.9,874.8,208.7,0,0,0,0,0,0,1.659e-15
 S3,43.8,656.1,-10,218.7,0,0,0,0,0,2.657e-05

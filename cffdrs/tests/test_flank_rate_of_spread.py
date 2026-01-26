@@ -7,19 +7,19 @@ csv_schema = {
     "ROS": float,
     "BROS": float,
     "LB": float,
-    "expected_FlankRateOfSpread": float
+    "FlankRateOfSpread": float
 }
 
 
 def test_flank_rate_of_spread(load_csv):
-    test_data = load_csv("cffdrs/tests/data/flank_rate_of_spread_data.csv", csv_schema)
+    test_data = load_csv("cffdrs/tests/data/FlankRateOfSpread.csv", csv_schema)
 
     for row in test_data:
         ros = row["ROS"]
         bros = row["BROS"]
         lb = row["LB"]
 
-        expected_fros = row["expected_FlankRateOfSpread"]
+        expected_fros = row["FlankRateOfSpread"]
 
         calculated_fros = flank_rate_of_spread(ros, bros, lb)
 

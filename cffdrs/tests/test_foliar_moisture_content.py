@@ -9,11 +9,11 @@ csv_schema = {
     "ELV": float,
     "DJ": int,
     "D0": int,
-    "expected_FoliarMoistureContent": float
+    "FoliarMoistureContent": float
 }
 
 def test_foliar_moisture_content(load_csv):
-    test_data = load_csv("cffdrs/tests/data/foliar_moisture_content_data.csv", csv_schema)
+    test_data = load_csv("cffdrs/tests/data/FoliarMoistureContent.csv", csv_schema)
 
     for row in test_data:
         lat = row["LAT"]
@@ -22,7 +22,7 @@ def test_foliar_moisture_content(load_csv):
         dj = row["DJ"]
         d0 = row["D0"]
 
-        expected_fmc = row["expected_FoliarMoistureContent"]
+        expected_fmc = row["FoliarMoistureContent"]
 
         calculated_fmc = foliar_moisture_content(lat, long, elv, dj, d0)
 

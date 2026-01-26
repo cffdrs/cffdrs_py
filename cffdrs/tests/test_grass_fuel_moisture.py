@@ -16,7 +16,7 @@ csv_schema = {
 
 def test_grass_fuel_moisture(load_csv):
 
-    test_data = load_csv("cffdrs/tests/data/grass_fuel_moisture_data.csv", csv_schema)
+    test_data = load_csv("cffdrs/tests/data/GrassFuelMoisture.csv", csv_schema)
 
     for row in test_data:
         temp = row["temp"]

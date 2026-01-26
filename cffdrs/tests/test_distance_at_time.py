@@ -8,11 +8,11 @@ csv_schema = {
     "ROSeq": float,
     "HR": int,
     "CFB": float,
-    "expected_DistanceAtTime": float_or_nan
+    "DistanceAtTime": float_or_nan
 }
 
 def test_distance_at_time(load_csv):
-    test_data = load_csv("cffdrs/tests/data/distance_at_time_data.csv", csv_schema)
+    test_data = load_csv("cffdrs/tests/data/DistanceAtTime.csv", csv_schema)
 
     for row in test_data:
         fuel_type = row["FUELTYPE"]
@@ -20,7 +20,7 @@ def test_distance_at_time(load_csv):
         hr = row["HR"]
         cfb = row["CFB"]
 
-        expected_distance = row["expected_DistanceAtTime"]
+        expected_distance = row["DistanceAtTime"]
 
         calculated_distance = distance_at_time(fuel_type, roseq, hr, cfb)
 

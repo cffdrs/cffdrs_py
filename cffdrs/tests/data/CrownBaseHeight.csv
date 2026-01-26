@@ -1,4 +1,4 @@
-fuel_type,cbh,sd,sh,expected_crown_base_height
+FUELTYPE,CBH,SD,SH,CrownBaseHeight
 NF,0,-999,-10,NA
 C4,1.2,-999,-10,1.2
 M1,2.4,-999,-10,2.4
