@@ -1,10 +1,10 @@
 from math import exp, log, sqrt
+import warnings
 
-# used in conversion between FFMC and moisture content
-FFMC_COEFFICIENT = 250.0 * 59.5 / 101.0
+from cffdrs.constants import FFMC_COEFFICIENT
 
 
-def ffmc(ffmc_yda, temp, rh, ws, prec):
+def fine_fuel_moisture_code(ffmc_yda, temp, rh, ws, prec):
     """
     Fine Fuel Moisture Code Calculation
 
@@ -97,7 +97,7 @@ def ffmc(ffmc_yda, temp, rh, ws, prec):
     return ffmc1
 
 
-def dmc(dmc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
+def duff_moisture_code(dmc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     """
     Duff Moisture Code Calculation
 
@@ -194,7 +194,7 @@ def dmc(dmc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     return dmc1
 
 
-def dc(dc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
+def drought_code(dc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     """
     Drought Code Calculation
 
@@ -329,7 +329,7 @@ def initial_spread_index(ffmc, ws, fbp_mod=False):
     return isi
 
 
-def bui(dmc, dc):
+def buildup_index(dmc, dc):
     """
     Buildup Index Calculation
 
@@ -380,7 +380,7 @@ def bui(dmc, dc):
     return bui1
 
 
-def fwi(isi, bui):
+def fire_weather_index(isi, bui):
     """
     Fire Weather Index Calculation
 
@@ -425,3 +425,29 @@ def fwi(isi, bui):
     # Eqs. 30b, 30a
     fwi = bb if (bb <= 1.0) else exp(2.72 * ((0.434 * log(bb)) ** 0.647))
     return fwi
+
+
+# Deprecated aliases for backward compatibility
+def ffmc(*args, **kwargs):
+    warnings.warn("ffmc is deprecated, use fine_fuel_moisture_code instead", DeprecationWarning, stacklevel=2)
+    return fine_fuel_moisture_code(*args, **kwargs)
+
+def dmc(*args, **kwargs):
+    warnings.warn("dmc is deprecated, use duff_moisture_code instead", DeprecationWarning, stacklevel=2)
+    return duff_moisture_code(*args, **kwargs)
+
+def dc(*args, **kwargs):
+    warnings.warn("dc is deprecated, use drought_code instead", DeprecationWarning, stacklevel=2)
+    return drought_code(*args, **kwargs)
+
+def isi(*args, **kwargs):
+    warnings.warn("isi is deprecated, use initial_spread_index instead", DeprecationWarning, stacklevel=2)
+    return initial_spread_index(*args, **kwargs)
+
+def bui(*args, **kwargs):
+    warnings.warn("bui is deprecated, use buildup_index instead", DeprecationWarning, stacklevel=2)
+    return buildup_index(*args, **kwargs)
+
+def fwi(*args, **kwargs):
+    warnings.warn("fwi is deprecated, use fire_weather_index instead", DeprecationWarning, stacklevel=2)
+    return fire_weather_index(*args, **kwargs)
