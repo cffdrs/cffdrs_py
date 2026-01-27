@@ -46,7 +46,6 @@ def test_crown_rate_of_spread_c6(c6_calc_test_data):
         assert pytest.approx(expected_rsc, abs=0.01) == rsc, f"Failed for row: {row} - RSC: {rsc}"
 
 
-# @pytest.mark.skip(reason="Issue with NaN/0 handling in crown_fraction_burned_c6")
 def test_crown_fraction_burned_c6(c6_calc_test_data):
     """Test the crown_fraction_burned_c6 function with test data from CSV."""
 
