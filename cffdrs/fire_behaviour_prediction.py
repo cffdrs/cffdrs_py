@@ -1,17 +1,3 @@
-"""
-Fire Behaviour Prediction System Calculation
-
-Fire Behavior Prediction System calculations. This is the
-primary function for calculating FBP for a single timestep. Not all
-equations are calculated within this function, but have been broken down
-further.
-
-:param input: FBPInput dataclass with input parameters
-:param output: What fbp outputs to return. Options are "Primary", "Secondary" and "All". Default: "Primary"
-
-:returns: FBPPrimaryOutput, FBPSecondaryOutput, or FBPAllOutput depending on output parameter
-"""
-
 import math
 from typing import Literal
 from cffdrs.fwi import initial_spread_index
@@ -37,6 +23,19 @@ from cffdrs.total_fuel_consumption import total_fuel_consumption
 def fire_behaviour_prediction(
     input: FBPInput, output: Literal["Primary", "Secondary", "All"] = "Primary"
 ):
+    """
+    Fire Behaviour Prediction System Calculation
+
+    Fire Behavior Prediction System calculations. This is the
+    primary function for calculating FBP for a single timestep. Not all
+    equations are calculated within this function, but have been broken down
+    further.
+
+    :param input: FBPInput dataclass with input parameters
+    :param output: What fbp outputs to return. Options are "Primary", "Secondary" and "All". Default: "Primary"
+
+    :returns: FBPPrimaryOutput, FBPSecondaryOutput, or FBPAllOutput depending on output parameter
+    """
     if not isinstance(input, FBPInput):
         input = FBPInput()
     # Unpack input (already validated and converted in FBPInput.__post_init__)
