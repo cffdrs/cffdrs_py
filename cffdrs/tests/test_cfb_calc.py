@@ -1,4 +1,3 @@
-import math
 import pytest
 
 from cffdrs.cfb_calc import (
@@ -52,11 +51,7 @@ def test_crown_fraction_burned(cfb_calc_test_data):
 
         expected_cfb = row["expected_cfb"]
         cfb = crown_fraction_burned(ros, rso)
-        if math.isnan(expected_cfb):
-            assert math.isnan(cfb) or cfb == 0, (
-                f"Failed for row: {row} - CSI: {csi}, RSO: {rso}, CFB: {cfb}"
-            )
-        else:
-            assert pytest.approx(expected_cfb, abs=0.01) == cfb, (
-                f"Failed for row: {row} - CSI: {csi}, RSO: {rso}, CFB: {cfb}"
-            )
+
+        assert pytest.approx(expected_cfb, abs=0.01, nan_ok=True) == cfb, (
+            f"Failed for row: {row} - CSI: {csi}, RSO: {rso}, CFB: {cfb}"
+        )

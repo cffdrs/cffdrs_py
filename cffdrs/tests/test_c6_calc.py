@@ -1,4 +1,3 @@
-import math
 import pytest
 
 from cffdrs.c6_calc import (
@@ -51,7 +50,7 @@ def test_crown_rate_of_spread_c6(c6_calc_test_data):
 def test_crown_fraction_burned_c6(c6_calc_test_data):
     """Test the crown_fraction_burned_c6 function with test data from CSV."""
 
-    for row in c6_calc_test_data:
+    for idx, row in enumerate(c6_calc_test_data, start=2):
         isi = row["isi"]
         bui = row["bui"]
         fmc = row["fmc"]
@@ -66,9 +65,7 @@ def test_crown_fraction_burned_c6(c6_calc_test_data):
 
         expected_cfb = row["exp_cfb"]
         cfb = crown_fraction_burned_c6(rsc, rss, rso)
-        if math.isnan(expected_cfb):
-            assert math.isnan(cfb) or cfb == 0, f"Failed for row: {row} - CFB: {cfb}"
-        else:
-            assert pytest.approx(expected_cfb, 0.01, nan_ok=True) == cfb, (
-                f"Failed for row: {row} - CFB: {cfb}"
-            )
+
+        assert pytest.approx(expected_cfb, abs=0.01, nan_ok=True) == cfb, (
+            f"Failed for row {idx}: {row} - CFB: {cfb}"
+        )

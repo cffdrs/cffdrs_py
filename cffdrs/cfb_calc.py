@@ -46,5 +46,9 @@ def crown_fraction_burned(ros, rso):
     :returns: CFB Crown fraction burned
     """
     # Eq. 58 (FCFDG 1992) Crown fraction burned
-    CFB = 1 - math.exp(-0.23 * (ros - rso)) if ros > rso else 0
-    return CFB
+    if math.isnan(rso):
+        return math.nan
+
+    if ros > rso:
+        return 1 - math.exp(-0.23 * (ros - rso))
+    return 0.0

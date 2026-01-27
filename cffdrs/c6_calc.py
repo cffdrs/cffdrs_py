@@ -63,13 +63,20 @@ def crown_fraction_burned_c6(rsc, rss, rso):
     :returns: CFB Crown fraction burned
     """
 
-    if math.isnan(rsc) or math.isnan(rss) or math.isnan(rso):
+    cond1 = rsc > rss
+
+    if math.isnan(rso):
+        cond2 = math.nan
+    else:
+        cond2 = rss > rso
+
+    if cond1 is False or cond2 is False:
+        return 0.0
+
+    if cond1 is None or cond2 is None:
         return math.nan
 
-    if (rsc > rss) and (rss > rso):
-        return crown_fraction_burned(rss, rso)
-
-    return 0.0
+    return crown_fraction_burned(rss, rso)
 
 
 def rate_of_spread_c6(rsc, rss, cfb):
