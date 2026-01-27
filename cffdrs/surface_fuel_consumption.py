@@ -1,6 +1,7 @@
 import math
 from cffdrs.constants import FuelType
 
+
 def surface_fuel_consumption(fuel_type: FuelType, ffmc, bui, pc, gfl):
     """
     Surface Fuel Consumption Calculator
@@ -31,18 +32,18 @@ def surface_fuel_consumption(fuel_type: FuelType, ffmc, bui, pc, gfl):
     # for the C1 fuel type SFC calculation
     if fuel_type == "C1":
         if ffmc > 84:
-            SFC = 0.75 + 0.75 * (1 - math.exp(-0.23 * (ffmc - 84)))**0.5
+            SFC = 0.75 + 0.75 * (1 - math.exp(-0.23 * (ffmc - 84))) ** 0.5
         else:
-            SFC = 0.75 - 0.75 * (1 - math.exp(-0.23 * (84 - ffmc)))**0.5
+            SFC = 0.75 - 0.75 * (1 - math.exp(-0.23 * (84 - ffmc))) ** 0.5
     # Eq. 10 (FCFDG 1992) - C2, M3, and M4 Fuel Types
     elif fuel_type == "C2" or fuel_type == "M3" or fuel_type == "M4":
         SFC = 5.0 * (1 - math.exp(-0.0115 * bui))
     # Eq. 11 (FCFDG 1992) - C3, C4 Fuel Types
     elif fuel_type == "C3" or fuel_type == "C4":
-        SFC = 5.0 * (1 - math.exp(-0.0164 * bui))**2.24
+        SFC = 5.0 * (1 - math.exp(-0.0164 * bui)) ** 2.24
     # Eq. 12 (FCFDG 1992) - C5, C6 Fuel Types
     elif fuel_type == "C5" or fuel_type == "C6":
-        SFC = 5.0 * (1 - math.exp(-0.0149 * bui))**2.48
+        SFC = 5.0 * (1 - math.exp(-0.0149 * bui)) ** 2.48
     # Eqs. 13, 14, 15 (FCFDG 1992) - C7 Fuel Types
     elif fuel_type == "C7":
         if ffmc > 70:
@@ -55,8 +56,9 @@ def surface_fuel_consumption(fuel_type: FuelType, ffmc, bui, pc, gfl):
         SFC = 1.5 * (1 - math.exp(-0.0183 * bui))
     # Eq. 17 (FCFDG 1992) - M1 and M2 Fuel Types
     elif fuel_type == "M1" or fuel_type == "M2":
-        SFC = (pc / 100 * (5.0 * (1 - math.exp(-0.0115 * bui)))
-               + ((100 - pc) / 100 * (1.5 * (1 - math.exp(-0.0183 * bui)))))
+        SFC = pc / 100 * (5.0 * (1 - math.exp(-0.0115 * bui))) + (
+            (100 - pc) / 100 * (1.5 * (1 - math.exp(-0.0183 * bui)))
+        )
     # Eq. 18 (FCFDG 1992) - Grass Fuel Types
     elif fuel_type == "O1A" or fuel_type == "O1B":
         SFC = gfl

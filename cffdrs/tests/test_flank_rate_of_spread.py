@@ -3,12 +3,7 @@ import pytest
 from cffdrs.flank_rate_of_spread import flank_rate_of_spread
 
 
-csv_schema = {
-    "ROS": float,
-    "BROS": float,
-    "LB": float,
-    "FlankRateOfSpread": float
-}
+csv_schema = {"ROS": float, "BROS": float, "LB": float, "FlankRateOfSpread": float}
 
 
 def test_flank_rate_of_spread(load_csv):
@@ -23,4 +18,6 @@ def test_flank_rate_of_spread(load_csv):
 
         calculated_fros = flank_rate_of_spread(ros, bros, lb)
 
-        assert pytest.approx(expected_fros, abs=0.01) == calculated_fros, f"Failed for row: {row} - FROS: {calculated_fros}"
+        assert pytest.approx(expected_fros, abs=0.01) == calculated_fros, (
+            f"Failed for row: {row} - FROS: {calculated_fros}"
+        )

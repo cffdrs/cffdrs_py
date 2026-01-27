@@ -1,7 +1,9 @@
 import datetime
 
 
-def fire_season(input, fs_start=12, fs_end=5, method="WF93", consistent_snow=False, multi_year=False):
+def fire_season(
+    input, fs_start=12, fs_end=5, method="WF93", consistent_snow=False, multi_year=False
+):
     """
     Fire Season Start and End
 
@@ -23,11 +25,11 @@ def fire_season(input, fs_start=12, fs_end=5, method="WF93", consistent_snow=Fal
         normalized_input.append({k.lower(): v for k, v in row.items()})
 
     # Extract variables
-    yr = [row.get('yr') for row in normalized_input]
-    mon = [row.get('mon') for row in normalized_input]
-    day = [row.get('day') for row in normalized_input]
-    tmax = [row.get('tmax') for row in normalized_input]
-    snow_depth = [row.get('snow_depth', 0) for row in normalized_input]
+    yr = [row.get("yr") for row in normalized_input]
+    mon = [row.get("mon") for row in normalized_input]
+    day = [row.get("day") for row in normalized_input]
+    tmax = [row.get("tmax") for row in normalized_input]
+    snow_depth = [row.get("snow_depth", 0) for row in normalized_input]
 
     # Validate required fields
     if not all(yr):
@@ -55,66 +57,72 @@ def fire_season(input, fs_start=12, fs_end=5, method="WF93", consistent_snow=Fal
         for k in range(n0):
             if k > 2:
                 # Check for start
-                if not season_active and all(t > fs_start for t in tmax[k-3:k]):
+                if not season_active and all(t > fs_start for t in tmax[k - 3 : k]):
                     season_active = True
                     the_day = day[k]
                     if not multi_year and mon[k] == 1 and day[k] == 4:
-                        the_day = day[k-3]
-                    season_start_end.append({
-                        'yr': yr[k],
-                        'mon': mon[k],
-                        'day': the_day,
-                        'fsdatetype': 'start'
-                    })
+                        the_day = day[k - 3]
+                    season_start_end.append(
+                        {
+                            "yr": yr[k],
+                            "mon": mon[k],
+                            "day": the_day,
+                            "fsdatetype": "start",
+                        }
+                    )
                 # Check for end
-                if season_active and all(t < fs_end for t in tmax[k-3:k]):
+                if season_active and all(t < fs_end for t in tmax[k - 3 : k]):
                     season_active = False
-                    season_start_end.append({
-                        'yr': yr[k],
-                        'mon': mon[k],
-                        'day': day[k],
-                        'fsdatetype': 'end'
-                    })
+                    season_start_end.append(
+                        {"yr": yr[k], "mon": mon[k], "day": day[k], "fsdatetype": "end"}
+                    )
     elif method == "LA08":
         if consistent_snow:
-            if not any('snow_depth' in row for row in normalized_input):
+            if not any("snow_depth" in row for row in normalized_input):
                 raise ValueError("Snow depth is required for the selected method 'LA08'.")
             for k in range(n0):
                 if k > 2:
                     # Check for start
-                    if not season_active and all(s <= 0 for s in snow_depth[k-2:k+1]):
+                    if not season_active and all(s <= 0 for s in snow_depth[k - 2 : k + 1]):
                         season_active = True
                         the_day = day[k]
                         if not multi_year and mon[k] == 1 and day[k] == 4:
-                            the_day = day[k-3]
-                        season_start_end.append({
-                            'yr': yr[k],
-                            'mon': mon[k],
-                            'day': the_day,
-                            'fsdatetype': 'start'
-                        })
+                            the_day = day[k - 3]
+                        season_start_end.append(
+                            {
+                                "yr": yr[k],
+                                "mon": mon[k],
+                                "day": the_day,
+                                "fsdatetype": "start",
+                            }
+                        )
                     # Check for end
-                    if season_active and (snow_depth[k] > 0 or (mon[k] == 12 and all(t < fs_end for t in tmax[k-2:k+1]))):
+                    if season_active and (
+                        snow_depth[k] > 0
+                        or (mon[k] == 12 and all(t < fs_end for t in tmax[k - 2 : k + 1]))
+                    ):
                         season_active = False
-                        season_start_end.append({
-                            'yr': yr[k],
-                            'mon': mon[k],
-                            'day': day[k],
-                            'fsdatetype': 'end'
-                        })
+                        season_start_end.append(
+                            {
+                                "yr": yr[k],
+                                "mon": mon[k],
+                                "day": day[k],
+                                "fsdatetype": "end",
+                            }
+                        )
         else:
             # Fall back to WF93
             return fire_season(input, fs_start, fs_end, "WF93", consistent_snow, multi_year)
 
     # Add date field and remove duplicates
     for entry in season_start_end:
-        entry['date'] = datetime.date(entry['yr'], entry['mon'], entry['day'])
+        entry["date"] = datetime.date(entry["yr"], entry["mon"], entry["day"])
 
     # Remove duplicates (same date)
     seen_dates = set()
     unique_entries = []
     for entry in season_start_end:
-        date_str = entry['date']
+        date_str = entry["date"]
         if date_str not in seen_dates:
             seen_dates.add(date_str)
             unique_entries.append(entry)

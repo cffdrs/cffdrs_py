@@ -21,7 +21,7 @@ from cffdrs.surface_fuel_consumption import surface_fuel_consumption
 from cffdrs.models import FBPInput, FBPPrimaryOutput, FBPSecondaryOutput, FBPAllOutput
 from cffdrs.back_rate_of_spread import back_rate_of_spread
 from cffdrs.buildup_effect import buildup_effect
-from cffdrs.cfb_calc import crown_fraction_burned 
+from cffdrs.cfb_calc import crown_fraction_burned
 from cffdrs.crown_base_height import crown_base_height
 from cffdrs.crown_fuel_load import crown_fuel_load
 from cffdrs.distance_at_time import distance_at_time
@@ -34,7 +34,9 @@ from cffdrs.rate_of_spread_at_time import rate_of_spread_at_time
 from cffdrs.total_fuel_consumption import total_fuel_consumption
 
 
-def fire_behaviour_prediction(input: FBPInput, output: Literal["Primary", "Secondary", "All"] = "Primary"):
+def fire_behaviour_prediction(
+    input: FBPInput, output: Literal["Primary", "Secondary", "All"] = "Primary"
+):
     if not isinstance(input, FBPInput):
         input = FBPInput()
     # Unpack input (already validated and converted in FBPInput.__post_init__)
@@ -80,19 +82,27 @@ def fire_behaviour_prediction(input: FBPInput, output: Literal["Primary", "Secon
     raz = -999
     validOutTypes = ["SECONDARY", "ALL", "S", "A", "RAZ0", "WSV0"]
     if output in validOutTypes:
-        fros = bros = tros = hrost = frost = brost = trost = fcfb = bcfb = tcfb = ffi = bfi = tfi = ftfc = btfc = ttfc = 0
+        fros = bros = tros = hrost = frost = brost = trost = fcfb = bcfb = tcfb = ffi = bfi = (
+            tfi
+        ) = ftfc = btfc = ttfc = 0
         ti = fti = bti = tti = lb = wsv = -999
 
     cbh = crown_base_height(fuel_type, cbh, sd, sh)
     cfl = crown_fuel_load(fuel_type, cfl)
-    fmc = foliar_moisture_content(lat, long, elv, dj, d0) if (fmc <= 0 or fmc > 120 or math.isnan(fmc)) else fmc
+    fmc = (
+        foliar_moisture_content(lat, long, elv, dj, d0)
+        if (fmc <= 0 or fmc > 120 or math.isnan(fmc))
+        else fmc
+    )
     fmc = 0 if fuel_type in ["D1", "S1", "S2", "S3", "O1A", "O1B"] else fmc
 
     # Calculate Surface fuel consumption (SFC)
     sfc = surface_fuel_consumption(fuel_type, ffmc, bui, pc, gfl)
     # Disable BUI Effect if necessary
     bui_eff = 0 if buieff != 1 else bui
-    slope_values = slope_adjustment(fuel_type, ffmc, bui_eff, ws, waz, gs, saz, fmc, sfc, pc, pdf, cc, cbh, isi)
+    slope_values = slope_adjustment(
+        fuel_type, ffmc, bui_eff, ws, waz, gs, saz, fmc, sfc, pc, pdf, cc, cbh, isi
+    )
     # Calculate the net effective windspeed (WSV)
     wsv0 = slope_values["WSV"]
     if output == "WSV0":
@@ -131,7 +141,7 @@ def fire_behaviour_prediction(input: FBPInput, output: Literal["Primary", "Secon
     # Calculate the Secondary Outputs
     if output in ["SECONDARY", "ALL", "S", "A"]:
         # Eq. 39 (FCFDG 1992) Calculate Spread Factor (GS is group slope)
-        sf = 10 if gs >= 70 else math.exp(3.533 * (gs / 100)**1.2)
+        sf = 10 if gs >= 70 else math.exp(3.533 * (gs / 100) ** 1.2)
         # Calculate The Buildup Effect
         be = buildup_effect(fuel_type, bui_eff)
         # Calculate length to breadth ratio
@@ -154,7 +164,11 @@ def fire_behaviour_prediction(input: FBPInput, output: Literal["Primary", "Secon
         if accel == 0:
             trost = tros
         else:
-            trost = (rost * (1 - math.sqrt(1 - 1 / lbt / lbt)) / (1 - math.sqrt(1 - 1 / lbt / lbt) * math.cos(theta_rad - raz)))
+            trost = (
+                rost
+                * (1 - math.sqrt(1 - 1 / lbt / lbt))
+                / (1 - math.sqrt(1 - 1 / lbt / lbt) * math.cos(theta_rad - raz))
+            )
         # Calculate Crown Fraction Burned for Flank, Back of fire and angle theta.
         fcfb = 0 if cfl == 0 else (0 if fuel_type == "C6" else crown_fraction_burned(fros, rso))
         bcfb = 0 if cfl == 0 else (0 if fuel_type == "C6" else crown_fraction_burned(bros, rso))
@@ -194,7 +208,9 @@ def fire_behaviour_prediction(input: FBPInput, output: Literal["Primary", "Secon
 
     # Prepare output
     if output in ["PRIMARY", "P"]:
-        fbp = FBPPrimaryOutput(id=id, cfb=cfb, cfc=cfc, fd=fd, hfi=hfi, raz=raz, ros=ros, sfc=sfc, tfc=tfc)
+        fbp = FBPPrimaryOutput(
+            id=id, cfb=cfb, cfc=cfc, fd=fd, hfi=hfi, raz=raz, ros=ros, sfc=sfc, tfc=tfc
+        )
         if fuel_type in ["WA", "NF"]:
             fbp.cfb = 0
             fbp.cfc = 0
@@ -205,24 +221,137 @@ def fire_behaviour_prediction(input: FBPInput, output: Literal["Primary", "Secon
             fbp.tfc = 0
             fbp.fd = "NA"
     elif output in ["SECONDARY", "S"]:
-        fbp = FBPSecondaryOutput(id=id, be=be, sf=sf, isi=isi, ffmc=ffmc, fmc=fmc, d0=d0, rso=rso,
-            csi=csi, fros=fros, bros=bros, hrost=hrost, frost=frost, brost=brost, fcfb=fcfb, bcfb=bcfb,
-            ffi=ffi, bfi=bfi, ftfc=ftfc, btfc=btfc, ti=ti, fti=fti, bti=bti, lb=lb, lbt=lbt, wsv=wsv,
-            dh=dh, db=db, df=df, tros=tros, trost=trost, tcfb=tcfb, tfi=tfi, ttfc=ttfc, tti=tti)
+        fbp = FBPSecondaryOutput(
+            id=id,
+            be=be,
+            sf=sf,
+            isi=isi,
+            ffmc=ffmc,
+            fmc=fmc,
+            d0=d0,
+            rso=rso,
+            csi=csi,
+            fros=fros,
+            bros=bros,
+            hrost=hrost,
+            frost=frost,
+            brost=brost,
+            fcfb=fcfb,
+            bcfb=bcfb,
+            ffi=ffi,
+            bfi=bfi,
+            ftfc=ftfc,
+            btfc=btfc,
+            ti=ti,
+            fti=fti,
+            bti=bti,
+            lb=lb,
+            lbt=lbt,
+            wsv=wsv,
+            dh=dh,
+            db=db,
+            df=df,
+            tros=tros,
+            trost=trost,
+            tcfb=tcfb,
+            tfi=tfi,
+            ttfc=ttfc,
+            tti=tti,
+        )
         if fuel_type in ["WA", "NF"]:
             for field in fbp.__dataclass_fields__:
-                if field != 'id':
+                if field != "id":
                     setattr(fbp, field, 0)
     elif output in ["ALL", "A"]:
-        fbp = FBPAllOutput(id=id, cfb=cfb, cfc=cfc, fd=fd, hfi=hfi, raz=raz, ros=ros, sfc=sfc,
-            tfc=tfc, be=be, sf=sf, isi=isi, ffmc=ffmc, fmc=fmc, d0=d0, rso=rso, csi=csi, fros=fros,
-            bros=bros, hrost=hrost, frost=frost, brost=brost, fcfb=fcfb, bcfb=bcfb, ffi=ffi, bfi=bfi,
-            ftfc=ftfc, btfc=btfc, ti=ti, fti=fti, bti=bti, lb=lb, lbt=lbt, wsv=wsv, dh=dh, db=db, df=df,
-            tros=tros, trost=trost, tcfb=tcfb, tfi=tfi, ttfc=ttfc, tti=tti)
+        fbp = FBPAllOutput(
+            id=id,
+            cfb=cfb,
+            cfc=cfc,
+            fd=fd,
+            hfi=hfi,
+            raz=raz,
+            ros=ros,
+            sfc=sfc,
+            tfc=tfc,
+            be=be,
+            sf=sf,
+            isi=isi,
+            ffmc=ffmc,
+            fmc=fmc,
+            d0=d0,
+            rso=rso,
+            csi=csi,
+            fros=fros,
+            bros=bros,
+            hrost=hrost,
+            frost=frost,
+            brost=brost,
+            fcfb=fcfb,
+            bcfb=bcfb,
+            ffi=ffi,
+            bfi=bfi,
+            ftfc=ftfc,
+            btfc=btfc,
+            ti=ti,
+            fti=fti,
+            bti=bti,
+            lb=lb,
+            lbt=lbt,
+            wsv=wsv,
+            dh=dh,
+            db=db,
+            df=df,
+            tros=tros,
+            trost=trost,
+            tcfb=tcfb,
+            tfi=tfi,
+            ttfc=ttfc,
+            tti=tti,
+        )
         if fuel_type in ["WA", "NF"]:
-            for field in ["cfb", "cfc", "hfi", "raz", "ros", "sfc", "tfc", "be", "sf", "isi", "ffmc", "fmc", "d0", "rso", "csi", "fros",
-                        "bros", "hrost", "frost", "brost", "fcfb", "bcfb", "ffi", "bfi", "ftfc", "btfc", "ti", "fti", "bti", "lb", "lbt", "wsv", "dh", "db", "df",
-                        "tros", "trost", "tcfb", "tfi", "ttfc", "tti"]:
+            for field in [
+                "cfb",
+                "cfc",
+                "hfi",
+                "raz",
+                "ros",
+                "sfc",
+                "tfc",
+                "be",
+                "sf",
+                "isi",
+                "ffmc",
+                "fmc",
+                "d0",
+                "rso",
+                "csi",
+                "fros",
+                "bros",
+                "hrost",
+                "frost",
+                "brost",
+                "fcfb",
+                "bcfb",
+                "ffi",
+                "bfi",
+                "ftfc",
+                "btfc",
+                "ti",
+                "fti",
+                "bti",
+                "lb",
+                "lbt",
+                "wsv",
+                "dh",
+                "db",
+                "df",
+                "tros",
+                "trost",
+                "tcfb",
+                "tfi",
+                "ttfc",
+                "tti",
+            ]:
                 setattr(fbp, field, 0)
             fbp.fd = "NA"
     return fbp

@@ -1,4 +1,3 @@
-
 import pytest
 from cffdrs.total_fuel_consumption import total_fuel_consumption
 
@@ -12,6 +11,7 @@ csv_schema = {
     "option": str,
     "TotalFuelConsumption": float,
 }
+
 
 def test_total_fuel_consumption(load_csv):
     data = load_csv("cffdrs/tests/data/TotalFuelConsumption.csv", csv_schema)
@@ -27,9 +27,8 @@ def test_total_fuel_consumption(load_csv):
 
         expected_consumption = row["TotalFuelConsumption"]
 
+        calculated_consumption = total_fuel_consumption(fuel_type, cfl, cfb, sfc, pc, pdf, option)
 
-        calculated_consumption = total_fuel_consumption(
-            fuel_type, cfl, cfb, sfc, pc, pdf, option
+        assert pytest.approx(expected_consumption, abs=0.01) == calculated_consumption, (
+            f"Failed for row: {row} - Consumption: {calculated_consumption}"
         )
-
-        assert pytest.approx(expected_consumption, abs=0.01) == calculated_consumption, f"Failed for row: {row} - Consumption: {calculated_consumption}"

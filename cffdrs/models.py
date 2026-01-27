@@ -5,6 +5,7 @@ import math
 
 from cffdrs.constants import FuelType
 
+
 @dataclass
 class FBPInput:
     fuel_type: FuelType = "C2"
@@ -38,21 +39,27 @@ class FBPInput:
     def __post_init__(self):
         # Fuel type normalization and validation
         original = self.fuel_type
-        self.fuel_type = self.fuel_type.upper().replace("-", "").replace(" ", "") if self.fuel_type else "C2"
+        self.fuel_type = (
+            self.fuel_type.upper().replace("-", "").replace(" ", "") if self.fuel_type else "C2"
+        )
         if not self.fuel_type:
             warnings.warn("FuelType not provided, using C2 (default) in the calculation")
             self.fuel_type = "C2"
-        
+
         # Validate against allowed fuel types
         allowed_fuel_types = get_args(FuelType)
         if self.fuel_type not in allowed_fuel_types:
-            raise ValueError(f"Invalid fuel type '{original}' (normalized to '{self.fuel_type}'). Must be one of: {', '.join(allowed_fuel_types)}")
-        
+            raise ValueError(
+                f"Invalid fuel type '{original}' (normalized to '{self.fuel_type}'). Must be one of: {', '.join(allowed_fuel_types)}"
+            )
+
         # Apply validations and defaults with warnings for changes
         original_accel = self.accel
         self.accel = 0 if math.isnan(self.accel) or self.accel < 0 else self.accel
         if self.accel not in [0, 1]:
-            warnings.warn(f"Input variable Accel ({original_accel}) is out of range, will be assigned to 1")
+            warnings.warn(
+                f"Input variable Accel ({original_accel}) is out of range, will be assigned to 1"
+            )
             self.accel = 1
 
         original_dj = self.dj
@@ -108,7 +115,9 @@ class FBPInput:
         # Convert WD to radians and clamp
         self.wd = math.radians(self.wd)
         original_wd = self.wd
-        self.wd = 0 if math.isnan(self.wd) or self.wd < -2 * math.pi or self.wd > 2 * math.pi else self.wd
+        self.wd = (
+            0 if math.isnan(self.wd) or self.wd < -2 * math.pi or self.wd > 2 * math.pi else self.wd
+        )
         if self.wd != original_wd:
             warnings.warn(f"WD (in radians) ({original_wd}) out of range, clamped to {self.wd}")
 
@@ -161,13 +170,19 @@ class FBPInput:
         if self.lon != original_lon:
             warnings.warn(f"LON ({original_lon}) out of range, clamped to {self.lon}")
         self.lon = -120 if math.isnan(self.lon) else self.lon
-        
+
         # Convert theta to radians and clamp
         self.theta = math.radians(self.theta)
         original_theta = self.theta
-        self.theta = 0 if math.isnan(self.theta) or self.theta < -2 * math.pi or self.theta > 2 * math.pi else self.theta
+        self.theta = (
+            0
+            if math.isnan(self.theta) or self.theta < -2 * math.pi or self.theta > 2 * math.pi
+            else self.theta
+        )
         if self.theta != original_theta:
-            warnings.warn(f"THETA (in radians) ({original_theta}) out of range, clamped to {self.theta}")
+            warnings.warn(
+                f"THETA (in radians) ({original_theta}) out of range, clamped to {self.theta}"
+            )
 
         original_sd = self.sd
         self.sd = -999 if self.sd < 0 or self.sd > 1e5 else self.sd
@@ -180,9 +195,10 @@ class FBPInput:
         if self.sh != original_sh:
             warnings.warn(f"SH ({original_sh}) out of range, clamped to {self.sh}")
         self.sh = 0 if math.isnan(self.sh) else self.sh
-        
+
         # Corrections for longitudes
         self.lon = -self.lon if self.lon < 0 else self.lon
+
 
 @dataclass
 class FBPPrimaryOutput:
@@ -195,6 +211,7 @@ class FBPPrimaryOutput:
     ros: float
     sfc: float
     tfc: float
+
 
 @dataclass
 class FBPSecondaryOutput:
@@ -233,6 +250,7 @@ class FBPSecondaryOutput:
     tfi: float
     ttfc: float
     tti: float
+
 
 @dataclass
 class FBPAllOutput:

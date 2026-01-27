@@ -12,17 +12,15 @@ csv_schema = {
     "SFC": float,
     "PC": float,
     "PDF": float,
-    "CC": float,    
+    "CC": float,
     "CBH": float,
     "BackRateOfSpread": float_or_nan,
 }
 
+
 def test_back_rate_of_spread(load_csv):
     """Test back_rate_of_spread function with data from BackRateOfSpread.csv"""
-    test_data = load_csv(
-        "cffdrs/tests/data/BackRateOfSpread.csv",
-        csv_schema
-    )
+    test_data = load_csv("cffdrs/tests/data/BackRateOfSpread.csv", csv_schema)
 
     for row in test_data:
         result = back_rate_of_spread(
@@ -35,7 +33,7 @@ def test_back_rate_of_spread(load_csv):
             pc=row["PC"],
             pdf=row["PDF"],
             cc=row["CC"],
-            cbh=row["CBH"]
+            cbh=row["CBH"],
         )
         assert pytest.approx(result, abs=0.01, nan_ok=True) == row["BackRateOfSpread"], (
             f"Failed for fuel_type={row['FUELTYPE']}, "

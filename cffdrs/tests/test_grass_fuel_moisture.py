@@ -11,11 +11,11 @@ csv_schema = {
     "isol": float,
     "mon": int,
     "expected_grass_fuel_moisture": float,
-    "expected_grass_fuel_moisture_code": float
+    "expected_grass_fuel_moisture_code": float,
 }
 
-def test_grass_fuel_moisture(load_csv):
 
+def test_grass_fuel_moisture(load_csv):
     test_data = load_csv("cffdrs/tests/data/GrassFuelMoisture.csv", csv_schema)
 
     for row in test_data:
@@ -28,12 +28,11 @@ def test_grass_fuel_moisture(load_csv):
         expected_gfmc = row["expected_grass_fuel_moisture_code"]
         expected_gfm = row["expected_grass_fuel_moisture"]
 
-        mc = grass_fuel_moisture(
-            temp=temp, rh=rh, ws=ws, prec=prec, isol=isol,
-            gfmc_old=85
-        )
+        mc = grass_fuel_moisture(temp=temp, rh=rh, ws=ws, prec=prec, isol=isol, gfmc_old=85)
 
         calculated_gfmc = grass_fuel_moisture_code(mc)
 
         assert pytest.approx(expected_gfm, abs=0.01) == mc, f"Failed GFM for row: {row} - GFM: {mc}"
-        assert pytest.approx(expected_gfmc, abs=0.01) == calculated_gfmc, f"Failed GFMC for row: {row} - GFMC: {calculated_gfmc}"
+        assert pytest.approx(expected_gfmc, abs=0.01) == calculated_gfmc, (
+            f"Failed GFMC for row: {row} - GFMC: {calculated_gfmc}"
+        )

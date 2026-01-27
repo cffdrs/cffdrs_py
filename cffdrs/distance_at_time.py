@@ -32,12 +32,12 @@ def distance_at_time(fuel_type: FuelType, roseq, hr, cfb):
         if cfb < 0:
             alpha = math.nan
         else:
-            alpha = 0.115 - 18.8 * (cfb ** 2.5) * math.exp(-8 * cfb)
+            alpha = 0.115 - 18.8 * (cfb**2.5) * math.exp(-8 * cfb)
 
     # Eq. 71 (FCFDG 1992) Calculate Head fire spread distance
     if math.isnan(alpha) or alpha == 0:
         DISTt = math.nan
     else:
         DISTt = roseq * (hr + math.exp(-alpha * hr) / alpha - 1 / alpha)
-    
+
     return DISTt

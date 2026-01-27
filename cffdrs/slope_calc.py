@@ -71,7 +71,17 @@ def slope_adjustment(
 
     # Eqs. 41a, 41b (Wotton 2009) - Calculate the slope equivalent ISI
     is_basic = fuel_type in [
-        "C1", "C2", "C3", "C4", "C5", "C6", "C7", "D1", "S1", "S2", "S3"
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "C6",
+        "C7",
+        "D1",
+        "S1",
+        "S2",
+        "S3",
     ]
     if is_basic:
         a_val = FUEL_TYPE_ROS[fuel_type]["a"]
@@ -87,8 +97,18 @@ def slope_adjustment(
         RSZ = rate_of_spread("D1", ISZ, NoBUI, fmc, sfc, pc, pdf, cc, cbh)
         RSF_D1 = RSZ * SF
 
-        ISF_C2 = math.log(max(1 - (RSF_C2 / FUEL_TYPE_ROS["C2"]["a"]) ** (1 / FUEL_TYPE_ROS["C2"]["c0"]), 0.01)) / (-FUEL_TYPE_ROS["C2"]["b"])
-        ISF_D1 = math.log(max(1 - (RSF_D1 / FUEL_TYPE_ROS["D1"]["a"]) ** (1 / FUEL_TYPE_ROS["D1"]["c0"]), 0.01)) / (-FUEL_TYPE_ROS["D1"]["b"])
+        ISF_C2 = math.log(
+            max(
+                1 - (RSF_C2 / FUEL_TYPE_ROS["C2"]["a"]) ** (1 / FUEL_TYPE_ROS["C2"]["c0"]),
+                0.01,
+            )
+        ) / (-FUEL_TYPE_ROS["C2"]["b"])
+        ISF_D1 = math.log(
+            max(
+                1 - (RSF_D1 / FUEL_TYPE_ROS["D1"]["a"]) ** (1 / FUEL_TYPE_ROS["D1"]["c0"]),
+                0.01,
+            )
+        ) / (-FUEL_TYPE_ROS["D1"]["b"])
         ISF = pc / 100 * ISF_C2 + (1 - pc / 100) * ISF_D1
 
     # M3 weighted average
@@ -98,8 +118,18 @@ def slope_adjustment(
         RSF_M3 = RSZ * SF
         RSZ = rate_of_spread("D1", ISZ, NoBUI, fmc, sfc, pc, PDF100, cc, cbh)
         RSF_D1 = RSZ * SF
-        ISF_M3 = math.log(max(1 - (RSF_M3 / FUEL_TYPE_ROS["M3"]["a"]) ** (1 / FUEL_TYPE_ROS["M3"]["c0"]), 0.01)) / (-FUEL_TYPE_ROS["M3"]["b"])
-        ISF_D1 = math.log(max(1 - (RSF_D1 / FUEL_TYPE_ROS["D1"]["a"]) ** (1 / FUEL_TYPE_ROS["D1"]["c0"]), 0.01)) / (-FUEL_TYPE_ROS["D1"]["b"])
+        ISF_M3 = math.log(
+            max(
+                1 - (RSF_M3 / FUEL_TYPE_ROS["M3"]["a"]) ** (1 / FUEL_TYPE_ROS["M3"]["c0"]),
+                0.01,
+            )
+        ) / (-FUEL_TYPE_ROS["M3"]["b"])
+        ISF_D1 = math.log(
+            max(
+                1 - (RSF_D1 / FUEL_TYPE_ROS["D1"]["a"]) ** (1 / FUEL_TYPE_ROS["D1"]["c0"]),
+                0.01,
+            )
+        ) / (-FUEL_TYPE_ROS["D1"]["b"])
         ISF = pdf / 100 * ISF_M3 + (1 - pdf / 100) * ISF_D1
 
     # M4 weighted average
@@ -109,8 +139,18 @@ def slope_adjustment(
         RSF_M4 = RSZ * SF
         RSZ = rate_of_spread("D1", ISZ, NoBUI, fmc, sfc, pc, PDF100, cc, cbh)
         RSF_D1 = RSZ * SF
-        ISF_M4 = math.log(max(1 - (RSF_M4 / FUEL_TYPE_ROS["M4"]["a"]) ** (1 / FUEL_TYPE_ROS["M4"]["c0"]), 0.01)) / (-FUEL_TYPE_ROS["M4"]["b"])
-        ISF_D1 = math.log(max(1 - (RSF_D1 / FUEL_TYPE_ROS["D1"]["a"]) ** (1 / FUEL_TYPE_ROS["D1"]["c0"]), 0.01)) / (-FUEL_TYPE_ROS["D1"]["b"])
+        ISF_M4 = math.log(
+            max(
+                1 - (RSF_M4 / FUEL_TYPE_ROS["M4"]["a"]) ** (1 / FUEL_TYPE_ROS["M4"]["c0"]),
+                0.01,
+            )
+        ) / (-FUEL_TYPE_ROS["M4"]["b"])
+        ISF_D1 = math.log(
+            max(
+                1 - (RSF_D1 / FUEL_TYPE_ROS["D1"]["a"]) ** (1 / FUEL_TYPE_ROS["D1"]["c0"]),
+                0.01,
+            )
+        ) / (-FUEL_TYPE_ROS["D1"]["b"])
         ISF = pdf / 100 * ISF_M4 + (1 - pdf / 100) * ISF_D1
 
     # Grass curing factor

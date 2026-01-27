@@ -1,8 +1,15 @@
 import pytest
-from cffdrs.fwi import fine_fuel_moisture_code, duff_moisture_code, drought_code, initial_spread_index, buildup_index, fire_weather_index
+from cffdrs.fwi import (
+    fine_fuel_moisture_code,
+    duff_moisture_code,
+    drought_code,
+    initial_spread_index,
+    buildup_index,
+    fire_weather_index,
+)
 
 
-'''
+"""
 Tabular test data are provided in Van Wagner and Pickett (1985): https://ostrnrcan-dostrncan.canada.ca/entities/publication/29706108-2891-4e5d-a59a-a77c96bc507c. 
 This test data set is available through the R cffdrs package. The following R script produces FWI System outputs that are within one decimal place of the test data published back in 1985, 
 the results of this script were saved into `fwi_test_data.csv` and a fixture was created for loading that data into tests:
@@ -19,8 +26,7 @@ output[, "DSR"] <- round(output[, "DSR"], digits = 2)
 # Save to CSV
 write.csv(output, file = "./test_fwi_output.csv", row.names = FALSE)
 
-'''
-
+"""
 
 
 def test_ffmc(fwi_test_data):

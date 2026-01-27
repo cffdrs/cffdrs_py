@@ -13,7 +13,7 @@ def critical_surface_intensity(fmc, cbh):
     :returns: CSI Critical surface intensity
     """
     # Eq. 56 (FCFDG 1992) Critical surface intensity
-    CSI = 0.001 * (cbh**1.5) * (460 + 25.9 * fmc)**1.5
+    CSI = 0.001 * (cbh**1.5) * (460 + 25.9 * fmc) ** 1.5
     return CSI
 
 

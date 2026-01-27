@@ -20,8 +20,9 @@ csv_schema = {
     "CBH": float,
     "ISI": float,
     "WSV": float_or_nan,
-    "RAZ": float_or_nan
+    "RAZ": float_or_nan,
 }
+
 
 @pytest.mark.xfail(
     reason=(
@@ -56,8 +57,9 @@ def test_slope_calc(load_csv):
         expected_raz = row["RAZ"]
 
         result = slope_adjustment(
-            fuel_type, ffmc, bui, ws, waz, gs, saz, fmc, sfc, pc, pdf, cc, cbh, isi)
-        
+            fuel_type, ffmc, bui, ws, waz, gs, saz, fmc, sfc, pc, pdf, cc, cbh, isi
+        )
+
         calculated_wsv = result["WSV"]
         calculated_raz = result["RAZ"]
 
@@ -79,7 +81,9 @@ def test_slope_calc(load_csv):
                 "calc_wsv": calculated_wsv,
                 "expected_raz": expected_raz,
                 "calc_raz": calculated_raz,
-                "diff_raz_deg": math.degrees(calculated_raz - expected_raz) if not math.isnan(calculated_raz) and not math.isnan(expected_raz) else None,
+                "diff_raz_deg": math.degrees(calculated_raz - expected_raz)
+                if not math.isnan(calculated_raz) and not math.isnan(expected_raz)
+                else None,
                 "waz_deg": math.degrees(waz),
                 "saz_deg": math.degrees(saz),
             }
@@ -93,15 +97,23 @@ def test_slope_calc(load_csv):
                 diff_deg = None
                 if not math.isnan(calculated_raz) and not math.isnan(expected_raz):
                     diff_deg = math.degrees(calculated_raz - expected_raz)
-                
-                print(f"RAZ issue  - {msg}  (diff ≈ {diff_deg:+.1f}°)" if diff_deg is not None else f"RAZ issue  - {msg}  (diff N/A - NaN involved)")
+
+                print(
+                    f"RAZ issue  - {msg}  (diff ≈ {diff_deg:+.1f}°)"
+                    if diff_deg is not None
+                    else f"RAZ issue  - {msg}  (diff N/A - NaN involved)"
+                )
 
     # After the loop — fail the test if anything went wrong
     if failures:
         print("\nSummary of all failures:")
         for f in failures:
-            diff_str = f"{f['diff_raz_deg']:+.1f}°" if f['diff_raz_deg'] is not None else "N/A"
-            print(f"Row {f['row']}: RAZ diff {diff_str}, "
-                f"expected {f['expected_raz']:.4g}, got {f['calc_raz']:.4g}")
-        
-        pytest.fail(f"{len(failures)} failures in slope_adjustment test. See printed details above.")
+            diff_str = f"{f['diff_raz_deg']:+.1f}°" if f["diff_raz_deg"] is not None else "N/A"
+            print(
+                f"Row {f['row']}: RAZ diff {diff_str}, "
+                f"expected {f['expected_raz']:.4g}, got {f['calc_raz']:.4g}"
+            )
+
+        pytest.fail(
+            f"{len(failures)} failures in slope_adjustment test. See printed details above."
+        )

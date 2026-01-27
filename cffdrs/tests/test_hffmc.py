@@ -13,9 +13,7 @@ csv_schema = {
 }
 
 
-def test_hourly_fine_fuel_moisture_code_cases(
-    load_csv
-):
+def test_hourly_fine_fuel_moisture_code_cases(load_csv):
     hffmc_test_data = load_csv("cffdrs/tests/data/HourlyFineFuelMoistureCode.csv", csv_schema)
     for row in hffmc_test_data:
         temp = row["temp"]

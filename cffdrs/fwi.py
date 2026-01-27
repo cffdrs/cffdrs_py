@@ -6,89 +6,112 @@ from cffdrs.constants import FFMC_COEFFICIENT
 
 def fine_fuel_moisture_code(ffmc_yda, temp, rh, ws, prec):
     """
-    Fine Fuel Moisture Code Calculation
+     Fine Fuel Moisture Code Calculation
 
-    Parameters
-    ----------
-    ffmc_yda : float
-        The Fine Fuel Moisture Code from previous iteration
-   temp : float
-      Temperature (centigrade)
-    rh : float
-      Relative Humidity (%)
-    prec : float
-       Precipitation (mm)
-    ws : float
-       Wind speed (km/h)
+     Parameters
+     ----------
+     ffmc_yda : float
+         The Fine Fuel Moisture Code from previous iteration
+    temp : float
+       Temperature (centigrade)
+     rh : float
+       Relative Humidity (%)
+     prec : float
+        Precipitation (mm)
+     ws : float
+        Wind speed (km/h)
 
-    Returns
-    -------
-    float
-        Fine Fuel Moisture Code
+     Returns
+     -------
+     float
+         Fine Fuel Moisture Code
 
-    Notes
-    -----
-    All code is based on a C code library that was written by Canadian
-    Forest Service Employees, which was originally based on
-    the Fortran code listed in the reference below. All equations
-    in this code refer to that document.
+     Notes
+     -----
+     All code is based on a C code library that was written by Canadian
+     Forest Service Employees, which was originally based on
+     the Fortran code listed in the reference below. All equations
+     in this code refer to that document.
 
-    Equations and FORTRAN program for the Canadian Forest Fire
-    Weather Index System. 1985. Van Wagner, C.E.; Pickett, T.L.
-    Canadian Forestry Service, Petawawa National Forestry
-    Institute, Chalk River, Ontario. Forestry Technical Report 33.
-    18 p.
+     Equations and FORTRAN program for the Canadian Forest Fire
+     Weather Index System. 1985. Van Wagner, C.E.; Pickett, T.L.
+     Canadian Forestry Service, Petawawa National Forestry
+     Institute, Chalk River, Ontario. Forestry Technical Report 33.
+     18 p.
 
-    Additional reference on FWI system
+     Additional reference on FWI system
 
-    Development and structure of the Canadian Forest Fire Weather
-    Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
-    Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
+     Development and structure of the Canadian Forest Fire Weather
+     Index System. 1987. Van Wagner, C.E. Canadian Forestry Service,
+     Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
     """
     if ffmc_yda < 0 or ffmc_yda > 101:
-        raise ValueError(f'Invalid ffmc_yda: {ffmc_yda}')
+        raise ValueError(f"Invalid ffmc_yda: {ffmc_yda}")
     if rh < 0 or rh > 100:
-        raise ValueError(f'Invalid rh: {rh}')
+        raise ValueError(f"Invalid rh: {rh}")
     if prec < 0:
-        raise ValueError(f'Invalid prec: {prec}')
+        raise ValueError(f"Invalid prec: {prec}")
     if ws < 0:
-        raise ValueError(f'Invalid ws: {ws}')
+        raise ValueError(f"Invalid ws: {ws}")
     # Eq. 1
     wmo = FFMC_COEFFICIENT * (101 - ffmc_yda) / (59.5 + ffmc_yda)
     # Eq. 2 Rain reduction to allow for loss in
     #  overhead canopy
     ra = (prec - 0.5) if (prec > 0.5) else prec
     # Eqs. 3a and 3b
-    wmo = ((wmo + 0.0015 * (wmo - 150) * (wmo - 150) *
-            sqrt(ra) + 42.5 * ra * exp(-100 / (251 - wmo))
-            * (1 - exp(-6.93 / ra))) if (wmo > 150) else
-           (wmo + 42.5 * ra * exp(-100 / (251 - wmo)) *
-            (1 - exp(-6.93 / ra)))) if (prec > 0.5) else wmo
+    wmo = (
+        (
+            (
+                wmo
+                + 0.0015 * (wmo - 150) * (wmo - 150) * sqrt(ra)
+                + 42.5 * ra * exp(-100 / (251 - wmo)) * (1 - exp(-6.93 / ra))
+            )
+            if (wmo > 150)
+            else (wmo + 42.5 * ra * exp(-100 / (251 - wmo)) * (1 - exp(-6.93 / ra)))
+        )
+        if (prec > 0.5)
+        else wmo
+    )
     # The real moisture content of pine litter ranges up to about 250 percent,
     # so we cap it at 250
     wmo = 250 if (wmo > 250) else wmo
     # Eq. 4 Equilibrium moisture content from drying
-    ed = (0.942 * (rh ** 0.679) + (11 * exp((rh - 100) / 10)) + 0.18 *
-          (21.1 - temp) * (1 - 1 / exp(rh * 0.115)))
+    ed = (
+        0.942 * (rh**0.679)
+        + (11 * exp((rh - 100) / 10))
+        + 0.18 * (21.1 - temp) * (1 - 1 / exp(rh * 0.115))
+    )
     # Eq. 5 Equilibrium moisture content from wetting
-    ew = (0.618 * (rh ** 0.753) + (10 * exp((rh - 100) / 10)) + 0.18 *
-          (21.1 - temp) * (1 - 1 / exp(rh * 0.115)))
+    ew = (
+        0.618 * (rh**0.753)
+        + (10 * exp((rh - 100) / 10))
+        + 0.18 * (21.1 - temp) * (1 - 1 / exp(rh * 0.115))
+    )
     # Eq. 6a (ko) Log drying rate at the normal
     #  termperature of 21.1 C
-    z = (0.424 * (1 - (((100 - rh) / 100) ** 1.7)) + 0.0694 *
-         sqrt(ws) * (1 - ((100 - rh) / 100) ** 8)) if (wmo < ed and wmo < ew) else 0
+    z = (
+        (
+            0.424 * (1 - (((100 - rh) / 100) ** 1.7))
+            + 0.0694 * sqrt(ws) * (1 - ((100 - rh) / 100) ** 8)
+        )
+        if (wmo < ed and wmo < ew)
+        else 0
+    )
     # Eq. 6b Affect of temperature on  drying rate
     x = z * 0.581 * exp(0.0365 * temp)
     # Eq. 8
-    wm = (ew - (ew - wmo) / (10 ** x)) if (wmo < ed and wmo < ew) else wmo
+    wm = (ew - (ew - wmo) / (10**x)) if (wmo < ed and wmo < ew) else wmo
     # Eq. 7a (ko) Log wetting rate at the normal
     #  termperature of 21.1 C
-    z = (0.424 * (1 - (rh / 100) ** 1.7) + 0.0694 * sqrt(ws) *
-         (1 - (rh / 100) ** 8)) if (wmo > ed) else z
+    z = (
+        (0.424 * (1 - (rh / 100) ** 1.7) + 0.0694 * sqrt(ws) * (1 - (rh / 100) ** 8))
+        if (wmo > ed)
+        else z
+    )
     # Eq. 7b Affect of temperature on  wetting rate
     x = z * 0.581 * exp(0.0365 * temp)
     # Eq. 9
-    wm = (ed + (wmo - ed) / (10 ** x)) if (wmo > ed) else wm
+    wm = (ed + (wmo - ed) / (10**x)) if (wmo > ed) else wm
     # Eq. 10 Final ffmc calculation
     ffmc1 = (59.5 * (250 - wm)) / (FFMC_COEFFICIENT + wm)
     # Constraints
@@ -143,13 +166,13 @@ def duff_moisture_code(dmc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
     """
     if dmc_yda < 0:
-        raise ValueError(f'Invalid dc_yda: {dmc_yda}')
+        raise ValueError(f"Invalid dc_yda: {dmc_yda}")
     if rh < 0 or rh > 100:
-        raise ValueError(f'Invalid rh: {rh}')
+        raise ValueError(f"Invalid rh: {rh}")
     if prec < 0:
-        raise ValueError(f'Invalid prec: {prec}')
+        raise ValueError(f"Invalid prec: {prec}")
     if mon < 1 or mon > 12 or not isinstance(mon, int):
-        raise ValueError(f'Invalid mon: {mon}')
+        raise ValueError(f"Invalid mon: {mon}")
     # Reference latitude for DMC day length adjustment
     # 46N: Canadian standard, latitude >= 30N   (Van Wagner 1987)
     ell01 = [6.5, 7.5, 9, 12.8, 13.9, 13.9, 12.4, 10.9, 9.4, 8, 7, 6]
@@ -166,9 +189,19 @@ def duff_moisture_code(dmc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     rk = 1.894 * (temp + 1.1) * (100 - rh) * ell01[mon - 1] * 1e-04
     # Adjust the day length  and thus the drying r, based on latitude and month
     if lat_adjust:
-        rk = (1.894 * (temp + 1.1) * (100 - rh) * ell02[mon - 1] * 1e-04) if (30 >= lat > 10) else rk
-        rk = (1.894 * (temp + 1.1) * (100 - rh) * ell03[mon - 1] * 1e-04) if (-10 >= lat > -30) else rk
-        rk = (1.894 * (temp + 1.1) * (100 - rh) * ell04[mon - 1] * 1e-04) if (-30 >= lat >= -90) else rk
+        rk = (
+            (1.894 * (temp + 1.1) * (100 - rh) * ell02[mon - 1] * 1e-04) if (30 >= lat > 10) else rk
+        )
+        rk = (
+            (1.894 * (temp + 1.1) * (100 - rh) * ell03[mon - 1] * 1e-04)
+            if (-10 >= lat > -30)
+            else rk
+        )
+        rk = (
+            (1.894 * (temp + 1.1) * (100 - rh) * ell04[mon - 1] * 1e-04)
+            if (-30 >= lat >= -90)
+            else rk
+        )
         rk = (1.894 * (temp + 1.1) * (100 - rh) * 9 * 1e-04) if (10 >= lat > -10) else rk
     # Constrain P
     if prec <= 1.5:
@@ -180,9 +213,11 @@ def duff_moisture_code(dmc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
         # Alteration to Eq. 12 to calculate more accurately
         wmi = 20 + 280 / exp(0.023 * dmc_yda)
         # Eqs. 13a, 13b, 13c
-        b = (100 / (0.5 + 0.3 * dmc_yda)) if (dmc_yda <= 33) else (
-            (14 - 1.3 * log(dmc_yda)) if (dmc_yda <= 65) else
-            (6.2 * log(dmc_yda) - 17.2))
+        b = (
+            (100 / (0.5 + 0.3 * dmc_yda))
+            if (dmc_yda <= 33)
+            else ((14 - 1.3 * log(dmc_yda)) if (dmc_yda <= 65) else (6.2 * log(dmc_yda) - 17.2))
+        )
         # Eq. 14 - Moisture content after rain
         wmr = wmi + 1000 * rw / (48.77 + b * rw)
         # Alteration to Eq. 15 to calculate more accurately
@@ -240,13 +275,13 @@ def drought_code(dc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
     """
     if dc_yda < 0:
-        raise ValueError(f'Invalid dc_yda: {dc_yda}')
+        raise ValueError(f"Invalid dc_yda: {dc_yda}")
     if rh < 0 or rh > 100:
-        raise ValueError(f'Invalid rh: {rh}')
+        raise ValueError(f"Invalid rh: {rh}")
     if prec < 0:
-        raise ValueError(f'Invalid prec: {prec}')
+        raise ValueError(f"Invalid prec: {prec}")
     if mon < 1 or mon > 12 or not isinstance(mon, int):
-        raise ValueError(f'Invalid mon: {mon}')
+        raise ValueError(f"Invalid mon: {mon}")
     # Day length factor for DC Calculations
     # 20N: North of 20 degrees N
     fl01 = [-1.6, -1.6, -1.6, 0.9, 3.8, 5.8, 6.4, 5, 2.4, 0.4, -1.6, -1.6]
@@ -313,9 +348,9 @@ def initial_spread_index(ffmc, ws, fbp_mod=False):
     Technical ReportST-X-3, Forestry Canada, Ottawa, Ontario.
     """
     if ffmc < 0 or ffmc > 101:
-        raise ValueError(f'Invalid ffmc: {ffmc}')
+        raise ValueError(f"Invalid ffmc: {ffmc}")
     if ws < 0:
-        raise ValueError(f'Invalid ws: {ws}')
+        raise ValueError(f"Invalid ws: {ws}")
     # Eq. 10 - Moisture content
     fm = FFMC_COEFFICIENT * (101 - ffmc) / (59.5 + ffmc)
     # Eq. 24 - Wind Effect
@@ -323,7 +358,7 @@ def initial_spread_index(ffmc, ws, fbp_mod=False):
     # This modification is Equation 53a in FCFDG (1992)
     fW = (12 * (1 - exp(-0.0818 * (ws - 28)))) if (ws >= 40 and fbp_mod) else exp(0.05039 * ws)
     # Eq. 25 - Fine Fuel Moisture
-    fF = 91.9 * exp(-0.1386 * fm) * (1 + (fm ** 5.31) / 49300000)
+    fF = 91.9 * exp(-0.1386 * fm) * (1 + (fm**5.31) / 49300000)
     # Eq. 26 - Spread Index Equation
     isi = 0.208 * fW * fF
     return isi
@@ -365,9 +400,9 @@ def buildup_index(dmc, dc):
     Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
     """
     if dmc < 0:
-        raise ValueError(f'Invalid dmc: {dmc}')
+        raise ValueError(f"Invalid dmc: {dmc}")
     if dc < 0:
-        raise ValueError(f'Invalid dc: {dc}')
+        raise ValueError(f"Invalid dc: {dc}")
     # Eq. 27a
     bui1 = 0 if (dmc == 0 and dc == 0) else (0.8 * dc * dmc / (dmc + 0.4 * dc))
     # Eq. 27b - next 3 lines
@@ -416,12 +451,15 @@ def fire_weather_index(isi, bui):
     Headquarters, Ottawa. Forestry Technical Report 35. 35 p.
     """
     if isi < 0:
-        raise ValueError(f'Invalid isi: {isi}')
+        raise ValueError(f"Invalid isi: {isi}")
     if bui < 0:
-        raise ValueError(f'Invalid bui: {bui}')
+        raise ValueError(f"Invalid bui: {bui}")
     # Eqs. 28b, 28a, 29
-    bb = (0.1 * isi * (1000 / (25 + 108.64 / exp(0.023 * bui)))) if (
-            bui > 80) else (0.1 * isi * (0.626 * (bui ** 0.809) + 2))
+    bb = (
+        (0.1 * isi * (1000 / (25 + 108.64 / exp(0.023 * bui))))
+        if (bui > 80)
+        else (0.1 * isi * (0.626 * (bui**0.809) + 2))
+    )
     # Eqs. 30b, 30a
     fwi = bb if (bb <= 1.0) else exp(2.72 * ((0.434 * log(bb)) ** 0.647))
     return fwi
@@ -429,25 +467,46 @@ def fire_weather_index(isi, bui):
 
 # Deprecated aliases for backward compatibility
 def ffmc(*args, **kwargs):
-    warnings.warn("ffmc is deprecated, use fine_fuel_moisture_code instead", DeprecationWarning, stacklevel=2)
+    warnings.warn(
+        "ffmc is deprecated, use fine_fuel_moisture_code instead",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     return fine_fuel_moisture_code(*args, **kwargs)
 
+
 def dmc(*args, **kwargs):
-    warnings.warn("dmc is deprecated, use duff_moisture_code instead", DeprecationWarning, stacklevel=2)
+    warnings.warn(
+        "dmc is deprecated, use duff_moisture_code instead",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     return duff_moisture_code(*args, **kwargs)
+
 
 def dc(*args, **kwargs):
     warnings.warn("dc is deprecated, use drought_code instead", DeprecationWarning, stacklevel=2)
     return drought_code(*args, **kwargs)
 
+
 def isi(*args, **kwargs):
-    warnings.warn("isi is deprecated, use initial_spread_index instead", DeprecationWarning, stacklevel=2)
+    warnings.warn(
+        "isi is deprecated, use initial_spread_index instead",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     return initial_spread_index(*args, **kwargs)
+
 
 def bui(*args, **kwargs):
     warnings.warn("bui is deprecated, use buildup_index instead", DeprecationWarning, stacklevel=2)
     return buildup_index(*args, **kwargs)
 
+
 def fwi(*args, **kwargs):
-    warnings.warn("fwi is deprecated, use fire_weather_index instead", DeprecationWarning, stacklevel=2)
+    warnings.warn(
+        "fwi is deprecated, use fire_weather_index instead",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     return fire_weather_index(*args, **kwargs)

@@ -10,6 +10,7 @@ csv_schema = {
     "BuildupEffect": float_or_nan,
 }
 
+
 def test_buildup_effect(load_csv):
     """Test the buildup_effect function with test data from CSV."""
     test_data = load_csv(
@@ -24,4 +25,6 @@ def test_buildup_effect(load_csv):
 
         result = buildup_effect(fuel_type, bui)
 
-        assert pytest.approx(result, abs=0.01, nan_ok=True) == expected, f"Failed for row: {row} - BE: {result}"
+        assert pytest.approx(result, abs=0.01, nan_ok=True) == expected, (
+            f"Failed for row: {row} - BE: {result}"
+        )

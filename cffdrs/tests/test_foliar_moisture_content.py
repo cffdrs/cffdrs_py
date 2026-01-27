@@ -9,8 +9,9 @@ csv_schema = {
     "ELV": float,
     "DJ": int,
     "D0": int,
-    "FoliarMoistureContent": float
+    "FoliarMoistureContent": float,
 }
+
 
 def test_foliar_moisture_content(load_csv):
     test_data = load_csv("cffdrs/tests/data/FoliarMoistureContent.csv", csv_schema)
@@ -26,4 +27,6 @@ def test_foliar_moisture_content(load_csv):
 
         calculated_fmc = foliar_moisture_content(lat, long, elv, dj, d0)
 
-        assert pytest.approx(expected_fmc, abs=0.01) == calculated_fmc, f"Failed for row: {row} - FMC: {calculated_fmc}"
+        assert pytest.approx(expected_fmc, abs=0.01) == calculated_fmc, (
+            f"Failed for row: {row} - FMC: {calculated_fmc}"
+        )

@@ -1,5 +1,6 @@
 import math
 
+
 def safe_power(base, exponent):
     """
     Raise a number to a power in a way that mimics R's numeric behavior.
@@ -25,7 +26,8 @@ def safe_power(base, exponent):
     if math.isnan(base) or math.isnan(exponent):
         return math.nan
 
-    return base ** exponent
+    return base**exponent
+
 
 def safe_div(numerator, denominator):
     """

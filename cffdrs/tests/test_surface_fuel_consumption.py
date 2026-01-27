@@ -1,5 +1,3 @@
-
-
 import pytest
 from cffdrs.surface_fuel_consumption import surface_fuel_consumption
 
@@ -12,6 +10,7 @@ csv_schema = {
     "GFL": float,
     "SurfaceFuelConsumption": float,
 }
+
 
 def test_surface_fuel_consumption(load_csv):
     data = load_csv("cffdrs/tests/data/SurfaceFuelConsumption.csv", csv_schema)
@@ -27,4 +26,6 @@ def test_surface_fuel_consumption(load_csv):
 
         calculated_consumption = surface_fuel_consumption(fuel_type, ffmc, bui, pc, gfl)
 
-        assert pytest.approx(expected_consumption, abs=0.01) == calculated_consumption, f"Failed for row: {row} - Consumption: {calculated_consumption}"
+        assert pytest.approx(expected_consumption, abs=0.01) == calculated_consumption, (
+            f"Failed for row: {row} - Consumption: {calculated_consumption}"
+        )

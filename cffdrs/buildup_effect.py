@@ -29,4 +29,3 @@ def buildup_effect(fuel_type: FuelType, bui):
         return math.exp(50 * math.log(q) * (1 / bui - 1 / buio))
 
     return 1.0
-

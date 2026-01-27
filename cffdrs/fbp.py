@@ -16,7 +16,9 @@ from cffdrs.models import FBPAllOutput, FBPInput, FBPPrimaryOutput, FBPSecondary
 from cffdrs.fire_behaviour_prediction import fire_behaviour_prediction
 
 
-def fbp(input: Union[FBPInput, List[FBPInput]] = None, output: str = "Primary") -> List[Union[FBPPrimaryOutput, FBPSecondaryOutput, FBPAllOutput]]:
+def fbp(
+    input: Union[FBPInput, List[FBPInput]] = None, output: str = "Primary"
+) -> List[Union[FBPPrimaryOutput, FBPSecondaryOutput, FBPAllOutput]]:
     if input is None:
         input = FBPInput()
     if isinstance(input, FBPInput):

@@ -29,17 +29,23 @@ def grass_fuel_moisture(temp, rh, ws, prec, isol, gfmc_old, rofl=0.3, time_step=
     # Eq. 2 - Calculate Fuel temperature
     Tf = temp + 35.07 * isol * math.exp(-0.06215 * ws)
     # Eq. 3 - Calculate Saturation Vapour Pressure (Baumgartner et a. 1982)
-    eS_T = 6.107 * 10**(7.5 * temp / (237 + temp))
+    eS_T = 6.107 * 10 ** (7.5 * temp / (237 + temp))
     # Eq. 3 for Fuel temperature
-    eS_Tf = 6.107 * 10**(7.5 * Tf / (237 + Tf))
+    eS_Tf = 6.107 * 10 ** (7.5 * Tf / (237 + Tf))
     # Eq. 4 - Calculate Fuel Level Relative Humidity
     RH_f = rh * (eS_T / eS_Tf)
     # Eq. 7 - Calculate Equilibrium Moisture Content for Drying phase
-    EMC_D = (1.62 * RH_f**0.532 + 13.7 * math.exp((RH_f - 100) / 13.0)
-             + 0.27 * (26.7 - Tf) * (1 - math.exp(-0.115 * RH_f)))
+    EMC_D = (
+        1.62 * RH_f**0.532
+        + 13.7 * math.exp((RH_f - 100) / 13.0)
+        + 0.27 * (26.7 - Tf) * (1 - math.exp(-0.115 * RH_f))
+    )
     # Eq. 7 - Calculate Equilibrium Moisture Content for Wetting phase
-    EMC_W = (1.42 * RH_f**0.512 + 12.0 * math.exp((RH_f - 100) / 18.0)
-             + 0.27 * (26.7 - Tf) * (1 - math.exp(-0.115 * RH_f)))
+    EMC_W = (
+        1.42 * RH_f**0.512
+        + 12.0 * math.exp((RH_f - 100) / 18.0)
+        + 0.27 * (26.7 - Tf) * (1 - math.exp(-0.115 * RH_f))
+    )
     # RH in terms of RH/100 for desorption
     Rf = RH_f / 100 if MCold > EMC_D else rh
     # RH in terms of 1-RH/100 for absorption
@@ -48,15 +54,20 @@ def grass_fuel_moisture(temp, rh, ws, prec, isol, gfmc_old, rofl=0.3, time_step=
     # Eq. 10 - Calculate Inverse Response time of grass (hours)
     try:
         exp_term = math.exp(0.0365 * Tf)
-    except OverflowError: # this can create a very large number and error out
-        exp_term = math.inf # tests pass by setting to infinity
-    K_GRASS = 0.389633 * exp_term * (0.424 * (1 - Rf**1.7) + 0.0694 *
-                math.sqrt(ws) * (1 - Rf**8))
-    
+    except OverflowError:  # this can create a very large number and error out
+        exp_term = math.inf  # tests pass by setting to infinity
+    K_GRASS = 0.389633 * exp_term * (0.424 * (1 - Rf**1.7) + 0.0694 * math.sqrt(ws) * (1 - Rf**8))
+
     # Fuel is drying, calculate Moisture Content
-    MC0 = (EMC_D + (MCold - EMC_D) * math.exp(-1.0 * math.log(10.0) * K_GRASS * time_step)
-           if MCold > EMC_D else MCold)
+    MC0 = (
+        EMC_D + (MCold - EMC_D) * math.exp(-1.0 * math.log(10.0) * K_GRASS * time_step)
+        if MCold > EMC_D
+        else MCold
+    )
     # Fuel is wetting, calculate moisture content
-    MC0 = (EMC_W + (MCold - EMC_W) * math.exp(-1.0 * math.log(10.0) * K_GRASS * time_step)
-           if MCold < EMC_W else MC0)
+    MC0 = (
+        EMC_W + (MCold - EMC_W) * math.exp(-1.0 * math.log(10.0) * K_GRASS * time_step)
+        if MCold < EMC_W
+        else MC0
+    )
     return MC0
