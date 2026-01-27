@@ -175,7 +175,7 @@ def slope_adjustment(
     fF = 91.9 * math.exp(-0.1386 * m) * (1 + (m**5.31) / 49300000)
     # Eqs. 44a, 44d (Wotton 2009) - Slope equivalent wind speed
     WSE = 1 / 0.05039 * math.log(ISF / (0.208 * fF))
-    # Eqs. 44b, 44e (Wotton 2009) - alternative corrections
+    # Eqs. 44b, 44e (Wotton 2009) - Slope equivalent wind speed
     if WSE > 40 and ISF < (0.999 * 2.496 * fF):
         WSE = 28 - (1 / 0.0818 * math.log(1 - ISF / (2.496 * fF)))
     if WSE > 40 and ISF >= (0.999 * 2.496 * fF):
@@ -188,29 +188,11 @@ def slope_adjustment(
 
     WSV = math.sqrt(WSX**2 + WSY**2)
 
-    if WSV < 1e-8:
-        WSV = 0.0
-        # NOTE: When net vector magnitude is negligible (WS ≈ 0 and tiny slope-equivalent effect),
-        # there is no defined spread direction in the FBP system.
-        # Setting RAZ = 0.0 is a reasonable and common fallback (direction undefined).
-        #
-        # Slope.csv test data, however, expects RAZ to be a direction related to saz
-        # (slope azimuth) — usually saz or saz ± 180° (π radians) — even in these cases.
-        # All failures show exactly these saz-linked values vs 0, with differences
-        # clustering around multiples of ~38.7° or ±180°.
-        #
-        # This indicates the test CSV uses a different fallback convention for
-        # zero-force cases (likely treating RAZ as slope aspect or upslope direction).
-        # The code follows the documented FBP meaning: RAZ = direction toward which
-        # the head fire spreads (resultant vector direction).
-        # Failures in WS≈0 rows are due to this test-data inconsistency, not a bug.
-        RAZ = 0.0
-
-    else:
-        # Normal case: net vector direction (spread toward)
-        RAZ = math.atan2(WSX, WSY)
-        RAZ = (RAZ + 2 * math.pi) % (2 * math.pi)
-        if abs(RAZ - 2 * math.pi) < 1e-6:
-            RAZ = 0.0
+    # Eq. 50 (FCFDG 1992) - the net effective wind direction (radians)
+    RAZ = math.acos(safe_div(WSY, WSV))
+    # Eq. 51 (FCFDG 1992) - convert possible negative RAZ into more understandable
+    # directions
+    if WSX < 0:
+        RAZ = 2 * math.pi - RAZ
 
     return {"WSV": WSV, "RAZ": RAZ}
