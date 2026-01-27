@@ -73,7 +73,7 @@ def crown_fraction_burned_c6(rsc, rss, rso):
     if cond1 is False or cond2 is False:
         return 0.0
 
-    if cond1 is None or cond2 is None:
+    if math.isnan(cond2):
         return math.nan
 
     return crown_fraction_burned(rss, rso)
