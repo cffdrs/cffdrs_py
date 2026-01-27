@@ -19,13 +19,9 @@ csv_schema = {
     reason="""Something odd happening with R sdmc tests. R test passes if full test suite is run, but 
             when I run manually and debug I see the same problem that this implements. Needs further investigation.
                 Row 76: Calculated SDMC=0.0484, Expected=0.0484, Diff=-0.0000
-                debug_sdmc.r:23
                 Row 77: Calculated SDMC=0.0484, Expected=0.0484, Diff=-0.0000
-                debug_sdmc.r:23
                 Row 78: Calculated SDMC=5.9601, Expected=0.0484, Diff=5.9117
-                debug_sdmc.r:23
                 Row 79: Calculated SDMC=19.1639, Expected=3.0500, Diff=16.1139
-                debug_sdmc.r:23
                 Row 80: Calculated SDMC=32.3677, Expected=9.7560, Diff=22.6117"""
 )
 def test_sdmc_calculation(load_csv):
