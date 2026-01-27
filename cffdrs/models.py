@@ -253,47 +253,5 @@ class FBPSecondaryOutput:
 
 
 @dataclass
-class FBPAllOutput:
-    id: str
-    cfb: float
-    cfc: float
-    fd: str
-    hfi: float
-    raz: float
-    ros: float
-    sfc: float
-    tfc: float
-    be: float
-    sf: float
-    isi: float
-    ffmc: float
-    fmc: float
-    d0: int
-    rso: float
-    csi: float
-    fros: float
-    bros: float
-    hrost: float
-    frost: float
-    brost: float
-    fcfb: float
-    bcfb: float
-    ffi: float
-    bfi: float
-    ftfc: float
-    btfc: float
-    ti: float
-    fti: float
-    bti: float
-    lb: float
-    lbt: float
-    wsv: float
-    dh: float
-    db: float
-    df: float
-    tros: float
-    trost: float
-    tcfb: float
-    tfi: float
-    ttfc: float
-    tti: float
+class FBPAllOutput(FBPPrimaryOutput, FBPSecondaryOutput):
+    pass
