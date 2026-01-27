@@ -178,7 +178,9 @@ def test_fbp_07(fbp_input_data, load_csv):
 ############
 
 
-@pytest.mark.xfail(reason="I believe default CFL should be 0, not 1 as it's currently written")
+@pytest.mark.xfail(
+    reason="I believe default CFL should be 0, not 1 as it's currently written - https://github.com/cffdrs/cffdrs_r/blob/4e40dd3af841f3a708abd83d7f2d43fefb08649a/R/fire_behaviour_prediction.r#L38"
+)
 def test_fbp_10(load_csv):
     """Test FBP function with no input (uses default FBPInput)"""
 
