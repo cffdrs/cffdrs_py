@@ -16,7 +16,7 @@ csv_schema = {
 
 
 @pytest.mark.skip(
-    reason="""Something odd happening with R sdmc tests. R test passes if full test suite is run, but 
+    reason="""Something odd happening with R sdmc tests. R test passes if full test suite is run, but
             when I run manually and debug I see the same problem that this implements. Needs further investigation.
                 Row 76: Calculated SDMC=0.0484, Expected=0.0484, Diff=-0.0000
                 Row 77: Calculated SDMC=0.0484, Expected=0.0484, Diff=-0.0000
@@ -26,6 +26,7 @@ csv_schema = {
 )
 def test_sdmc_calculation(load_csv):
     test_data = load_csv("cffdrs/tests/data/sdmc.csv", schema=csv_schema)
+    # test_data = sorted(test_data, key=lambda x: (x["mon"], x["day"]))
 
     sdmc_prev = None
 
@@ -40,7 +41,7 @@ def test_sdmc_calculation(load_csv):
             dmc=row["dmc"],
             sdmc_old=sdmc_prev,
         )
-        assert pytest.approx(expected_sdmc, abs=0.01) == sdmc_calculated, (
+        assert pytest.approx(sdmc_calculated, abs=0.01) == expected_sdmc, (
             f"Failed for row {idx}: {row}. Result: {sdmc_calculated}, Expected: {expected_sdmc}"
         )
 

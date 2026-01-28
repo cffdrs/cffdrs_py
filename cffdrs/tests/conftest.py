@@ -19,6 +19,13 @@ def float_or_nan(value: str) -> float:
     return float(value)
 
 
+def string_or_none(value: str) -> str:
+    value = value.strip()
+    if not value or value.upper() == "NA":
+        return None
+    return str(value)
+
+
 @pytest.fixture
 def load_csv():
     def _load_csv(path, schema):

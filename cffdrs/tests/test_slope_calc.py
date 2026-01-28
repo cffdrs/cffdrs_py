@@ -61,8 +61,8 @@ def test_slope_calc(load_csv):
             fuel_type, ffmc, bui, ws, waz, gs, saz, fmc, sfc, pc, pdf, cc, cbh, isi
         )
 
-        calculated_wsv = result["WSV"]
-        calculated_raz = result["RAZ"]
+        calculated_wsv = result.wsv
+        calculated_raz = result.raz
 
         tol = 0.1
 

@@ -32,8 +32,8 @@ def test_lros(load_csv):
             row["BearingT1T2"],
             row["BearingT1T3"],
         )
-        ros_calculated = result["ros"]
-        direction_calculated = result["direction"]
+        ros_calculated = result.ros
+        direction_calculated = result.direction
 
         assert pytest.approx(expected_ros, abs=0.01) == ros_calculated, (
             f"Failed ROS for row {idx}: {row}. Result: {ros_calculated}, Expected: {expected_ros}"

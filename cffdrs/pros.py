@@ -1,5 +1,12 @@
+from dataclasses import dataclass
 import math
 from cffdrs.direction import direction
+
+
+@dataclass
+class ProsOutput:
+    ros: float
+    direction: float
 
 
 def haversine_distance(lon1, lat1, lon2, lat2):
@@ -127,4 +134,4 @@ def pros(T1, Long1, Lat1, T2, Long2, Lat2, T3, Long3, Lat3):
     theta_adeg = (theta_arad * 180) / math.pi
     dir = direction(bearing_t1t2, bearing_t1t3, theta_adeg)
     ros = (length_t1t2 * math.cos(theta_arad)) / (T2 - T1)
-    return {"ros": ros, "direction": dir}
+    return ProsOutput(ros=ros, direction=dir)

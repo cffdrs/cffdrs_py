@@ -33,8 +33,8 @@ def test_pros(load_csv):
             row["Long3"],
             row["Lat3"],
         )
-        ros_calculated = result["ros"]
-        direction_calculated = result["direction"]
+        ros_calculated = result.ros
+        direction_calculated = result.direction
 
         assert pytest.approx(expected_ros, abs=0.01) == ros_calculated, (
             f"Failed ROS for row {idx}: {row}. Result: {ros_calculated}, Expected: {expected_ros}"

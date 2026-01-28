@@ -1,5 +1,12 @@
+from dataclasses import dataclass
 import math
 from cffdrs.direction import direction
+
+
+@dataclass
+class LrosOutput:
+    ros: float
+    direction: float
 
 
 def lros(T1, LengthT1T2, T2, LengthT1T3, T3, LengthT2T3, BearingT1T2, BearingT1T3):
@@ -97,4 +104,4 @@ def lros(T1, LengthT1T2, T2, LengthT1T3, T3, LengthT2T3, BearingT1T2, BearingT1T
     theta_adeg = (theta_arad * 180) / math.pi
     dir = direction(BearingT1T2, BearingT1T3, theta_adeg)
     ros = (LengthT1T2 * math.cos(theta_arad)) / (T2 - T1)
-    return {"ros": ros, "direction": dir}
+    return LrosOutput(ros=ros, direction=dir)

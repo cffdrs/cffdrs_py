@@ -103,12 +103,12 @@ def fire_behaviour_prediction(
         fuel_type, ffmc, bui_eff, ws, waz, gs, saz, fmc, sfc, pc, pdf, cc, cbh, isi
     )
     # Calculate the net effective windspeed (WSV)
-    wsv0 = slope_values["WSV"]
+    wsv0 = slope_values.wsv
     if output == "WSV0":
         return wsv0
     wsv = wsv0 if gs > 0 and ffmc > 0 else ws
     # Calculate the net effective wind direction (RAZ)
-    raz0 = slope_values["RAZ"]
+    raz0 = slope_values.raz
     if output == "RAZ0":
         return raz0
     raz = raz0 if gs > 0 and ffmc > 0 else waz
@@ -116,10 +116,10 @@ def fire_behaviour_prediction(
     isi = isi if isi > 0 else initial_spread_index(ffmc, wsv, True)
     # HACK: C6 ROS depends on CFB so do this to not repeat calculations
     ros_vars = rate_of_spread_extended(fuel_type, isi, bui_eff, fmc, sfc, pc, pdf, cc, cbh)
-    ros = ros_vars["ROS"]
-    cfb = ros_vars["CFB"] if cfl > 0 else 0
-    csi = ros_vars["CSI"]
-    rso = ros_vars["RSO"]
+    ros = ros_vars.ros
+    cfb = ros_vars.cfb if cfl > 0 else 0
+    csi = ros_vars.csi
+    rso = ros_vars.rso
     # Calculate Total Fuel Consumption (TFC)
     tfc = total_fuel_consumption(fuel_type, cfl, cfb, sfc, pc, pdf)
     # Calculate Head Fire Intensity(HFI)
@@ -210,15 +210,6 @@ def fire_behaviour_prediction(
         fbp = FBPPrimaryOutput(
             id=id, cfb=cfb, cfc=cfc, fd=fd, hfi=hfi, raz=raz, ros=ros, sfc=sfc, tfc=tfc
         )
-        if fuel_type in ["WA", "NF"]:
-            fbp.cfb = 0
-            fbp.cfc = 0
-            fbp.hfi = 0
-            fbp.raz = 0
-            fbp.ros = 0
-            fbp.sfc = 0
-            fbp.tfc = 0
-            fbp.fd = "NA"
     elif output in ["SECONDARY", "S"]:
         fbp = FBPSecondaryOutput(
             id=id,
@@ -257,10 +248,6 @@ def fire_behaviour_prediction(
             ttfc=ttfc,
             tti=tti,
         )
-        if fuel_type in ["WA", "NF"]:
-            for field in fbp.__dataclass_fields__:
-                if field != "id":
-                    setattr(fbp, field, 0)
     elif output in ["ALL", "A"]:
         fbp = FBPAllOutput(
             id=id,
@@ -307,50 +294,12 @@ def fire_behaviour_prediction(
             ttfc=ttfc,
             tti=tti,
         )
-        if fuel_type in ["WA", "NF"]:
-            for field in [
-                "cfb",
-                "cfc",
-                "hfi",
-                "raz",
-                "ros",
-                "sfc",
-                "tfc",
-                "be",
-                "sf",
-                "isi",
-                "ffmc",
-                "fmc",
-                "d0",
-                "rso",
-                "csi",
-                "fros",
-                "bros",
-                "hrost",
-                "frost",
-                "brost",
-                "fcfb",
-                "bcfb",
-                "ffi",
-                "bfi",
-                "ftfc",
-                "btfc",
-                "ti",
-                "fti",
-                "bti",
-                "lb",
-                "lbt",
-                "wsv",
-                "dh",
-                "db",
-                "df",
-                "tros",
-                "trost",
-                "tcfb",
-                "tfi",
-                "ttfc",
-                "tti",
-            ]:
+    if fuel_type in ["WA", "NF"]:
+        for field in fbp.__dataclass_fields__:
+            if field == "id":
+                continue
+            elif field == "fd":
+                fbp.fd = None
+            else:
                 setattr(fbp, field, 0)
-            fbp.fd = "NA"
     return fbp

@@ -205,7 +205,7 @@ class FBPPrimaryOutput:
     id: str
     cfb: float
     cfc: float
-    fd: str
+    fd: str | None
     hfi: float
     raz: float
     ros: float

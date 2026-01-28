@@ -1,14 +1,14 @@
 import pytest
 from cffdrs.fbp import fbp
 from cffdrs.models import FBPInput
-from cffdrs.tests.conftest import run_csv_test
+from cffdrs.tests.conftest import run_csv_test, string_or_none
 
 
 primary_output_csv_schema = {
     "ID": int,
     "CFB": float,
     "CFC": float,
-    "FD": str,
+    "FD": string_or_none,
     "HFI": float,
     "RAZ": float,
     "ROS": float,

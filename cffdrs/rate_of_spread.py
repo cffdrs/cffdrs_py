@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import math
 from cffdrs.constants import FUEL_TYPE_ROS, FuelType
 from cffdrs.c6_calc import (
@@ -13,6 +14,14 @@ from cffdrs.cfb_calc import (
     crown_fraction_burned,
 )
 from cffdrs.buildup_effect import buildup_effect
+
+
+@dataclass
+class RateOfSpreadOutput:
+    ros: float
+    cfb: float
+    csi: float
+    rso: float
 
 
 def rate_of_spread_extended(fuel_type: FuelType, isi, bui, fmc, sfc, pc, pdf, cc, cbh):
@@ -138,10 +147,10 @@ def rate_of_spread_extended(fuel_type: FuelType, isi, bui, fmc, sfc, pc, pdf, cc
     if ros <= 0:
         ros = 0.000001
     # CFB <- ros_and_cfb$CFB
-    return {"ROS": ros, "CFB": cfb, "CSI": csi, "RSO": rso}
+    return RateOfSpreadOutput(ros=ros, cfb=cfb, csi=csi, rso=rso)
 
 
 def rate_of_spread(fuel_type: FuelType, isi, bui, fmc, sfc, pc, pdf, cc, cbh):
     # HACK: C6 ROS depends on CFB so do this to not repeat calculations
     ros_vars = rate_of_spread_extended(fuel_type, isi, bui, fmc, sfc, pc, pdf, cc, cbh)
-    return ros_vars["ROS"]
+    return ros_vars.ros

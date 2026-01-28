@@ -1,8 +1,15 @@
+from dataclasses import dataclass
 import math
 from cffdrs.constants import FUEL_TYPE_ROS, FFMC_COEFFICIENT, FuelType
 from cffdrs.fwi import initial_spread_index
 from cffdrs.r_helpers import safe_div
 from cffdrs.rate_of_spread import rate_of_spread
+
+
+@dataclass
+class SlopeAdjustmentOutput:
+    wsv: float
+    raz: float
 
 
 def slope_adjustment(
@@ -43,9 +50,11 @@ def slope_adjustment(
 
     :returns: RAZ and WSV - Rate of spread azimuth (degrees) and Wind Slope speed (km/hr)
     """
+    default_output = SlopeAdjustmentOutput(wsv=math.nan, raz=math.nan)
+
     # Non-fuel or unknown fuel types → no spread
     if fuel_type in ["NF", "WA"]:
-        return {"WSV": math.nan, "RAZ": math.nan}
+        return default_output
 
     no_bui = -1
     # Eq. 39 (FCFDG 1992) - Calculate Spread Factor
@@ -167,7 +176,7 @@ def slope_adjustment(
 
         # Only set WSV/RAZ to nan for non-spreading fuels
     if isf <= 0 or math.isnan(isf):
-        return {"WSV": math.nan, "RAZ": math.nan}
+        return default_output
 
     # Eq. 46 (FCFDG 1992)
     m = FFMC_COEFFICIENT * (101 - ffmc) / (59.5 + ffmc)
@@ -195,4 +204,4 @@ def slope_adjustment(
     if wsx < 0:
         raz = 2 * math.pi - raz
 
-    return {"WSV": wsv, "RAZ": raz}
+    return SlopeAdjustmentOutput(wsv=wsv, raz=raz)

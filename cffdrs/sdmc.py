@@ -99,9 +99,9 @@ def sdmc(temp, rh, ws, prec, mon, dmc, sdmc_old=None):
     pr = max(0.0, pr)
 
     # Calculate final SDMC
-    SDMC = pr + rk
+    sdmc = pr + rk
 
     # Constrain result
-    SDMC = max(0.0, SDMC)
+    sdmc = max(0.0, sdmc)
 
-    return SDMC
+    return sdmc
