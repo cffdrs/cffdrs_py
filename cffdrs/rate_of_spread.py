@@ -114,9 +114,6 @@ def rate_of_spread_extended(fuel_type: FuelType, isi, bui, fmc, sfc, pc, pdf, cc
         b_val = FUEL_TYPE_ROS[fuel_type]["b"]
         c0_val = FUEL_TYPE_ROS[fuel_type]["c0"]
         rsi = a_val * ((1 - math.exp(-b_val * isi)) ** c0_val) * cf
-    # used to be called like this and return ROS here
-    # # Calculate the Rate of Spread (ROS)
-    # ROS <- rate_of_spread(FUELTYPE, ISI, BUI, FMC, SFC, PC, PDF, CC, CBH)
     # Calculate Critical Surface Intensity
     csi = critical_surface_intensity(fmc, cbh)
     # Calculate Surface fire rate of spread (m/min)
@@ -146,7 +143,6 @@ def rate_of_spread_extended(fuel_type: FuelType, isi, bui, fmc, sfc, pc, pdf, cc
     # add a constraint
     if ros <= 0:
         ros = 0.000001
-    # CFB <- ros_and_cfb$CFB
     return RateOfSpreadOutput(ros=ros, cfb=cfb, csi=csi, rso=rso)
 
 
