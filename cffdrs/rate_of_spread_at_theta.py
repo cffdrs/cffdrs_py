@@ -27,7 +27,7 @@ def rate_of_spread_at_theta(ros, fros, bros, theta):
     c1 = math.cos(theta + 0.001) if c1 == 0 else c1
     # Eq. 94 - Calculate the Rate of Spread at point THETA
     # large equation, view the paper to see a better representation
-    ROStheta = ((ros - bros) / (2 * c1) + (ros + bros) / (2 * c1)) * (
+    ros_theta = ((ros - bros) / (2 * c1) + (ros + bros) / (2 * c1)) * (
         safe_div(
             (
                 fros * c1 * math.sqrt(fros * fros * c1 * c1 + (ros * bros) * s1 * s1)
@@ -36,4 +36,4 @@ def rate_of_spread_at_theta(ros, fros, bros, theta):
             (fros * fros * c1 * c1 + ((ros + bros) / 2) * ((ros + bros) / 2) * s1 * s1),
         )
     )
-    return ROStheta
+    return ros_theta

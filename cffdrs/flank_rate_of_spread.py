@@ -16,5 +16,5 @@ def flank_rate_of_spread(ros, bros, lb):
     :returns: FROS Flank Fire Spread Rate (m/min) value
     """
     # Eq. 89 (FCFDG 1992)
-    FROS = (ros + bros) / lb / 2
-    return FROS
+    fros = (ros + bros) / lb / 2
+    return fros

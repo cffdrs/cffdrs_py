@@ -15,5 +15,5 @@ def fire_intensity(fc, ros):
     :returns: FI Fire Intensity (kW/m)
     """
     # Eq. 69 (FCFDG 1992) Fire Intensity (kW/m)
-    FI = 300 * fc * ros
-    return FI
+    fi = 300 * fc * ros
+    return fi

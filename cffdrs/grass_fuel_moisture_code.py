@@ -12,5 +12,5 @@ def grass_fuel_moisture_code(mc0):
     :returns: gfmc
     """
     # Eq. 12 - Calculate GFMC
-    GFMC0 = 59.5 * ((250 - mc0) / (FFMC_COEFFICIENT + mc0))
-    return GFMC0
+    gfmc0 = 59.5 * ((250 - mc0) / (FFMC_COEFFICIENT + mc0))
+    return gfmc0

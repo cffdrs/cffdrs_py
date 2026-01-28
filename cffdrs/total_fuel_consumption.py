@@ -1,3 +1,4 @@
+from typing import Literal
 from cffdrs.constants import FuelType
 
 
@@ -13,7 +14,9 @@ def crown_fuel_consumption(fuel_type: FuelType, cfl, cfb, pc, pdf):
     return CFC
 
 
-def total_fuel_consumption(fuel_type: FuelType, cfl, cfb, sfc, pc, pdf, option="TFC"):
+def total_fuel_consumption(
+    fuel_type: FuelType, cfl, cfb, sfc, pc, pdf, option: Literal["TFC", "CFC"] = "TFC"
+):
     """
     Total Fuel Consumption calculation
 
@@ -41,10 +44,10 @@ def total_fuel_consumption(fuel_type: FuelType, cfl, cfb, sfc, pc, pdf, option="
 
     :returns: TFC Total (Surface + Crown) Fuel Consumption (kg/m^2) OR CFC Crown Fuel Consumption (kg/m^2)
     """
-    CFC = crown_fuel_consumption(fuel_type, cfl, cfb, pc, pdf)
+    cfc = crown_fuel_consumption(fuel_type, cfl, cfb, pc, pdf)
     # Return CFC if requested
     if option == "CFC":
-        return CFC
+        return cfc
     # Eq. 67 (FCFDG 1992) - Total Fuel Consumption
-    TFC = sfc + CFC
-    return TFC
+    tfc = sfc + cfc
+    return tfc

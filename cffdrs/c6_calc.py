@@ -12,8 +12,8 @@ def intermediate_surface_rate_of_spread_c6(isi):
     :returns: RSI Intermediate surface fire spread rate
     """
     # Eq. 62 (FCFDG 1992) Intermediate surface fire spread rate
-    RSI = 30 * (1 - math.exp(-0.08 * isi)) ** 3.0
-    return RSI
+    rsi = 30 * (1 - math.exp(-0.08 * isi)) ** 3.0
+    return rsi
 
 
 def surface_rate_of_spread_c6(rsi, bui):
@@ -26,8 +26,8 @@ def surface_rate_of_spread_c6(rsi, bui):
     :returns: RSS Surface fire spread rate (m/min)
     """
     # Eq. 63 (FCFDG 1992) Surface fire spread rate (m/min)
-    RSS = rsi * buildup_effect("C6", bui)
-    return RSS
+    rss = rsi * buildup_effect("C6", bui)
+    return rss
 
 
 def crown_rate_of_spread_c6(isi, fmc):
@@ -40,16 +40,16 @@ def crown_rate_of_spread_c6(isi, fmc):
     :returns: RSC Crown fire spread rate (m/min)
     """
     # Average foliar moisture effect
-    FMEavg = 0.778
+    fme_avg = 0.778
     # Eq. 59 (FCFDG 1992) Crown flame temperature (degrees K)
-    tt = 1500 - 2.75 * fmc
+    tt = 1500 - 2.75 * fmc  # this comes from the source R code but is not used
     # Eq. 60 (FCFDG 1992) Head of ignition (kJ/kg)
-    H = 460 + 25.9 * fmc
+    H = 460 + 25.9 * fmc  # this comes from the source R code but is not used
     # Eq. 61 (FCFDG 1992) Average foliar moisture effect
-    FME = ((1.5 - 0.00275 * fmc) ** 4.0) / (460 + 25.9 * fmc) * 1000
+    fme = ((1.5 - 0.00275 * fmc) ** 4.0) / (460 + 25.9 * fmc) * 1000
     # Eq. 64 (FCFDG 1992) Crown fire spread rate (m/min)
-    RSC = 60 * (1 - math.exp(-0.0497 * isi)) * FME / FMEavg
-    return RSC
+    rsc = 60 * (1 - math.exp(-0.0497 * isi)) * fme / fme_avg
+    return rsc
 
 
 def crown_fraction_burned_c6(rsc, rss, rso):
@@ -90,5 +90,5 @@ def rate_of_spread_c6(rsc, rss, cfb):
     :returns: ROS Rate of spread (m/min)
     """
     # Eq. 65 (FCFDG 1992) Calculate Rate of spread (m/min)
-    ROS = rss + cfb * (rsc - rss) if rsc > rss else rss
-    return ROS
+    ros = rss + cfb * (rsc - rss) if rsc > rss else rss
+    return ros

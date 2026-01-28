@@ -35,5 +35,5 @@ def rate_of_spread_at_time(fuel_type: FuelType, roseq, hr, cfb):
             alpha = 0.115 - 18.8 * (cfb**2.5) * math.exp(-8 * cfb)
 
     # Eq. 70 - Rate of Spread at time since ignition
-    ROSt = roseq * (1 - math.exp(-alpha * hr))
-    return ROSt
+    ros_t = roseq * (1 - math.exp(-alpha * hr))
+    return ros_t

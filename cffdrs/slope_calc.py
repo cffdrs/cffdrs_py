@@ -47,27 +47,29 @@ def slope_adjustment(
     if fuel_type in ["NF", "WA"]:
         return {"WSV": math.nan, "RAZ": math.nan}
 
-    NoBUI = -1
+    no_bui = -1
     # Eq. 39 (FCFDG 1992) - Calculate Spread Factor
-    SF = 10 if gs >= 70 else math.exp(3.533 * (gs / 100) ** 1.2)
+    sf = 10 if gs >= 70 else math.exp(3.533 * (gs / 100) ** 1.2)
     # ISI with 0 wind on level grounds
-    ISZ = initial_spread_index(ffmc, 0)
+    isz = initial_spread_index(ffmc, 0)
     # Surface spread rate with 0 wind on level ground
-    RSZ = rate_of_spread(fuel_type, ISZ, NoBUI, fmc, sfc, pc, pdf, cc, cbh)
+    rsz = rate_of_spread(fuel_type, isz, no_bui, fmc, sfc, pc, pdf, cc, cbh)
     # Eq. 40 (FCFDG 1992) - Surface spread rate with 0 wind upslope
-    RSF = RSZ * SF
+    rsf = rsz * sf
 
     # initialize local vars
-    ISF = -99
-    RSF_C2 = -99
-    RSF_D1 = -99
-    RSF_M3 = -99
-    RSF_M4 = -99
-    CF = -99
-    ISF_C2 = -99
-    ISF_D1 = -99
-    ISF_M3 = -99
-    ISF_M4 = -99
+    isf = -99
+    rsf_c2 = -99
+    rsf_d1 = -99
+    rsf_m3 = -99
+    rsf_m4 = -99
+    cf = -99
+    isf_c2 = -99
+    isf_d1 = -99
+    isf_m3 = -99
+    isf_m4 = -99
+
+    pdf100 = 100
 
     # Eqs. 41a, 41b (Wotton 2009) - Calculate the slope equivalent ISI
     is_basic = fuel_type in [
@@ -87,112 +89,110 @@ def slope_adjustment(
         a_val = FUEL_TYPE_ROS[fuel_type]["a"]
         b_val = FUEL_TYPE_ROS[fuel_type]["b"]
         c0_val = FUEL_TYPE_ROS[fuel_type]["c0"]
-        temp = 1 - (RSF / a_val) ** (1 / c0_val)
-        ISF = math.log(max(temp, 0.01)) / (-b_val)
+        temp = 1 - (rsf / a_val) ** (1 / c0_val)
+        isf = math.log(max(temp, 0.01)) / (-b_val)
 
     # M1/M2 weighted average
     if fuel_type in ["M1", "M2"]:
-        RSZ = rate_of_spread("C2", ISZ, NoBUI, fmc, sfc, pc, pdf, cc, cbh)
-        RSF_C2 = RSZ * SF
-        RSZ = rate_of_spread("D1", ISZ, NoBUI, fmc, sfc, pc, pdf, cc, cbh)
-        RSF_D1 = RSZ * SF
+        rsz = rate_of_spread("C2", isz, no_bui, fmc, sfc, pc, pdf, cc, cbh)
+        rsf_c2 = rsz * sf
+        rsz = rate_of_spread("D1", isz, no_bui, fmc, sfc, pc, pdf, cc, cbh)
+        rsf_d1 = rsz * sf
 
-        ISF_C2 = math.log(
+        isf_c2 = math.log(
             max(
-                1 - (RSF_C2 / FUEL_TYPE_ROS["C2"]["a"]) ** (1 / FUEL_TYPE_ROS["C2"]["c0"]),
+                1 - (rsf_c2 / FUEL_TYPE_ROS["C2"]["a"]) ** (1 / FUEL_TYPE_ROS["C2"]["c0"]),
                 0.01,
             )
         ) / (-FUEL_TYPE_ROS["C2"]["b"])
-        ISF_D1 = math.log(
+        isf_d1 = math.log(
             max(
-                1 - (RSF_D1 / FUEL_TYPE_ROS["D1"]["a"]) ** (1 / FUEL_TYPE_ROS["D1"]["c0"]),
+                1 - (rsf_d1 / FUEL_TYPE_ROS["D1"]["a"]) ** (1 / FUEL_TYPE_ROS["D1"]["c0"]),
                 0.01,
             )
         ) / (-FUEL_TYPE_ROS["D1"]["b"])
-        ISF = pc / 100 * ISF_C2 + (1 - pc / 100) * ISF_D1
+        isf = pc / 100 * isf_c2 + (1 - pc / 100) * isf_d1
 
     # M3 weighted average
     if fuel_type == "M3":
-        PDF100 = 100
-        RSZ = rate_of_spread("M3", ISZ, NoBUI, fmc, sfc, pc, PDF100, cc, cbh)
-        RSF_M3 = RSZ * SF
-        RSZ = rate_of_spread("D1", ISZ, NoBUI, fmc, sfc, pc, PDF100, cc, cbh)
-        RSF_D1 = RSZ * SF
-        ISF_M3 = math.log(
+        rsz = rate_of_spread("M3", isz, no_bui, fmc, sfc, pc, pdf100, cc, cbh)
+        rsf_m3 = rsz * sf
+        rsz = rate_of_spread("D1", isz, no_bui, fmc, sfc, pc, pdf100, cc, cbh)
+        rsf_d1 = rsz * sf
+        isf_m3 = math.log(
             max(
-                1 - (RSF_M3 / FUEL_TYPE_ROS["M3"]["a"]) ** (1 / FUEL_TYPE_ROS["M3"]["c0"]),
+                1 - (rsf_m3 / FUEL_TYPE_ROS["M3"]["a"]) ** (1 / FUEL_TYPE_ROS["M3"]["c0"]),
                 0.01,
             )
         ) / (-FUEL_TYPE_ROS["M3"]["b"])
-        ISF_D1 = math.log(
+        isf_d1 = math.log(
             max(
-                1 - (RSF_D1 / FUEL_TYPE_ROS["D1"]["a"]) ** (1 / FUEL_TYPE_ROS["D1"]["c0"]),
+                1 - (rsf_d1 / FUEL_TYPE_ROS["D1"]["a"]) ** (1 / FUEL_TYPE_ROS["D1"]["c0"]),
                 0.01,
             )
         ) / (-FUEL_TYPE_ROS["D1"]["b"])
-        ISF = pdf / 100 * ISF_M3 + (1 - pdf / 100) * ISF_D1
+        isf = pdf / 100 * isf_m3 + (1 - pdf / 100) * isf_d1
 
     # M4 weighted average
     if fuel_type == "M4":
-        PDF100 = 100
-        RSZ = rate_of_spread("M4", ISZ, NoBUI, fmc, sfc, pc, PDF100, cc, cbh)
-        RSF_M4 = RSZ * SF
-        RSZ = rate_of_spread("D1", ISZ, NoBUI, fmc, sfc, pc, PDF100, cc, cbh)
-        RSF_D1 = RSZ * SF
-        ISF_M4 = math.log(
+        rsz = rate_of_spread("M4", isz, no_bui, fmc, sfc, pc, pdf100, cc, cbh)
+        rsf_m4 = rsz * sf
+        rsz = rate_of_spread("D1", isz, no_bui, fmc, sfc, pc, pdf100, cc, cbh)
+        rsf_d1 = rsz * sf
+        isf_m4 = math.log(
             max(
-                1 - (RSF_M4 / FUEL_TYPE_ROS["M4"]["a"]) ** (1 / FUEL_TYPE_ROS["M4"]["c0"]),
+                1 - (rsf_m4 / FUEL_TYPE_ROS["M4"]["a"]) ** (1 / FUEL_TYPE_ROS["M4"]["c0"]),
                 0.01,
             )
         ) / (-FUEL_TYPE_ROS["M4"]["b"])
-        ISF_D1 = math.log(
+        isf_d1 = math.log(
             max(
-                1 - (RSF_D1 / FUEL_TYPE_ROS["D1"]["a"]) ** (1 / FUEL_TYPE_ROS["D1"]["c0"]),
+                1 - (rsf_d1 / FUEL_TYPE_ROS["D1"]["a"]) ** (1 / FUEL_TYPE_ROS["D1"]["c0"]),
                 0.01,
             )
         ) / (-FUEL_TYPE_ROS["D1"]["b"])
-        ISF = pdf / 100 * ISF_M4 + (1 - pdf / 100) * ISF_D1
+        isf = pdf / 100 * isf_m4 + (1 - pdf / 100) * isf_d1
 
     # Grass curing factor
     if fuel_type in ["O1A", "O1B"]:
         if cc < 58.8:
-            CF = 0.005 * (math.exp(0.061 * cc) - 1)
+            cf = 0.005 * (math.exp(0.061 * cc) - 1)
         else:
-            CF = 0.176 + 0.02 * (cc - 58.8)
+            cf = 0.176 + 0.02 * (cc - 58.8)
         a_val = FUEL_TYPE_ROS[fuel_type]["a"]
         b_val = FUEL_TYPE_ROS[fuel_type]["b"]
         c0_val = FUEL_TYPE_ROS[fuel_type]["c0"]
-        temp = 1 - safe_div(RSF, (CF * a_val)) ** (1 / c0_val)
-        ISF = math.log(max(temp, 0.01)) / (-b_val)
+        temp = 1 - safe_div(rsf, (cf * a_val)) ** (1 / c0_val)
+        isf = math.log(max(temp, 0.01)) / (-b_val)
 
         # Only set WSV/RAZ to nan for non-spreading fuels
-    if ISF <= 0 or math.isnan(ISF):
+    if isf <= 0 or math.isnan(isf):
         return {"WSV": math.nan, "RAZ": math.nan}
 
     # Eq. 46 (FCFDG 1992)
     m = FFMC_COEFFICIENT * (101 - ffmc) / (59.5 + ffmc)
     # Eq. 45 (FCFDG 1992) - FFMC function from the ISI equation
-    fF = 91.9 * math.exp(-0.1386 * m) * (1 + (m**5.31) / 49300000)
+    ff = 91.9 * math.exp(-0.1386 * m) * (1 + (m**5.31) / 49300000)
     # Eqs. 44a, 44d (Wotton 2009) - Slope equivalent wind speed
-    WSE = 1 / 0.05039 * math.log(ISF / (0.208 * fF))
+    wse = 1 / 0.05039 * math.log(isf / (0.208 * ff))
     # Eqs. 44b, 44e (Wotton 2009) - Slope equivalent wind speed
-    if WSE > 40 and ISF < (0.999 * 2.496 * fF):
-        WSE = 28 - (1 / 0.0818 * math.log(1 - ISF / (2.496 * fF)))
-    if WSE > 40 and ISF >= (0.999 * 2.496 * fF):
-        WSE = 112.45
+    if wse > 40 and isf < (0.999 * 2.496 * ff):
+        wse = 28 - (1 / 0.0818 * math.log(1 - isf / (2.496 * ff)))
+    if wse > 40 and isf >= (0.999 * 2.496 * ff):
+        wse = 112.45
 
     # Eq. 47 (FCFDG 1992) - x component
-    WSX = ws * math.sin(waz) + WSE * math.sin(saz)
+    wsx = ws * math.sin(waz) + wse * math.sin(saz)
     # Eq. 48 (FCFDG 1992) - y component
-    WSY = ws * math.cos(waz) + WSE * math.cos(saz)
+    wsy = ws * math.cos(waz) + wse * math.cos(saz)
 
-    WSV = math.sqrt(WSX**2 + WSY**2)
+    wsv = math.sqrt(wsx**2 + wsy**2)
 
     # Eq. 50 (FCFDG 1992) - the net effective wind direction (radians)
-    RAZ = math.acos(safe_div(WSY, WSV))
+    raz = math.acos(safe_div(wsy, wsv))
     # Eq. 51 (FCFDG 1992) - convert possible negative RAZ into more understandable
     # directions
-    if WSX < 0:
-        RAZ = 2 * math.pi - RAZ
+    if wsx < 0:
+        raz = 2 * math.pi - raz
 
-    return {"WSV": WSV, "RAZ": RAZ}
+    return {"WSV": wsv, "RAZ": raz}

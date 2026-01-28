@@ -30,15 +30,15 @@ def length_to_breadth(fuel_type: FuelType, wsv):
         # Correction to original Equation 80 is made here
         # Eq. 80a / 80b from Wotton 2009
         if wsv >= 1.0:
-            LB = 1.1 * (wsv**0.464)
+            lb = 1.1 * (wsv**0.464)
         else:
-            LB = 1.0  # Eq. 80/81
+            lb = 1.0  # Eq. 80/81
     else:
         # Eq. 79
         base = 1 - math.exp(-0.030 * wsv)
         if base < 0:
-            LB = math.nan
+            lb = math.nan
         else:
-            LB = 1.0 + 8.729 * (base**2.155)
+            lb = 1.0 + 8.729 * (base**2.155)
 
-    return LB
+    return lb

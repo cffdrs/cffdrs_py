@@ -109,22 +109,22 @@ def pros(T1, Long1, Lat1, T2, Long2, Lat2, T3, Long3, Lat3):
 
     """
     # Compute lengths
-    LengthT1T2 = haversine_distance(Long1, Lat1, Long2, Lat2)
-    LengthT1T3 = haversine_distance(Long1, Lat1, Long3, Lat3)
-    LengthT2T3 = haversine_distance(Long2, Lat2, Long3, Lat3)
+    length_t1t2 = haversine_distance(Long1, Lat1, Long2, Lat2)
+    length_t1t3 = haversine_distance(Long1, Lat1, Long3, Lat3)
+    length_t2t3 = haversine_distance(Long2, Lat2, Long3, Lat3)
 
     # Compute bearings
-    BearingT1T2 = bearing(Long1, Lat1, Long2, Lat2)
-    BearingT1T3 = bearing(Long1, Lat1, Long3, Lat3)
+    bearing_t1t2 = bearing(Long1, Lat1, Long2, Lat2)
+    bearing_t1t3 = bearing(Long1, Lat1, Long3, Lat3)
 
     angle_arad = math.acos(
-        (LengthT1T3**2 + LengthT1T2**2 - LengthT2T3**2) / (2 * LengthT1T3 * LengthT1T2)
+        (length_t1t3**2 + length_t1t2**2 - length_t2t3**2) / (2 * length_t1t3 * length_t1t2)
     )
     theta_arad = math.atan(
-        (T3 - T1) / (T2 - T1) * (LengthT1T2 / (LengthT1T3 * math.sin(angle_arad)))
+        (T3 - T1) / (T2 - T1) * (length_t1t2 / (length_t1t3 * math.sin(angle_arad)))
         - (1 / math.tan(angle_arad))
     )
     theta_adeg = (theta_arad * 180) / math.pi
-    dir = direction(BearingT1T2, BearingT1T3, theta_adeg)
-    ros = (LengthT1T2 * math.cos(theta_arad)) / (T2 - T1)
+    dir = direction(bearing_t1t2, bearing_t1t3, theta_adeg)
+    ros = (length_t1t2 * math.cos(theta_arad)) / (T2 - T1)
     return {"ros": ros, "direction": dir}

@@ -41,11 +41,11 @@ def overwinter_drought_code(dcf=100, rw=200, a=0.75, b=0.75):
     Bethesda, MD. https://cfs.nrcan.gc.ca/pubwarehouse/pdfs/23550.pdf
     """
     # Eq. 3 - Final fall moisture equivalent of the DC
-    Qf = 800 * math.exp(-dcf / 400)
+    qf = 800 * math.exp(-dcf / 400)
     # Eq. 2 - Starting spring moisture equivalent of the DC
-    Qs = a * Qf + b * (3.94 * rw)
+    qs = a * qf + b * (3.94 * rw)
     # Eq. 4 - Spring start-up value for the DC
-    dc_start = 400 * math.log(safe_div(800, Qs))
+    dc_start = 400 * math.log(safe_div(800, qs))
     # Constrain DC
     dc_start = max(dc_start, 15)
     return dc_start

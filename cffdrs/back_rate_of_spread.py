@@ -31,11 +31,11 @@ def back_rate_of_spread(fuel_type: FuelType, ffmc, bui, wsv, fmc, sfc, pc, pdf, 
     fF = 91.9 * math.exp(-0.1386 * m) * (1.0 + (m**5.31) / 49300000)
     # Eq. 75 (FCFDG 1992)
     # Calculate the Back fire wind function
-    BfW = math.exp(-0.05039 * wsv)
+    bf_w = math.exp(-0.05039 * wsv)
     # Calculate the ISI associated with the back fire spread rate
     # Eq. 76 (FCFDG 1992)
-    BISI = 0.208 * BfW * fF
+    bisi = 0.208 * bf_w * fF
     # Eq. 77 (FCFDG 1992)
     # Calculate final Back fire spread rate
-    BROS = rate_of_spread(fuel_type, BISI, bui, fmc, sfc, pc, pdf, cc, cbh)
-    return BROS
+    bros = rate_of_spread(fuel_type, bisi, bui, fmc, sfc, pc, pdf, cc, cbh)
+    return bros
