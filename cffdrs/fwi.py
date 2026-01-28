@@ -1,5 +1,4 @@
 from math import exp, log, sqrt
-import warnings
 
 from cffdrs.constants import FFMC_COEFFICIENT
 
