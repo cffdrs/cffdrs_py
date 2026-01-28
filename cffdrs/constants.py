@@ -28,6 +28,8 @@ FuelType = Literal[
 ]
 
 # Fuel type mappings
+# BUIo = average BUI for the fuel type
+# q = proportion of maximum possible spread rate that is reached at a standard BUI
 FUEL_TYPE_DEFAULTS = {
     "C1": {"BUIo": 72, "Q": 0.9},
     "C2": {"BUIo": 64, "Q": 0.7},
