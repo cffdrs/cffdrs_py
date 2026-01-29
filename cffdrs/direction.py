@@ -7,6 +7,11 @@ def direction(bearingT1T2, bearingT1T3, ThetaAdeg):
     :param ThetaAdeg: Direction
 
     :returns: dir - a direction in degrees
+
+    Note: This implementation normalizes the result using 360-degree adjustments,
+    fixing what I believe is a bug in the original R version which used 10-degree adjustments.
+    The result is that every direction returned will be between +180° and -180°, which wasn't always the
+    case with the R implementation.
     """
     dir = None
     if bearingT1T2 > 0 and bearingT1T3 > 0 and bearingT1T2 > bearingT1T3:
