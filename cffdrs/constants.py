@@ -50,6 +50,8 @@ FUEL_TYPE_DEFAULTS = {
     "O1B": {"BUIo": 1, "Q": 1.0},
 }
 
+# fuel type rate of spread regression coefficients
+# Table 6 (FCFDG 1992)
 FUEL_TYPE_ROS = {
     "C1": {"a": 90, "b": 0.0649, "c0": 4.5},
     "C2": {"a": 110, "b": 0.0282, "c0": 1.5},
