@@ -17,7 +17,6 @@ from cffdrs.fwi import fine_fuel_moisture_code
 
 # Calculate FFMC
 ffmc = fine_fuel_moisture_code(ffmc_yda=85.0, temp=20.0, rh=60.0, ws=15.0, prec=0.0)
-print(ffmc)  # Output: 87.692
 ```
 
 #### Duff Moisture Code (DMC)
@@ -27,7 +26,6 @@ from cffdrs.fwi import duff_moisture_code
 
 # Calculate DMC
 dmc = duff_moisture_code(dmc_yda=20.0, temp=25.0, rh=45.0, prec=0.0, lat=55.0, mon=6)
-print(dmc)  # Output: 22.123
 ```
 
 #### Drought Code (DC)
@@ -37,7 +35,6 @@ from cffdrs.fwi import drought_code
 
 # Calculate DC
 dc = drought_code(dc_yda=150.0, temp=30.0, rh=30.0, prec=0.0, lat=50.0, mon=7)
-print(dc)  # Output: 152.456
 ```
 
 #### Initial Spread Index (ISI)
@@ -47,7 +44,6 @@ from cffdrs.fwi import initial_spread_index
 
 # Calculate ISI
 isi = initial_spread_index(ffmc=85.0, ws=20.0)
-print(isi)  # Output: 8.234
 ```
 
 #### Buildup Index (BUI)
@@ -57,7 +53,6 @@ from cffdrs.fwi import buildup_index
 
 # Calculate BUI
 bui = buildup_index(dmc=25.0, dc=160.0)
-print(bui)  # Output: 45.678
 ```
 
 #### Fire Weather Index (FWI)
@@ -67,7 +62,6 @@ from cffdrs.fwi import fire_weather_index
 
 # Calculate FWI
 fwi = fire_weather_index(isi=10.0, bui=50.0)
-print(fwi)  # Output: 12.345
 ```
 
 ### Fire Behaviour Prediction (FBP) System
@@ -108,8 +102,7 @@ input_data = FBPInput(
 
 # Calculate primary outputs
 primary_results = fbp(input=input_data, output="Primary")
-print(primary_results[0])
-# Output: FBPPrimaryOutput(id='1', cfb=0.0, cfc=0.0, fd='S', hfi=0.0, raz=0.0, ros=0.0, sfc=0.0, tfc=0.0)
+
 
 # Calculate all outputs
 all_results = fbp(input=input_data, output="All")
