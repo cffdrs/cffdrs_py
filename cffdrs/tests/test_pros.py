@@ -39,6 +39,6 @@ def test_pros(load_csv):
         assert pytest.approx(expected_ros, abs=0.01) == ros_calculated, (
             f"Failed ROS for row {idx}: {row}. Result: {ros_calculated}, Expected: {expected_ros}"
         )
-        assert pytest.approx(expected_direction, rel=0.1) == direction_calculated, (
+        assert pytest.approx(expected_direction, abs=0.15) == direction_calculated, (
             f"Failed Direction for row {idx}: {row}. Result: {direction_calculated}, Expected: {expected_direction}"
         )
