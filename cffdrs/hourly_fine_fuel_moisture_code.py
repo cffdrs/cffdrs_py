@@ -1,5 +1,6 @@
 from math import exp
-from cffdrs.fwi import FFMC_COEFFICIENT
+
+from cffdrs.constants import FFMC_COEFFICIENT
 
 
 def hourly_fine_fuel_moisture_code(temp, rh, ws, prec, fo=85, t0=1):

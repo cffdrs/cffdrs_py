@@ -21,4 +21,7 @@ dependencies = []
 "Bug Tracker" = "https://github.com/nrcan-cfs-fire/cffdrs_py/issues"
 
 [dependency-groups]
-dev = ["pytest>=7.4.4"]
+dev = ["pytest>=7.4.4", "ruff>=0.14.14"]
+
+[tool.ruff]
+line-length = 100
