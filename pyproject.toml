@@ -3,8 +3,8 @@ requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cffdrs-py"
-version = "0.1.2"
+name = "cffdrs"
+version = "0.2.0"
 authors = [{ name = "Jordan Evens", email = "jordan.evens@nrcan-rncan.gc.ca" }]
 description = "A Python package for CFFDRS"
 readme = "README.md"
