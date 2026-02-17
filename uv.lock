@@ -10,8 +10,8 @@ resolution-markers = [
 ]
 
 [[package]]
-name = "cffdrs-py"
-version = "0.1.2"
+name = "cffdrs"
+version = "0.2.0"
 source = { editable = "." }
 
 [package.dev-dependencies]
