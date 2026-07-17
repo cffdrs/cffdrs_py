@@ -1,6 +1,7 @@
 import pytest
 
-from cffdrs.buildup_effect import buildup_effect
+from cffdrs.buildup_effect import buildup_effect, buildup_effect_core
+from cffdrs.constants import FUEL_TYPE_CODES
 from cffdrs.tests.conftest import float_or_nan
 
 
@@ -27,4 +28,23 @@ def test_buildup_effect(load_csv):
 
         assert pytest.approx(result, abs=0.01, nan_ok=True) == expected, (
             f"Failed for row: {row} - BE: {result}"
+        )
+
+
+def test_buildup_effect_core(load_csv):
+    """buildup_effect_core (int fuel_type_code) must match buildup_effect (string)."""
+    test_data = load_csv(
+        "cffdrs/tests/data/BuildupEffect.csv",
+        csv_schema,
+    )
+
+    for row in test_data:
+        bui = row["BUI"]
+        fuel_type = row["FUELTYPE"]
+
+        expected = buildup_effect(fuel_type, bui)
+        calculated = buildup_effect_core(FUEL_TYPE_CODES[fuel_type], bui)
+
+        assert pytest.approx(expected, abs=1e-9, nan_ok=True) == calculated, (
+            f"Failed for row: {row} - BE core: {calculated} vs scalar: {expected}"
         )

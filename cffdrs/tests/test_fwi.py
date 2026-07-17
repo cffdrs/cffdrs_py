@@ -4,6 +4,7 @@ from cffdrs.fwi import (
     duff_moisture_code,
     drought_code,
     initial_spread_index,
+    initial_spread_index_core,
     buildup_index,
     fire_weather_index,
 )
@@ -110,6 +111,27 @@ def test_isi(fwi_test_data):
         # Use a small tolerance for floating point comparison
         assert pytest.approx(result, abs=0.1) == expected_isi, (
             f"Failed for row: {row}, got {result}, expected {expected_isi}"
+        )
+
+        current_ffmc = result_ffmc
+
+
+def test_isi_core(fwi_test_data):
+    """initial_spread_index_core must match initial_spread_index."""
+    current_ffmc = 85.0
+
+    for row in fwi_test_data:
+        temp = row["TEMP"]
+        rh = row["RH"]
+        ws = row["WS"]
+        prec = row["PREC"]
+
+        result_ffmc = fine_fuel_moisture_code(current_ffmc, temp, rh, ws, prec)
+        expected = initial_spread_index(result_ffmc, ws)
+        calculated = initial_spread_index_core(result_ffmc, ws)
+
+        assert pytest.approx(expected, abs=1e-9, nan_ok=True) == calculated, (
+            f"Failed for row: {row}, core={calculated}, scalar={expected}"
         )
 
         current_ffmc = result_ffmc

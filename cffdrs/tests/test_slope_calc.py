@@ -1,7 +1,8 @@
 import pytest
 import math
 from cffdrs.tests.conftest import float_or_nan
-from cffdrs.slope_calc import slope_adjustment
+from cffdrs.constants import FUEL_TYPE_CODES
+from cffdrs.slope_calc import slope_adjustment, slope_adjustment_core
 
 
 csv_schema = {
@@ -116,4 +117,41 @@ def test_slope_calc(load_csv):
 
         pytest.fail(
             f"{len(failures)} failures in slope_adjustment test. See printed details above."
+        )
+
+
+def test_slope_adjustment_core(load_csv):
+    """
+    slope_adjustment_core (int fuel_type_code, M1-M4 recursion unrolled) must match
+    slope_adjustment (string fuel_type) exactly - this checks the refactor is a faithful
+    translation, independent of the known R-comparison edge cases the xfail test above covers.
+    """
+    data = load_csv("cffdrs/tests/data/Slope.csv", csv_schema)
+
+    for idx, row in enumerate(data, start=2):
+        fuel_type = row["FUELTYPE"]
+        args = (
+            row["FFMC"],
+            row["BUI"],
+            row["WS"],
+            row["WAZ"],
+            row["GS"],
+            row["SAZ"],
+            row["FMC"],
+            row["SFC"],
+            row["PC"],
+            row["PDF"],
+            row["CC"],
+            row["CBH"],
+            row["ISI"],
+        )
+
+        expected = slope_adjustment(fuel_type, *args)
+        calculated = slope_adjustment_core(FUEL_TYPE_CODES[fuel_type], *args)
+
+        assert pytest.approx(expected.wsv, abs=1e-9, nan_ok=True) == calculated.wsv, (
+            f"Row {idx} WSV core: {calculated.wsv} vs scalar: {expected.wsv}"
+        )
+        assert pytest.approx(expected.raz, abs=1e-9, nan_ok=True) == calculated.raz, (
+            f"Row {idx} RAZ core: {calculated.raz} vs scalar: {expected.raz}"
         )

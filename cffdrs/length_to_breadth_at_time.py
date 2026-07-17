@@ -1,5 +1,33 @@
 import math
-from cffdrs.constants import FuelType
+from cffdrs.constants import FuelType, C1, O1A, O1B, S1, S2, S3, D1
+
+
+def length_to_breadth_at_time_core(fuel_type_code: int, lb, hr, cfb):
+    """
+    Vectorization-ready Length-to-Breadth ratio at time t function.
+
+    Same as length_to_breadth_at_time(), but takes an int fuel_type_code (see
+    cffdrs.constants.FUEL_TYPE_CODES) instead of a fuel type string.
+
+    :param fuel_type_code: The Fire Behaviour Prediction fuel type code
+    :param lb: Length to Breadth ratio
+    :param hr: Time since ignition (hours)
+    :param cfb: Crown Fraction Burned
+
+    :returns: Length to Breadth ratio at time since ignition
+    """
+    # Eq. 72 (FCFDG 1992) - alpha constant value, dependent on fuel type
+    if fuel_type_code in (C1, O1A, O1B, S1, S2, S3, D1):
+        alpha = 0.115
+    else:
+        if cfb < 0:
+            alpha = math.nan
+        else:
+            alpha = 0.115 - 18.8 * (cfb**2.5) * math.exp(-8 * cfb)
+
+    # Eq. 81 (Wotton et.al. 2009) - LB at time since ignition
+    lb_t = (lb - 1) * (1 - math.exp(-alpha * hr)) + 1
+    return lb_t
 
 
 def length_to_breadth_at_time(fuel_type: FuelType, lb, hr, cfb):

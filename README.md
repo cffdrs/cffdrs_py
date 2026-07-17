@@ -120,3 +120,44 @@ results = fbp(input=inputs, output="Primary")
 for result in results:
     print(result)
 ```
+
+#### Vectorization
+
+`cffdrs` has no runtime dependencies - it does not depend on numpy, numba, or jax. For large
+batches, `fbp()`'s Python-level loop over `FBPInput` objects can be a bottleneck, so every
+FBP function that branches on fuel type (a string, like `"C2"`) also has a `_core` counterpart
+that takes an int `fuel_type_code` instead (see `cffdrs.constants.FUEL_TYPE_CODES`), has no
+Python object construction/validation in the hot path, and has no fuel-type-dependent recursion
+(the M1-M4 mixedwood blends, which normally call back into `rate_of_spread`/`slope_adjustment`
+with a different fixed fuel type, are unrolled into flat arithmetic instead). That makes them
+straightforward to wrap yourself with array-vectorization tools such as `numpy.vectorize` or
+`numba.guvectorize` - you bring the dependency, this package stays dependency-free either way.
+
+The top-level function is `fire_behaviour_prediction_core` in `cffdrs.fire_behaviour_prediction`;
+it mirrors `fire_behaviour_prediction(input, "All")` but takes already-validated scalar inputs
+(the range-clamping and unit conversion `FBPInput.__post_init__` normally does) and an int
+`fuel_type_code`, and always returns the full set of fields as a `NamedTuple` (`FBPCoreOutput`,
+with `fd_code` in place of the `fd` string - see `FD_SURFACE`/`FD_INTERMITTENT`/`FD_CROWN`/`FD_NONE`).
+
+```python
+import numpy as np
+from cffdrs.constants import FUEL_TYPE_CODES
+from cffdrs.fire_behaviour_prediction import fire_behaviour_prediction_core
+
+# Map string fuel types to int codes once, up front.
+fuel_type_codes = np.array([FUEL_TYPE_CODES[ft] for ft in ["C2", "C3", "D1"]])
+ffmc = np.array([85.0, 90.0, 88.0])
+bui = np.array([40.0, 50.0, 45.0])
+ws = np.array([15.0, 20.0, 10.0])
+# ... one array per fire_behaviour_prediction_core parameter, pre-clamped/validated
+# the same way FBPInput.__post_init__ does for the scalar API.
+
+vectorized = np.vectorize(fire_behaviour_prediction_core, otypes=[object])
+results = vectorized(fuel_type_codes, ffmc, bui, ws, ...)  # one FBPCoreOutput per row
+ros = np.array([r.ros for r in results])
+```
+
+A `numba.guvectorize`'d version of the same call would compile down to native code and avoid the
+Python-level loop `numpy.vectorize` still does under the hood - useful once you're processing
+rasters or large tables and `_core`'s lack of recursion/string dispatch is what makes it eligible
+for `nopython` mode in the first place.

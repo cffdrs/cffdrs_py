@@ -1,5 +1,56 @@
 from typing import Literal
-from cffdrs.constants import FuelType
+from cffdrs.constants import FuelType, M1, M2, M3, M4
+
+
+def crown_fuel_consumption_core(fuel_type_code: int, cfl, cfb, pc, pdf):
+    """
+    Vectorization-ready Crown Fuel Consumption calculation.
+
+    Same as crown_fuel_consumption(), but takes an int fuel_type_code (see
+    cffdrs.constants.FUEL_TYPE_CODES) instead of a fuel type string.
+
+    :param fuel_type_code: The Fire Behaviour Prediction fuel type code
+    :param cfl: Crown Fuel Load (kg/m^2)
+    :param cfb: Crown Fraction Burned (0-1)
+    :param pc: Percent Conifer (%)
+    :param pdf: Percent Dead Balsam Fir (%)
+
+    :returns: CFC Crown Fuel Consumption (kg/m^2)
+    """
+    # Eq. 66a (Wotton 2009) - Crown Fuel Consumption (CFC)
+    cfc = cfl * cfb
+    if fuel_type_code in (M1, M2):
+        # Eq. 66b (Wotton 2009) - CFC for M1/M2 types
+        cfc = pc / 100 * cfc
+    elif fuel_type_code in (M3, M4):
+        # Eq. 66c (Wotton 2009) - CFC for M3/M4 types
+        cfc = pdf / 100 * cfc
+    return cfc
+
+
+def total_fuel_consumption_core(fuel_type_code: int, cfl, cfb, sfc, pc, pdf):
+    """
+    Vectorization-ready Total Fuel Consumption calculation.
+
+    Same as total_fuel_consumption(..., option="TFC"), but takes an int
+    fuel_type_code (see cffdrs.constants.FUEL_TYPE_CODES) instead of a fuel
+    type string. Use crown_fuel_consumption_core() directly for the "CFC"
+    option - a string option switch has no place in a vectorization-ready
+    numeric core, so the two outputs are now separate functions.
+
+    :param fuel_type_code: The Fire Behaviour Prediction fuel type code
+    :param cfl: Crown Fuel Load (kg/m^2)
+    :param cfb: Crown Fraction Burned (0-1)
+    :param sfc: Surface Fuel Consumption (kg/m^2)
+    :param pc: Percent Conifer (%)
+    :param pdf: Percent Dead Balsam Fir (%)
+
+    :returns: TFC Total (Surface + Crown) Fuel Consumption (kg/m^2)
+    """
+    cfc = crown_fuel_consumption_core(fuel_type_code, cfl, cfb, pc, pdf)
+    # Eq. 67 (FCFDG 1992) - Total Fuel Consumption
+    tfc = sfc + cfc
+    return tfc
 
 
 def crown_fuel_consumption(fuel_type: FuelType, cfl, cfb, pc, pdf):

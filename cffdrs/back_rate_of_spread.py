@@ -1,6 +1,32 @@
 import math
 from cffdrs.constants import FuelType, FFMC_COEFFICIENT
-from cffdrs.rate_of_spread import rate_of_spread
+from cffdrs.rate_of_spread import rate_of_spread, rate_of_spread_core
+
+
+def back_rate_of_spread_core(fuel_type_code: int, ffmc, bui, wsv, fmc, sfc, pc, pdf, cc, cbh):
+    """
+    Vectorization-ready Back Fire Rate of Spread Calculator.
+
+    Same as back_rate_of_spread(), but takes an int fuel_type_code (see
+    cffdrs.constants.FUEL_TYPE_CODES) instead of a fuel type string.
+
+    :returns: BROS Back Fire Rate of Spread
+    """
+    # Eq. 46 (FCFDG 1992)
+    # Calculate the FFMC function from the ISI equation
+    m = FFMC_COEFFICIENT * (101 - ffmc) / (59.5 + ffmc)
+    # Eq. 45 (FCFDG 1992)
+    fF = 91.9 * math.exp(-0.1386 * m) * (1.0 + (m**5.31) / 49300000)
+    # Eq. 75 (FCFDG 1992)
+    # Calculate the Back fire wind function
+    bf_w = math.exp(-0.05039 * wsv)
+    # Calculate the ISI associated with the back fire spread rate
+    # Eq. 76 (FCFDG 1992)
+    bisi = 0.208 * bf_w * fF
+    # Eq. 77 (FCFDG 1992)
+    # Calculate final Back fire spread rate
+    bros = rate_of_spread_core(fuel_type_code, bisi, bui, fmc, sfc, pc, pdf, cc, cbh)
+    return bros
 
 
 def back_rate_of_spread(fuel_type: FuelType, ffmc, bui, wsv, fmc, sfc, pc, pdf, cc, cbh):

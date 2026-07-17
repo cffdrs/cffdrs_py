@@ -1,5 +1,30 @@
 import math
-from cffdrs.constants import FuelType, FUEL_TYPE_DEFAULTS
+from cffdrs.constants import FuelType, FUEL_TYPE_DEFAULTS, BUI_O, BUI_Q
+
+
+def buildup_effect_core(fuel_type_code: int, bui):
+    """
+    Vectorization-ready Build Up Effect Calculator.
+
+    Same as buildup_effect(), but takes an int fuel_type_code (see
+    cffdrs.constants.FUEL_TYPE_CODES) instead of a fuel type string.
+
+    :param fuel_type_code: The Fire Behaviour Prediction fuel type code
+    :param bui: The Buildup Index value
+
+    :returns: BE Build up effect
+    """
+    # Eq. 54 (FCFDG 1992) The Buildup Effect
+    buio = BUI_O[fuel_type_code]
+    q = BUI_Q[fuel_type_code]
+
+    if math.isnan(buio) or math.isnan(q):
+        return math.nan if bui > 0 else 1.0
+
+    if bui > 0 and buio > 0:
+        return math.exp(50 * math.log(q) * (1 / bui - 1 / buio))
+
+    return 1.0
 
 
 def buildup_effect(fuel_type: FuelType, bui):

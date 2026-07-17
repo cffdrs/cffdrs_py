@@ -313,6 +313,45 @@ def drought_code(dc_yda, temp, rh, prec, lat, mon, lat_adjust=True):
     return dc1
 
 
+def initial_spread_index_core(ffmc, ws, fbp_mod=False):
+    """
+    Vectorization-ready Initial Spread Index Calculation.
+
+    Same formula as initial_spread_index(), but without the range-validating
+    `raise ValueError` guards - dynamic exception messages aren't
+    traceable/compilable by array-vectorization tools like numba or jax, and
+    within the FBP system, inputs are already range-clamped once up front (see
+    FBPInput.__post_init__) before reaching this calculation. A caller
+    vectorizing over arrays of inputs is expected to validate/clamp the same
+    way, once, over the whole array.
+
+    Parameters
+    ----------
+    ffmc : float
+       Fine Fuel Moisture Code
+    ws : float
+       Wind Speed (km/h)
+    fbp_mod : bool, default=False
+       Use the fbp modification at the extreme end
+
+    Returns
+    -------
+    float
+        Initial Spread Index
+    """
+    # Eq. 10 - Moisture content
+    fm = FFMC_COEFFICIENT * (101 - ffmc) / (59.5 + ffmc)
+    # Eq. 24 - Wind Effect
+    # the ifelse, also takes care of the ISI modification for the fbp functions
+    # This modification is Equation 53a in FCFDG (1992)
+    fW = (12 * (1 - exp(-0.0818 * (ws - 28)))) if (ws >= 40 and fbp_mod) else exp(0.05039 * ws)
+    # Eq. 25 - Fine Fuel Moisture
+    fF = 91.9 * exp(-0.1386 * fm) * (1 + (fm**5.31) / 49300000)
+    # Eq. 26 - Spread Index Equation
+    isi = 0.208 * fW * fF
+    return isi
+
+
 def initial_spread_index(ffmc, ws, fbp_mod=False):
     """
     Initial Spread Index Calculation
