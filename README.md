@@ -121,27 +121,38 @@ for result in results:
     print(result)
 ```
 
-#### Vectorization
+#### Vectorization support
 
-`cffdrs` has no runtime dependencies - it does not depend on numpy, numba, or jax. For large
-batches, `fbp()`'s Python-level loop over `FBPInput` objects can be a bottleneck, so every
-FBP function that branches on fuel type (a string, like `"C2"`) also has a leading-underscore
-counterpart that takes an int `fuel_type_code` instead (see `cffdrs.constants.FUEL_TYPE_CODES`), has no
-Python object construction/validation in the hot path, and has no fuel-type-dependent recursion
-(the M1-M4 mixedwood blends, which normally call back into `rate_of_spread`/`slope_adjustment`
-with a different fixed fuel type, are unrolled into flat arithmetic instead). That makes them
-straightforward to wrap yourself with array-vectorization tools such as `numpy.vectorize` or
-`numba.guvectorize` - you bring the dependency, this package stays dependency-free either way.
-These functions are prefixed with `_` because they're a lower-level, less stable surface than
-the rest of the public API (plain scalar inputs, no input validation, no dataclass output) -
-they're still importable by name (Python's `_` prefix is a convention, not access control), just
-opt in with the understanding that they may change without a deprecation cycle.
+`cffdrs` does not vectorize anything itself and has no runtime dependencies, so it does not depend
+on numpy, numba, or jax. This section is for callers who want to do that themselves: `fbp()`'s
+Python-level loop over `FBPInput` objects can be a bottleneck over large batches, and two things
+about the normal API get in the way of vectorizing it directly. Fuel type is a string (`"C2"`),
+and the M1-M4 mixedwood fuel types compute part of their rate of spread by calling back into
+`rate_of_spread`/`slope_adjustment` with a *different* fuel type, a data-dependent recursive call
+that array-vectorization tools like `numba` or `jax` can't trace or compile.
 
-The top-level function is `_fire_behaviour_prediction` in `cffdrs.fire_behaviour_prediction`;
-it mirrors `fire_behaviour_prediction(input, "All")` but takes already-validated scalar inputs
-(the range-clamping and unit conversion `FBPInput.__post_init__` normally does) and an int
-`fuel_type_code`, and always returns the full set of fields as a `NamedTuple` (`_FBPOutput`,
-with `fd_code` in place of the `fd` string - see `FD_SURFACE`/`FD_INTERMITTENT`/`FD_CROWN`/`FD_NONE`).
+To make that possible, every FBP function that branches on fuel type also has a leading-underscore
+counterpart that a caller can wrap themselves:
+
+- it takes an int `fuel_type_code` instead of a fuel type string (see
+  `cffdrs.constants.FUEL_TYPE_CODES` for the mapping)
+- the M1-M4 recursive sub-calls are unrolled into flat arithmetic instead
+- it has no Python object construction or input validation in the hot path (plain scalars in,
+  plain scalars/tuples out)
+
+These functions are prefixed with `_` because they're a lower-level, less stable surface than the
+rest of the public API. They're still importable by name (Python's `_` prefix is a convention,
+not access control), just opt in with the understanding that they may change without a
+deprecation cycle. You bring the vectorization tool (`numpy.vectorize`, `numba.guvectorize`,
+etc.); this package stays dependency-free either way.
+
+The one you'll usually want is `_fire_behaviour_prediction` in `cffdrs.fire_behaviour_prediction`.
+It's what `fire_behaviour_prediction(input, "All")` delegates to internally, so it mirrors that
+computation exactly, but takes already-validated scalar inputs (the range-clamping and unit
+conversion `FBPInput.__post_init__` normally does; a caller vectorizing over arrays of inputs is
+expected to do the equivalent once, up front, over the whole array) and an int `fuel_type_code`,
+and always returns the full set of fields as a `NamedTuple` (`_FBPOutput`, with `fd_code` in place
+of the `fd` string; see `FD_SURFACE`/`FD_INTERMITTENT`/`FD_CROWN`/`FD_NONE`).
 
 ```python
 import numpy as np
@@ -162,6 +173,6 @@ ros = np.array([r.ros for r in results])
 ```
 
 A `numba.guvectorize`'d version of the same call would compile down to native code and avoid the
-Python-level loop `numpy.vectorize` still does under the hood - useful once you're processing
+Python-level loop `numpy.vectorize` still does under the hood. That's useful once you're processing
 rasters or large tables, and it's the lack of recursion/string dispatch in `_fire_behaviour_prediction`
 that makes it eligible for `nopython` mode in the first place.
