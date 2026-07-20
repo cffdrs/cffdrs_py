@@ -1,5 +1,16 @@
 import math
-from cffdrs.constants import FuelType, FUEL_TYPE_CODES, C1, O1A, O1B, S1, S2, S3, D1
+from cffdrs.constants import (
+    FuelType,
+    FUEL_TYPE_CODES,
+    UNKNOWN_FUEL_TYPE_CODE,
+    C1,
+    O1A,
+    O1B,
+    S1,
+    S2,
+    S3,
+    D1,
+)
 
 
 def _length_to_breadth_at_time(fuel_type_code: int, lb: float, hr: float, cfb: float) -> float:
@@ -55,6 +66,8 @@ def length_to_breadth_at_time(fuel_type: FuelType, lb, hr, cfb):
 
     :returns: Length to Breadth ratio at time since ignition
     """
-    # -1 for an unrecognized fuel type never matches the alpha=0.115 list,
-    # which mirrors the old fall-through to the cfb-based "else" formula.
-    return _length_to_breadth_at_time(FUEL_TYPE_CODES.get(fuel_type, -1), lb, hr, cfb)
+    # UNKNOWN_FUEL_TYPE_CODE never matches the alpha=0.115 list, which
+    # mirrors the old fall-through to the cfb-based "else" formula.
+    return _length_to_breadth_at_time(
+        FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE), lb, hr, cfb
+    )

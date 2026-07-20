@@ -1,5 +1,5 @@
 import math
-from cffdrs.constants import FuelType, BUI_O, BUI_Q, FUEL_TYPE_CODES
+from cffdrs.constants import FuelType, BUI_O, BUI_Q, FUEL_TYPE_CODES, UNKNOWN_FUEL_TYPE_CODE
 
 
 def _buildup_effect(fuel_type_code: int, bui: float) -> float:
@@ -47,4 +47,4 @@ def buildup_effect(fuel_type: FuelType, bui):
 
     :returns: BE Build up effect
     """
-    return _buildup_effect(FUEL_TYPE_CODES.get(fuel_type, -1), bui)
+    return _buildup_effect(FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE), bui)

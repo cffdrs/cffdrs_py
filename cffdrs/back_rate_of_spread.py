@@ -1,5 +1,5 @@
 import math
-from cffdrs.constants import FuelType, FFMC_COEFFICIENT, FUEL_TYPE_CODES
+from cffdrs.constants import FuelType, FFMC_COEFFICIENT, FUEL_TYPE_CODES, UNKNOWN_FUEL_TYPE_CODE
 from cffdrs.rate_of_spread import _rate_of_spread
 
 
@@ -62,5 +62,14 @@ def back_rate_of_spread(fuel_type: FuelType, ffmc, bui, wsv, fmc, sfc, pc, pdf, 
     :returns: BROS Back Fire Rate of Spread
     """
     return _back_rate_of_spread(
-        FUEL_TYPE_CODES.get(fuel_type, -1), ffmc, bui, wsv, fmc, sfc, pc, pdf, cc, cbh
+        FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE),
+        ffmc,
+        bui,
+        wsv,
+        fmc,
+        sfc,
+        pc,
+        pdf,
+        cc,
+        cbh,
     )

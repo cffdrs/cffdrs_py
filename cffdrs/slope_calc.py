@@ -5,6 +5,7 @@ from cffdrs.constants import (
     FFMC_COEFFICIENT,
     FuelType,
     FUEL_TYPE_CODES,
+    UNKNOWN_FUEL_TYPE_CODE,
     ROS_A,
     ROS_B,
     ROS_C0,
@@ -262,7 +263,7 @@ def slope_adjustment(
     :returns: RAZ and WSV - Rate of spread azimuth (degrees) and Wind Slope speed (km/hr)
     """
     result = _slope_adjustment(
-        FUEL_TYPE_CODES.get(fuel_type, -1),
+        FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE),
         ffmc,
         bui,
         ws,

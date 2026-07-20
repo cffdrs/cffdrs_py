@@ -1,5 +1,11 @@
 import math
-from cffdrs.constants import FuelType, FUEL_TYPE_NAMES, FUEL_TYPE_CODES, C6
+from cffdrs.constants import (
+    FuelType,
+    FUEL_TYPE_NAMES,
+    FUEL_TYPE_CODES,
+    UNKNOWN_FUEL_TYPE_CODE,
+    C6,
+)
 
 # Default crown base height by fuel type (Table 7, FCFDG 1992), indexed by
 # fuel_type_code instead of fuel_type string. math.nan where undefined (NF, WA).
@@ -65,4 +71,4 @@ def crown_base_height(fuel_type: FuelType, cbh, sd, sh):
 
     :returns: Crown Base Height (m)
     """
-    return _crown_base_height(FUEL_TYPE_CODES.get(fuel_type, -1), cbh, sd, sh)
+    return _crown_base_height(FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE), cbh, sd, sh)

@@ -1,5 +1,5 @@
 import math
-from cffdrs.constants import FuelType, FUEL_TYPE_CODES, O1A, O1B
+from cffdrs.constants import FuelType, FUEL_TYPE_CODES, UNKNOWN_FUEL_TYPE_CODE, O1A, O1B
 
 
 def _length_to_breadth(fuel_type_code: int, wsv: float) -> float:
@@ -52,6 +52,6 @@ def length_to_breadth(fuel_type: FuelType, wsv):
 
     :returns: Length to Breadth ratio value
     """
-    # -1 for an unrecognized fuel type never matches (O1A, O1B), which
-    # mirrors the old fall-through to the non-grass "else" formula.
-    return _length_to_breadth(FUEL_TYPE_CODES.get(fuel_type, -1), wsv)
+    # UNKNOWN_FUEL_TYPE_CODE never matches (O1A, O1B), which mirrors the old
+    # fall-through to the non-grass "else" formula.
+    return _length_to_breadth(FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE), wsv)

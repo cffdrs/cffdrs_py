@@ -90,6 +90,16 @@ FUEL_TYPE_ROS = {
 FUEL_TYPE_NAMES: tuple = get_args(FuelType)
 FUEL_TYPE_CODES: dict = {name: code for code, name in enumerate(FUEL_TYPE_NAMES)}
 
+# Sentinel fuel_type_code for a string that isn't a recognized FuelType.
+# Public wrappers use FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE)
+# instead of a bare subscript so an unrecognized fuel type falls through to
+# whatever a leading-underscore function does for a fuel type with no
+# entry (nan, or an unscaled/default formula branch) instead of raising
+# KeyError - matching the graceful fallback the original string-keyed
+# dict.get(fuel_type, default) calls had. It's always negative so it can
+# never collide with a real fuel_type_code (always >= 0).
+UNKNOWN_FUEL_TYPE_CODE = -1
+
 (
     C1,
     C2,

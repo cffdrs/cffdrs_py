@@ -2,6 +2,7 @@ import math
 from cffdrs.constants import (
     FuelType,
     FUEL_TYPE_CODES,
+    UNKNOWN_FUEL_TYPE_CODE,
     C1,
     C2,
     C3,
@@ -101,6 +102,8 @@ def surface_fuel_consumption(fuel_type: FuelType, ffmc, bui, pc, gfl):
 
     :returns: SFC Surface Fuel Consumption (kg/m^2)
     """
-    # -1 for an unrecognized fuel type never matches any branch below, which
-    # mirrors the old behavior of falling through to the sfc<=0 constraint.
-    return _surface_fuel_consumption(FUEL_TYPE_CODES.get(fuel_type, -1), ffmc, bui, pc, gfl)
+    # UNKNOWN_FUEL_TYPE_CODE never matches any branch below, which mirrors
+    # the old behavior of falling through to the sfc<=0 constraint.
+    return _surface_fuel_consumption(
+        FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE), ffmc, bui, pc, gfl
+    )

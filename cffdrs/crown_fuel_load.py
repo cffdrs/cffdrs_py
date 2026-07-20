@@ -1,5 +1,5 @@
 import math
-from cffdrs.constants import FuelType, FUEL_TYPE_NAMES, FUEL_TYPE_CODES
+from cffdrs.constants import FuelType, FUEL_TYPE_NAMES, FUEL_TYPE_CODES, UNKNOWN_FUEL_TYPE_CODE
 
 # Default crown fuel load by fuel type (Table 7, FCFDG 1992), indexed by
 # fuel_type_code instead of fuel_type string. math.nan where undefined (NF, WA).
@@ -56,4 +56,4 @@ def crown_fuel_load(fuel_type: FuelType, cfl):
 
     :returns: Crown Fuel Load
     """
-    return _crown_fuel_load(FUEL_TYPE_CODES.get(fuel_type, -1), cfl)
+    return _crown_fuel_load(FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE), cfl)

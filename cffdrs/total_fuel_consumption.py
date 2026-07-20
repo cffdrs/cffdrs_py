@@ -1,5 +1,5 @@
 from typing import Literal
-from cffdrs.constants import FuelType, FUEL_TYPE_CODES, M1, M2, M3, M4
+from cffdrs.constants import FuelType, FUEL_TYPE_CODES, UNKNOWN_FUEL_TYPE_CODE, M1, M2, M3, M4
 
 
 def _crown_fuel_consumption(
@@ -58,9 +58,11 @@ def _total_fuel_consumption(
 
 
 def crown_fuel_consumption(fuel_type: FuelType, cfl, cfb, pc, pdf):
-    # -1 for an unrecognized fuel type never matches (M1,M2)/(M3,M4), which
-    # mirrors the old fall-through leaving CFC unscaled.
-    return _crown_fuel_consumption(FUEL_TYPE_CODES.get(fuel_type, -1), cfl, cfb, pc, pdf)
+    # UNKNOWN_FUEL_TYPE_CODE never matches (M1,M2)/(M3,M4), which mirrors
+    # the old fall-through leaving CFC unscaled.
+    return _crown_fuel_consumption(
+        FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE), cfl, cfb, pc, pdf
+    )
 
 
 def total_fuel_consumption(

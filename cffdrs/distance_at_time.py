@@ -1,5 +1,16 @@
 import math
-from cffdrs.constants import FuelType, FUEL_TYPE_CODES, C1, O1A, O1B, S1, S2, S3, D1
+from cffdrs.constants import (
+    FuelType,
+    FUEL_TYPE_CODES,
+    UNKNOWN_FUEL_TYPE_CODE,
+    C1,
+    O1A,
+    O1B,
+    S1,
+    S2,
+    S3,
+    D1,
+)
 
 
 def _distance_at_time(fuel_type_code: int, roseq: float, hr: float, cfb: float) -> float:
@@ -53,6 +64,6 @@ def distance_at_time(fuel_type: FuelType, roseq, hr, cfb):
 
     :returns: DISTt Head fire spread distance at time t
     """
-    # -1 for an unrecognized fuel type never matches the alpha=0.115 list,
-    # which mirrors the old fall-through to the cfb-based "else" formula.
-    return _distance_at_time(FUEL_TYPE_CODES.get(fuel_type, -1), roseq, hr, cfb)
+    # UNKNOWN_FUEL_TYPE_CODE never matches the alpha=0.115 list, which
+    # mirrors the old fall-through to the cfb-based "else" formula.
+    return _distance_at_time(FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE), roseq, hr, cfb)

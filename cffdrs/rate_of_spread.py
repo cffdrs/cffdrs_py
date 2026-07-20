@@ -4,6 +4,7 @@ import math
 from cffdrs.constants import (
     FuelType,
     FUEL_TYPE_CODES,
+    UNKNOWN_FUEL_TYPE_CODE,
     ROS_A,
     ROS_B,
     ROS_C0,
@@ -241,11 +242,13 @@ def rate_of_spread_extended(fuel_type: FuelType, isi, bui, fmc, sfc, pc, pdf, cc
     :returns: dict with ROS - Rate of Spread (m/min), CFB, CSI, RSO
     """
     result = _rate_of_spread_extended(
-        FUEL_TYPE_CODES.get(fuel_type, -1), isi, bui, fmc, sfc, pc, pdf, cc, cbh
+        FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE), isi, bui, fmc, sfc, pc, pdf, cc, cbh
     )
     return RateOfSpreadOutput(ros=result.ros, cfb=result.cfb, csi=result.csi, rso=result.rso)
 
 
 def rate_of_spread(fuel_type: FuelType, isi, bui, fmc, sfc, pc, pdf, cc, cbh):
     # HACK: C6 ROS depends on CFB so do this to not repeat calculations
-    return _rate_of_spread(FUEL_TYPE_CODES.get(fuel_type, -1), isi, bui, fmc, sfc, pc, pdf, cc, cbh)
+    return _rate_of_spread(
+        FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE), isi, bui, fmc, sfc, pc, pdf, cc, cbh
+    )
