@@ -3,7 +3,7 @@ import pytest
 from cffdrs.c6_calc import (
     intermediate_surface_rate_of_spread_c6,
     surface_rate_of_spread_c6,
-    surface_rate_of_spread_c6_core,
+    _surface_rate_of_spread_c6,
     crown_rate_of_spread_c6,
     crown_fraction_burned_c6,
 )
@@ -35,8 +35,8 @@ def test_surface_rate_of_spread_c6(c6_calc_test_data):
         assert pytest.approx(expected_rss, abs=0.01) == rss, f"Failed for row: {row} - RSS: {rss}"
 
 
-def test_surface_rate_of_spread_c6_core(c6_calc_test_data):
-    """surface_rate_of_spread_c6_core must match surface_rate_of_spread_c6."""
+def test_surface_rate_of_spread_c6_equivalence(c6_calc_test_data):
+    """_surface_rate_of_spread_c6 must match surface_rate_of_spread_c6."""
 
     for row in c6_calc_test_data:
         isi = row["isi"]
@@ -45,7 +45,7 @@ def test_surface_rate_of_spread_c6_core(c6_calc_test_data):
         rsi = intermediate_surface_rate_of_spread_c6(isi)
 
         expected = surface_rate_of_spread_c6(rsi, bui)
-        calculated = surface_rate_of_spread_c6_core(rsi, bui)
+        calculated = _surface_rate_of_spread_c6(rsi, bui)
         assert pytest.approx(expected, abs=1e-9, nan_ok=True) == calculated, (
             f"Failed for row: {row} - RSS core: {calculated} vs scalar: {expected}"
         )

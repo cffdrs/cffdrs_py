@@ -1,8 +1,8 @@
 import pytest
 from cffdrs.total_fuel_consumption import (
     total_fuel_consumption,
-    total_fuel_consumption_core,
-    crown_fuel_consumption_core,
+    _total_fuel_consumption,
+    _crown_fuel_consumption,
 )
 from cffdrs.constants import FUEL_TYPE_CODES
 
@@ -39,9 +39,9 @@ def test_total_fuel_consumption(load_csv):
         )
 
 
-def test_total_fuel_consumption_core(load_csv):
+def test_total_fuel_consumption_equivalence(load_csv):
     """
-    crown_fuel_consumption_core/total_fuel_consumption_core (int fuel_type_code,
+    _crown_fuel_consumption/_total_fuel_consumption (int fuel_type_code,
     no "option" string) must match total_fuel_consumption(..., option=...).
     """
     data = load_csv("cffdrs/tests/data/TotalFuelConsumption.csv", csv_schema)
@@ -58,9 +58,9 @@ def test_total_fuel_consumption_core(load_csv):
 
         expected = total_fuel_consumption(fuel_type, cfl, cfb, sfc, pc, pdf, option)
         if option == "CFC":
-            calculated = crown_fuel_consumption_core(fuel_type_code, cfl, cfb, pc, pdf)
+            calculated = _crown_fuel_consumption(fuel_type_code, cfl, cfb, pc, pdf)
         else:
-            calculated = total_fuel_consumption_core(fuel_type_code, cfl, cfb, sfc, pc, pdf)
+            calculated = _total_fuel_consumption(fuel_type_code, cfl, cfb, sfc, pc, pdf)
 
         assert pytest.approx(expected, abs=1e-9) == calculated, (
             f"Failed for row: {row} - core: {calculated} vs scalar: {expected}"

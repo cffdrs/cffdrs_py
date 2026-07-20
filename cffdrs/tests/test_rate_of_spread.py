@@ -1,5 +1,5 @@
 import pytest
-from cffdrs.rate_of_spread import rate_of_spread, rate_of_spread_core
+from cffdrs.rate_of_spread import rate_of_spread, _rate_of_spread
 from cffdrs.constants import FUEL_TYPE_CODES
 from cffdrs.tests.conftest import float_or_nan
 
@@ -41,8 +41,8 @@ def test_rate_of_spread(load_csv):
         )
 
 
-def test_rate_of_spread_core(load_csv):
-    """rate_of_spread_core (int fuel_type_code, recursion unrolled) must match rate_of_spread."""
+def test_rate_of_spread_equivalence(load_csv):
+    """_rate_of_spread (int fuel_type_code, recursion unrolled) must match rate_of_spread."""
     test_data = load_csv("cffdrs/tests/data/RateOfSpread.csv", csv_schema)
 
     for row in test_data:
@@ -57,7 +57,7 @@ def test_rate_of_spread_core(load_csv):
         cbh = row["CBH"]
 
         expected = rate_of_spread(fuel_type, isi, bui, fmc, sfc, pc, pdf, cc, cbh)
-        calculated = rate_of_spread_core(
+        calculated = _rate_of_spread(
             FUEL_TYPE_CODES[fuel_type], isi, bui, fmc, sfc, pc, pdf, cc, cbh
         )
 

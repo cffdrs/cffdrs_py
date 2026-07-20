@@ -1,8 +1,10 @@
 from typing import Literal
-from cffdrs.constants import FuelType, M1, M2, M3, M4
+from cffdrs.constants import FuelType, FUEL_TYPE_CODES, M1, M2, M3, M4
 
 
-def crown_fuel_consumption_core(fuel_type_code: int, cfl, cfb, pc, pdf):
+def _crown_fuel_consumption(
+    fuel_type_code: int, cfl: float, cfb: float, pc: float, pdf: float
+) -> float:
     """
     Vectorization-ready Crown Fuel Consumption calculation.
 
@@ -28,13 +30,15 @@ def crown_fuel_consumption_core(fuel_type_code: int, cfl, cfb, pc, pdf):
     return cfc
 
 
-def total_fuel_consumption_core(fuel_type_code: int, cfl, cfb, sfc, pc, pdf):
+def _total_fuel_consumption(
+    fuel_type_code: int, cfl: float, cfb: float, sfc: float, pc: float, pdf: float
+) -> float:
     """
     Vectorization-ready Total Fuel Consumption calculation.
 
     Same as total_fuel_consumption(..., option="TFC"), but takes an int
     fuel_type_code (see cffdrs.constants.FUEL_TYPE_CODES) instead of a fuel
-    type string. Use crown_fuel_consumption_core() directly for the "CFC"
+    type string. Use _crown_fuel_consumption() directly for the "CFC"
     option - a string option switch has no place in a vectorization-ready
     numeric core, so the two outputs are now separate functions.
 
@@ -47,22 +51,16 @@ def total_fuel_consumption_core(fuel_type_code: int, cfl, cfb, sfc, pc, pdf):
 
     :returns: TFC Total (Surface + Crown) Fuel Consumption (kg/m^2)
     """
-    cfc = crown_fuel_consumption_core(fuel_type_code, cfl, cfb, pc, pdf)
+    cfc = _crown_fuel_consumption(fuel_type_code, cfl, cfb, pc, pdf)
     # Eq. 67 (FCFDG 1992) - Total Fuel Consumption
     tfc = sfc + cfc
     return tfc
 
 
 def crown_fuel_consumption(fuel_type: FuelType, cfl, cfb, pc, pdf):
-    # Eq. 66a (Wotton 2009) - Crown Fuel Consumption (CFC)
-    CFC = cfl * cfb
-    if fuel_type in ["M1", "M2"]:
-        # Eq. 66b (Wotton 2009) - CFC for M1/M2 types
-        CFC = pc / 100 * CFC
-    elif fuel_type in ["M3", "M4"]:
-        # Eq. 66c (Wotton 2009) - CFC for M3/M4 types
-        CFC = pdf / 100 * CFC
-    return CFC
+    # -1 for an unrecognized fuel type never matches (M1,M2)/(M3,M4), which
+    # mirrors the old fall-through leaving CFC unscaled.
+    return _crown_fuel_consumption(FUEL_TYPE_CODES.get(fuel_type, -1), cfl, cfb, pc, pdf)
 
 
 def total_fuel_consumption(

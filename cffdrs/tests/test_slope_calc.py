@@ -2,7 +2,7 @@ import pytest
 import math
 from cffdrs.tests.conftest import float_or_nan
 from cffdrs.constants import FUEL_TYPE_CODES
-from cffdrs.slope_calc import slope_adjustment, slope_adjustment_core
+from cffdrs.slope_calc import slope_adjustment, _slope_adjustment
 
 
 csv_schema = {
@@ -120,9 +120,9 @@ def test_slope_calc(load_csv):
         )
 
 
-def test_slope_adjustment_core(load_csv):
+def test_slope_adjustment_equivalence(load_csv):
     """
-    slope_adjustment_core (int fuel_type_code, M1-M4 recursion unrolled) must match
+    _slope_adjustment (int fuel_type_code, M1-M4 recursion unrolled) must match
     slope_adjustment (string fuel_type) exactly - this checks the refactor is a faithful
     translation, independent of the known R-comparison edge cases the xfail test above covers.
     """
@@ -147,7 +147,7 @@ def test_slope_adjustment_core(load_csv):
         )
 
         expected = slope_adjustment(fuel_type, *args)
-        calculated = slope_adjustment_core(FUEL_TYPE_CODES[fuel_type], *args)
+        calculated = _slope_adjustment(FUEL_TYPE_CODES[fuel_type], *args)
 
         assert pytest.approx(expected.wsv, abs=1e-9, nan_ok=True) == calculated.wsv, (
             f"Row {idx} WSV core: {calculated.wsv} vs scalar: {expected.wsv}"

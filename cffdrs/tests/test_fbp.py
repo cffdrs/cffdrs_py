@@ -4,7 +4,7 @@ from cffdrs.models import FBPInput
 from cffdrs.constants import FUEL_TYPE_CODES
 from cffdrs.fire_behaviour_prediction import (
     fire_behaviour_prediction,
-    fire_behaviour_prediction_core,
+    _fire_behaviour_prediction,
     FD_SURFACE,
     FD_INTERMITTENT,
     FD_CROWN,
@@ -245,7 +245,7 @@ _FD_CODE_BY_STRING = {"S": FD_SURFACE, "I": FD_INTERMITTENT, "C": FD_CROWN, None
 
 def _assert_core_matches_scalar(fbp_input: FBPInput):
     scalar = fire_behaviour_prediction(fbp_input, "All")
-    core = fire_behaviour_prediction_core(
+    core = _fire_behaviour_prediction(
         FUEL_TYPE_CODES[fbp_input.fuel_type],
         fbp_input.ffmc,
         fbp_input.bui,
@@ -291,7 +291,7 @@ def _assert_core_matches_scalar(fbp_input: FBPInput):
 
 def test_fbp_core_equivalence(fbp_input_data):
     """
-    fire_behaviour_prediction_core (int fuel_type_code, pre-validated scalar
+    _fire_behaviour_prediction (int fuel_type_code, pre-validated scalar
     inputs, no recursion) must match fire_behaviour_prediction(..., "All")
     field-for-field, for every row of test_fbp.csv.
     """

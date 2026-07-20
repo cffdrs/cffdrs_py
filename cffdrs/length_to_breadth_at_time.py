@@ -1,8 +1,8 @@
 import math
-from cffdrs.constants import FuelType, C1, O1A, O1B, S1, S2, S3, D1
+from cffdrs.constants import FuelType, FUEL_TYPE_CODES, C1, O1A, O1B, S1, S2, S3, D1
 
 
-def length_to_breadth_at_time_core(fuel_type_code: int, lb, hr, cfb):
+def _length_to_breadth_at_time(fuel_type_code: int, lb: float, hr: float, cfb: float) -> float:
     """
     Vectorization-ready Length-to-Breadth ratio at time t function.
 
@@ -55,18 +55,6 @@ def length_to_breadth_at_time(fuel_type: FuelType, lb, hr, cfb):
 
     :returns: Length to Breadth ratio at time since ignition
     """
-    # Eq. 72 (FCFDG 1992) - alpha constant value, dependent on fuel type
-
-    if fuel_type in ["C1", "O1A", "O1B", "S1", "S2", "S3", "D1"]:
-        alpha = 0.115
-    else:
-        # In R, negative base ** non-integer exponent → NaN
-        # Replicate that behavior for test consistency when cfb < 0
-        if cfb < 0:
-            alpha = math.nan
-        else:
-            alpha = 0.115 - 18.8 * (cfb**2.5) * math.exp(-8 * cfb)
-
-    # Eq. 81 (Wotton et.al. 2009) - LB at time since ignition
-    lb_t = (lb - 1) * (1 - math.exp(-alpha * hr)) + 1
-    return lb_t
+    # -1 for an unrecognized fuel type never matches the alpha=0.115 list,
+    # which mirrors the old fall-through to the cfb-based "else" formula.
+    return _length_to_breadth_at_time(FUEL_TYPE_CODES.get(fuel_type, -1), lb, hr, cfb)

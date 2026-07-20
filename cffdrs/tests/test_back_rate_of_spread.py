@@ -1,6 +1,6 @@
 import pytest
 
-from cffdrs.back_rate_of_spread import back_rate_of_spread, back_rate_of_spread_core
+from cffdrs.back_rate_of_spread import back_rate_of_spread, _back_rate_of_spread
 from cffdrs.constants import FUEL_TYPE_CODES
 from cffdrs.tests.conftest import float_or_nan
 
@@ -45,8 +45,8 @@ def test_back_rate_of_spread(load_csv):
         )
 
 
-def test_back_rate_of_spread_core(load_csv):
-    """back_rate_of_spread_core (int fuel_type_code) must match back_rate_of_spread (string)."""
+def test_back_rate_of_spread_equivalence(load_csv):
+    """_back_rate_of_spread (int fuel_type_code) must match back_rate_of_spread (string)."""
     test_data = load_csv("cffdrs/tests/data/BackRateOfSpread.csv", csv_schema)
 
     for row in test_data:
@@ -62,7 +62,7 @@ def test_back_rate_of_spread_core(load_csv):
             cbh=row["CBH"],
         )
         expected = back_rate_of_spread(fuel_type=row["FUELTYPE"], **kwargs)
-        calculated = back_rate_of_spread_core(FUEL_TYPE_CODES[row["FUELTYPE"]], **kwargs)
+        calculated = _back_rate_of_spread(FUEL_TYPE_CODES[row["FUELTYPE"]], **kwargs)
 
         assert pytest.approx(expected, abs=1e-9, nan_ok=True) == calculated, (
             f"Failed for row: {row} - BROS core: {calculated} vs scalar: {expected}"

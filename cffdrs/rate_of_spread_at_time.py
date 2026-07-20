@@ -1,8 +1,8 @@
 import math
-from cffdrs.constants import FuelType, C1, O1A, O1B, S1, S2, S3, D1
+from cffdrs.constants import FuelType, FUEL_TYPE_CODES, C1, O1A, O1B, S1, S2, S3, D1
 
 
-def rate_of_spread_at_time_core(fuel_type_code: int, roseq, hr, cfb):
+def _rate_of_spread_at_time(fuel_type_code: int, roseq: float, hr: float, cfb: float) -> float:
     """
     Vectorization-ready Rate of spread at time t calculation.
 
@@ -50,18 +50,6 @@ def rate_of_spread_at_time(fuel_type: FuelType, roseq, hr, cfb):
 
     :returns: ROSt Rate of Spread at time since ignition value
     """
-    # Eq. 72 - alpha constant value, dependent on fuel type
-
-    if fuel_type in ("C1", "O1A", "O1B", "S1", "S2", "S3", "D1"):
-        alpha = 0.115
-    else:
-        # In R, negative base ** non-integer exponent → NaN
-        # replicate that behavior here for test consistency
-        if cfb < 0:
-            alpha = math.nan
-        else:
-            alpha = 0.115 - 18.8 * (cfb**2.5) * math.exp(-8 * cfb)
-
-    # Eq. 70 - Rate of Spread at time since ignition
-    ros_t = roseq * (1 - math.exp(-alpha * hr))
-    return ros_t
+    # -1 for an unrecognized fuel type never matches the alpha=0.115 list,
+    # which mirrors the old fall-through to the cfb-based "else" formula.
+    return _rate_of_spread_at_time(FUEL_TYPE_CODES.get(fuel_type, -1), roseq, hr, cfb)

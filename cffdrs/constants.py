@@ -80,10 +80,10 @@ FUEL_TYPE_ROS = {
 # for M1-M4, slope_adjustment) recurse into themselves with a different fixed
 # fuel_type string to compute a sub-formula. Neither pattern can be compiled
 # or traced by array-vectorization tools like numba or jax. Every module in
-# this package that branches on fuel type also exposes a "_core" sibling
-# function that takes an int fuel_type_code (looked up here) instead of a
-# string, with any such recursive calls unrolled into flat arithmetic. This
-# package does not depend on numba or jax itself - the *_core functions are
+# this package that branches on fuel type also exposes a leading-underscore
+# sibling function that takes an int fuel_type_code (looked up here) instead
+# of a string, with any such recursive calls unrolled into flat arithmetic.
+# This package does not depend on numba or jax itself - these functions are
 # just plain, vectorization-friendly Python that a caller can wrap themselves.
 #
 # FUEL_TYPE_NAMES[code] == name, and FUEL_TYPE_CODES[name] == code.

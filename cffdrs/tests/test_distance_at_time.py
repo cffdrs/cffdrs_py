@@ -1,5 +1,5 @@
 import pytest
-from cffdrs.distance_at_time import distance_at_time, distance_at_time_core
+from cffdrs.distance_at_time import distance_at_time, _distance_at_time
 from cffdrs.constants import FUEL_TYPE_CODES
 from cffdrs.tests.conftest import float_or_nan
 
@@ -31,8 +31,8 @@ def test_distance_at_time(load_csv):
         )
 
 
-def test_distance_at_time_core(load_csv):
-    """distance_at_time_core (int fuel_type_code) must match distance_at_time (string)."""
+def test_distance_at_time_equivalence(load_csv):
+    """_distance_at_time (int fuel_type_code) must match distance_at_time (string)."""
     test_data = load_csv("cffdrs/tests/data/DistanceAtTime.csv", csv_schema)
 
     for row in test_data:
@@ -42,7 +42,7 @@ def test_distance_at_time_core(load_csv):
         cfb = row["CFB"]
 
         expected = distance_at_time(fuel_type, roseq, hr, cfb)
-        calculated = distance_at_time_core(FUEL_TYPE_CODES[fuel_type], roseq, hr, cfb)
+        calculated = _distance_at_time(FUEL_TYPE_CODES[fuel_type], roseq, hr, cfb)
 
         assert pytest.approx(expected, abs=1e-9, nan_ok=True) == calculated, (
             f"Failed for row: {row} - DISTt core: {calculated} vs scalar: {expected}"

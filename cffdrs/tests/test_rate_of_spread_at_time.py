@@ -1,7 +1,7 @@
 import pytest
 from cffdrs.tests.conftest import float_or_nan
 from cffdrs.constants import FUEL_TYPE_CODES
-from cffdrs.rate_of_spread_at_time import rate_of_spread_at_time, rate_of_spread_at_time_core
+from cffdrs.rate_of_spread_at_time import rate_of_spread_at_time, _rate_of_spread_at_time
 
 
 csv_schema = {
@@ -31,8 +31,8 @@ def test_rate_of_spread_at_time(load_csv):
         ), f"Failed for row: {row} - ROS at Time: {calculated_ros_at_time}"
 
 
-def test_rate_of_spread_at_time_core(load_csv):
-    """rate_of_spread_at_time_core (int fuel_type_code) must match the string version."""
+def test_rate_of_spread_at_time_equivalence(load_csv):
+    """_rate_of_spread_at_time (int fuel_type_code) must match the string version."""
     test_data = load_csv("cffdrs/tests/data/RateOfSpreadAtTime.csv", csv_schema)
 
     for row in test_data:
@@ -42,7 +42,7 @@ def test_rate_of_spread_at_time_core(load_csv):
         cfb = row["CFB"]
 
         expected = rate_of_spread_at_time(fuel_type, roseq, hr, cfb)
-        calculated = rate_of_spread_at_time_core(FUEL_TYPE_CODES[fuel_type], roseq, hr, cfb)
+        calculated = _rate_of_spread_at_time(FUEL_TYPE_CODES[fuel_type], roseq, hr, cfb)
 
         assert pytest.approx(expected, abs=1e-9, nan_ok=True) == calculated, (
             f"Failed for row: {row} - ROSt core: {calculated} vs scalar: {expected}"
