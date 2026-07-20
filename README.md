@@ -140,11 +140,7 @@ counterpart that a caller can wrap themselves:
 - it has no Python object construction or input validation in the hot path (plain scalars in,
   plain scalars/tuples out)
 
-These functions are prefixed with `_` because they're a lower-level, less stable surface than the
-rest of the public API. They're still importable by name (Python's `_` prefix is a convention,
-not access control), just opt in with the understanding that they may change without a
-deprecation cycle. You bring the vectorization tool (`numpy.vectorize`, `numba.guvectorize`,
-etc.); this package stays dependency-free either way.
+These functions are prefixed with `_` because they're a lower-level, less stable surface than the rest of the public API. They're still importable directly by name. You bring the vectorization tool (`numpy.vectorize`, `numba.guvectorize`, etc.).
 
 The one you'll usually want is `_fire_behaviour_prediction` in `cffdrs.fire_behaviour_prediction`.
 It's what `fire_behaviour_prediction(input, "All")` delegates to internally, so it mirrors that
