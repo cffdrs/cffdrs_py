@@ -1,6 +1,13 @@
 import math
-from cffdrs.buildup_effect import buildup_effect
+from cffdrs.buildup_effect import _buildup_effect
 from cffdrs.cfb_calc import crown_fraction_burned
+from cffdrs.constants import C6
+
+# intermediate_surface_rate_of_spread_c6, crown_rate_of_spread_c6,
+# crown_fraction_burned_c6 and rate_of_spread_c6 below have no fuel-type
+# branching at all - they're already vectorization-ready as-is and have no
+# leading-underscore sibling. Only surface_rate_of_spread_c6 depends on fuel
+# type (via _buildup_effect(C6, bui)), so only it gets one.
 
 
 def intermediate_surface_rate_of_spread_c6(isi):
@@ -25,8 +32,24 @@ def surface_rate_of_spread_c6(rsi, bui):
 
     :returns: RSS Surface fire spread rate (m/min)
     """
+    return _surface_rate_of_spread_c6(rsi, bui)
+
+
+def _surface_rate_of_spread_c6(rsi: float, bui: float) -> float:
+    """
+    Vectorization-ready Surface Rate of Spread for C6 Calculator.
+
+    Same as surface_rate_of_spread_c6(), but uses _buildup_effect()
+    internally instead of buildup_effect() (fuel type is always C6, so no
+    fuel_type_code parameter is needed here).
+
+    :param rsi: Intermediate surface fire spread rate
+    :param bui: Buildup Index
+
+    :returns: RSS Surface fire spread rate (m/min)
+    """
     # Eq. 63 (FCFDG 1992) Surface fire spread rate (m/min)
-    rss = rsi * buildup_effect("C6", bui)
+    rss = rsi * _buildup_effect(C6, bui)
     return rss
 
 

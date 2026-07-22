@@ -1,6 +1,7 @@
 # Constants for cffdrs_py
 
-from typing import Literal
+import math
+from typing import Literal, get_args
 
 
 FFMC_COEFFICIENT = 250.0 * 59.5 / 101.0
@@ -72,3 +73,62 @@ FUEL_TYPE_ROS = {
     "O1A": {"a": 190, "b": 0.0310, "c0": 1.4},
     "O1B": {"a": 250, "b": 0.0350, "c0": 1.7},
 }
+
+# --- Vectorization support -------------------------------------------------
+#
+# The functions above dispatch on fuel_type strings, and a few (rate_of_spread
+# for M1-M4, slope_adjustment) recurse into themselves with a different fixed
+# fuel_type string to compute a sub-formula. Neither pattern can be compiled
+# or traced by array-vectorization tools like numba or jax. Every module in
+# this package that branches on fuel type also exposes a leading-underscore
+# sibling function that takes an int fuel_type_code (looked up here) instead
+# of a string, with any such recursive calls unrolled into flat arithmetic.
+# This package does not depend on numba or jax itself - these functions are
+# just plain, vectorization-friendly Python that a caller can wrap themselves.
+#
+# FUEL_TYPE_NAMES[code] == name, and FUEL_TYPE_CODES[name] == code.
+FUEL_TYPE_NAMES: tuple = get_args(FuelType)
+FUEL_TYPE_CODES: dict = {name: code for code, name in enumerate(FUEL_TYPE_NAMES)}
+
+# Sentinel fuel_type_code for a string that isn't a recognized FuelType.
+# Public wrappers use FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE)
+# instead of a bare subscript so an unrecognized fuel type falls through to
+# whatever a leading-underscore function does for a fuel type with no
+# entry (nan, or an unscaled/default formula branch) instead of raising
+# KeyError - matching the graceful fallback the original string-keyed
+# dict.get(fuel_type, default) calls had. It's always negative so it can
+# never collide with a real fuel_type_code (always >= 0).
+UNKNOWN_FUEL_TYPE_CODE = -1
+
+(
+    C1,
+    C2,
+    C3,
+    C4,
+    C5,
+    C6,
+    C7,
+    D1,
+    M1,
+    M2,
+    M3,
+    M4,
+    S1,
+    S2,
+    S3,
+    O1A,
+    O1B,
+    NF,
+    WA,
+) = range(len(FUEL_TYPE_NAMES))
+
+# ROS_A/ROS_B/ROS_C0[code] mirror FUEL_TYPE_ROS[name]["a"/"b"/"c0"], math.nan
+# where a fuel type has no entry (NF, WA).
+ROS_A = tuple(FUEL_TYPE_ROS.get(name, {}).get("a", math.nan) for name in FUEL_TYPE_NAMES)
+ROS_B = tuple(FUEL_TYPE_ROS.get(name, {}).get("b", math.nan) for name in FUEL_TYPE_NAMES)
+ROS_C0 = tuple(FUEL_TYPE_ROS.get(name, {}).get("c0", math.nan) for name in FUEL_TYPE_NAMES)
+
+# BUI_O/BUI_Q[code] mirror FUEL_TYPE_DEFAULTS[name]["BUIo"/"Q"], math.nan
+# where a fuel type has no entry (NF, WA).
+BUI_O = tuple(FUEL_TYPE_DEFAULTS.get(name, {}).get("BUIo", math.nan) for name in FUEL_TYPE_NAMES)
+BUI_Q = tuple(FUEL_TYPE_DEFAULTS.get(name, {}).get("Q", math.nan) for name in FUEL_TYPE_NAMES)

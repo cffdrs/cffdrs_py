@@ -1,5 +1,32 @@
 import math
-from cffdrs.constants import FuelType
+from cffdrs.constants import FuelType, FUEL_TYPE_CODES, UNKNOWN_FUEL_TYPE_CODE, O1A, O1B
+
+
+def _length_to_breadth(fuel_type_code: int, wsv: float) -> float:
+    """
+    Vectorization-ready Length-to-Breadth ratio function.
+
+    Same as length_to_breadth(), but takes an int fuel_type_code (see
+    cffdrs.constants.FUEL_TYPE_CODES) instead of a fuel type string.
+
+    :param fuel_type_code: The Fire Behaviour Prediction fuel type code
+    :param wsv: The Wind Speed (km/h)
+
+    :returns: Length to Breadth ratio value
+    """
+    if fuel_type_code in (O1A, O1B):
+        if wsv >= 1.0:
+            lb = 1.1 * (wsv**0.464)
+        else:
+            lb = 1.0
+    else:
+        base = 1 - math.exp(-0.030 * wsv)
+        if base < 0:
+            lb = math.nan
+        else:
+            lb = 1.0 + 8.729 * (base**2.155)
+
+    return lb
 
 
 def length_to_breadth(fuel_type: FuelType, wsv):
@@ -25,20 +52,6 @@ def length_to_breadth(fuel_type: FuelType, wsv):
 
     :returns: Length to Breadth ratio value
     """
-    # calculation is depending on if fuel type is grass (O1) or other fueltype
-    if fuel_type in ["O1A", "O1B"]:
-        # Correction to original Equation 80 is made here
-        # Eq. 80a / 80b from Wotton 2009
-        if wsv >= 1.0:
-            lb = 1.1 * (wsv**0.464)
-        else:
-            lb = 1.0  # Eq. 80/81
-    else:
-        # Eq. 79
-        base = 1 - math.exp(-0.030 * wsv)
-        if base < 0:
-            lb = math.nan
-        else:
-            lb = 1.0 + 8.729 * (base**2.155)
-
-    return lb
+    # UNKNOWN_FUEL_TYPE_CODE never matches (O1A, O1B), which mirrors the old
+    # fall-through to the non-grass "else" formula.
+    return _length_to_breadth(FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE), wsv)

@@ -1,6 +1,15 @@
 import pytest
 from cffdrs.fbp import fbp
 from cffdrs.models import FBPInput
+from cffdrs.constants import FUEL_TYPE_CODES
+from cffdrs.fire_behaviour_prediction import (
+    fire_behaviour_prediction,
+    _fire_behaviour_prediction,
+    FD_SURFACE,
+    FD_INTERMITTENT,
+    FD_CROWN,
+    FD_NONE,
+)
 from cffdrs.tests.conftest import run_csv_test, string_or_none
 
 
@@ -229,3 +238,74 @@ def test_fbp_12(fbp_input_data, load_csv):
     )
 
     run_csv_test(results_dicts, expected)
+
+
+_FD_CODE_BY_STRING = {"S": FD_SURFACE, "I": FD_INTERMITTENT, "C": FD_CROWN, None: FD_NONE}
+
+
+def _assert_core_matches_scalar(fbp_input: FBPInput):
+    scalar = fire_behaviour_prediction(fbp_input, "All")
+    core = _fire_behaviour_prediction(
+        FUEL_TYPE_CODES[fbp_input.fuel_type],
+        fbp_input.ffmc,
+        fbp_input.bui,
+        fbp_input.ws,
+        fbp_input.wd,
+        fbp_input.gs,
+        fbp_input.aspect,
+        fbp_input.pc,
+        fbp_input.pdf,
+        fbp_input.cc,
+        fbp_input.gfl,
+        fbp_input.cbh,
+        fbp_input.cfl,
+        fbp_input.fmc,
+        fbp_input.isi,
+        fbp_input.lat,
+        fbp_input.lon,
+        fbp_input.elv,
+        fbp_input.dj,
+        fbp_input.d0,
+        fbp_input.sd,
+        fbp_input.sh,
+        fbp_input.hr,
+        fbp_input.theta,
+        fbp_input.accel,
+        fbp_input.bui_eff,
+    )
+
+    for name in scalar.__dataclass_fields__:
+        if name == "id":
+            continue
+        scalar_value = getattr(scalar, name)
+        if name == "fd":
+            assert _FD_CODE_BY_STRING[scalar_value] == core.fd_code, (
+                f"fd mismatch for {fbp_input}: scalar={scalar_value}, core fd_code={core.fd_code}"
+            )
+            continue
+        core_value = getattr(core, name)
+        assert pytest.approx(scalar_value, abs=1e-6, nan_ok=True) == core_value, (
+            f"{name} mismatch for {fbp_input}: scalar={scalar_value}, core={core_value}"
+        )
+
+
+def test_fbp_core_equivalence(fbp_input_data):
+    """
+    _fire_behaviour_prediction (int fuel_type_code, pre-validated scalar
+    inputs, no recursion) must match fire_behaviour_prediction(..., "All")
+    field-for-field, for every row of test_fbp.csv.
+    """
+    for fbp_input in fbp_input_data:
+        _assert_core_matches_scalar(fbp_input)
+
+
+def test_fbp_core_equivalence_nf(fbp_input_data):
+    """Same equivalence check, forcing every row to the NF (non-fuel) fuel type."""
+    for row in fbp_input_data:
+        _assert_core_matches_scalar(FBPInput(**{**row.__dict__, "fuel_type": "NF"}))
+
+
+def test_fbp_core_equivalence_wa(fbp_input_data):
+    """Same equivalence check, forcing every row to the WA (water) fuel type."""
+    for row in fbp_input_data:
+        _assert_core_matches_scalar(FBPInput(**{**row.__dict__, "fuel_type": "WA"}))
