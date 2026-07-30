@@ -1,7 +1,7 @@
 import math
 from typing import Literal, NamedTuple
 from cffdrs.constants import D1, S1, S2, S3, O1A, O1B, C6, NF, WA, FUEL_TYPE_CODES
-from cffdrs.fwi import _initial_spread_index
+from cffdrs.fwi import initial_spread_index
 from cffdrs.rate_of_spread import _rate_of_spread_extended
 from cffdrs.slope_calc import _slope_adjustment
 from cffdrs.surface_fuel_consumption import _surface_fuel_consumption
@@ -326,7 +326,7 @@ def _fire_behaviour_prediction(
     raz0 = slope_values.raz
     raz = raz0 if gs > 0 and ffmc > 0 else waz
     # Calculate or keep Initial Spread Index (ISI)
-    isi = isi if isi > 0 else _initial_spread_index(ffmc, wsv, True)
+    isi = isi if isi > 0 else initial_spread_index(ffmc, wsv, True)
     # HACK: C6 ROS depends on CFB so do this to not repeat calculations
     ros_vars = _rate_of_spread_extended(fuel_type_code, isi, bui_eff, fmc, sfc, pc, pdf, cc, cbh)
     ros = ros_vars.ros

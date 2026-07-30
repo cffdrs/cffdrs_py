@@ -29,7 +29,7 @@ from cffdrs.constants import (
     NF,
     WA,
 )
-from cffdrs.fwi import _initial_spread_index
+from cffdrs.fwi import initial_spread_index
 from cffdrs.r_helpers import safe_div
 from cffdrs.rate_of_spread import _rate_of_spread
 
@@ -84,7 +84,7 @@ def _slope_adjustment(
     # Eq. 39 (FCFDG 1992) - Calculate Spread Factor
     sf = 10 if gs >= 70 else math.exp(3.533 * (gs / 100) ** 1.2)
     # ISI with 0 wind on level grounds
-    isz = _initial_spread_index(ffmc, 0)
+    isz = initial_spread_index(ffmc, 0)
     # Surface spread rate with 0 wind on level ground
     rsz = _rate_of_spread(fuel_type_code, isz, no_bui, fmc, sfc, pc, pdf, cc, cbh)
     # Eq. 40 (FCFDG 1992) - Surface spread rate with 0 wind upslope
