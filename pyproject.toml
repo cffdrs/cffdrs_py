@@ -5,7 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cffdrs"
 version = "0.3.0"
-authors = [{ name = "Jordan Evens", email = "jordan.evens@nrcan-rncan.gc.ca" }]
+authors = [
+    { name = "Jordan Evens", email = "jordan.evens@nrcan-rncan.gc.ca" },
+    { name = "Brett Edwards", email = "brett.1.edwards@gov.bc.ca" },
+    { name = "Conor Brady", email = "conor.brady@gov.bc.ca" },
+]
 description = "A Python package for CFFDRS"
 readme = "README.md"
 requires-python = ">=3.7"
