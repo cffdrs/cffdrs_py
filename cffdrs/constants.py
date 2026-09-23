@@ -6,6 +6,11 @@ from typing import Literal, get_args
 
 FFMC_COEFFICIENT = 250.0 * 59.5 / 101.0
 
+# D-2 model reference:
+# Alexander, M.E. 2010. Surface fire spread potential in trembling aspen during summer in the
+# Boreal Forest Region of Canada. The Forestry Chronicle 86(2), 200-212.
+# https://doi.org/10.5558/tfc86200-2
+
 FuelType = Literal[
     "C1",
     "C2",
@@ -26,6 +31,7 @@ FuelType = Literal[
     "O1B",
     "NF",
     "WA",
+    "D2",
 ]
 
 # Fuel type mappings
@@ -41,6 +47,7 @@ FUEL_TYPE_DEFAULTS = {
     "C6": {"BUIo": 62, "Q": 0.8},
     "C7": {"BUIo": 106, "Q": 0.85},
     "D1": {"BUIo": 32, "Q": 0.9},
+    "D2": {"BUIo": 32, "Q": 0.9},
     "M1": {"BUIo": 50, "Q": 0.8},
     "M2": {"BUIo": 50, "Q": 0.8},
     "M3": {"BUIo": 50, "Q": 0.8},
@@ -63,6 +70,7 @@ FUEL_TYPE_ROS = {
     "C6": {"a": 30, "b": 0.0800, "c0": 3.0},
     "C7": {"a": 45, "b": 0.0305, "c0": 2.0},
     "D1": {"a": 30, "b": 0.0232, "c0": 1.6},
+    "D2": {"a": 30, "b": 0.0232, "c0": 1.6},
     "M1": {"a": 0, "b": 0, "c0": 0},
     "M2": {"a": 0, "b": 0, "c0": 0},
     "M3": {"a": 120, "b": 0.0572, "c0": 1.4},
@@ -120,6 +128,7 @@ UNKNOWN_FUEL_TYPE_CODE = -1
     O1B,
     NF,
     WA,
+    D2,
 ) = range(len(FUEL_TYPE_NAMES))
 
 # ROS_A/ROS_B/ROS_C0[code] mirror FUEL_TYPE_ROS[name]["a"/"b"/"c0"], math.nan

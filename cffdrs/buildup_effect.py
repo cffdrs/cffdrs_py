@@ -1,5 +1,5 @@
 import math
-from cffdrs.constants import FuelType, BUI_O, BUI_Q, FUEL_TYPE_CODES, UNKNOWN_FUEL_TYPE_CODE
+from cffdrs.constants import D2, FuelType, BUI_O, BUI_Q, FUEL_TYPE_CODES, UNKNOWN_FUEL_TYPE_CODE
 
 
 def _buildup_effect(fuel_type_code: int, bui: float) -> float:
@@ -15,6 +15,11 @@ def _buildup_effect(fuel_type_code: int, bui: float) -> float:
     :returns: BE Build up effect
     """
     # Eq. 54 (FCFDG 1992) The Buildup Effect
+    # Negative BUI is an internal sentinel meaning "disable the BUI effect".
+    # D-2 Green Aspen threshold from Alexander (2010); see cffdrs.constants.
+    if fuel_type_code == D2 and 0 <= bui < 80:
+        return 0.0
+
     if not 0 <= fuel_type_code < len(BUI_O):
         # Out-of-range/unrecognized fuel_type_code: same fallback as a fuel
         # type with no BUIo/Q entry (e.g. NF, WA).

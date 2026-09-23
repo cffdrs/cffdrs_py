@@ -16,6 +16,7 @@ from cffdrs.constants import (
     C6,
     C7,
     D1,
+    D2,
     M1,
     M2,
     M3,
@@ -51,7 +52,7 @@ class _RateOfSpreadOutput(NamedTuple):
 # The basic a*(1-exp(-b*isi))**c0 formula (Eq. 26) applies to these fuel
 # types directly. M1-M4 and O1A/O1B are handled separately below; C6 is
 # handled separately further down (its ROS depends on CFB).
-_BASIC_ROS_FUEL_TYPES = (C1, C2, C3, C4, C5, C7, D1, S1, S2, S3)
+_BASIC_ROS_FUEL_TYPES = (C1, C2, C3, C4, C5, C7, D1, D2, S1, S2, S3)
 
 
 def _floored_basic_rsi(fuel_type_code: int, isi: float) -> float:
@@ -106,7 +107,9 @@ def _rate_of_spread_extended(
     # Eq. 26 (FCFDG 1992) - Initial Rate of Spread for Conifer and Slash types
     rsi = -1
     if fuel_type_code in _BASIC_ROS_FUEL_TYPES:
-        rsi = (
+        # D-2 Green Aspen uses one fifth of the D-1 RSI (Alexander 2010).
+        rsi_multiplier = 0.2 if fuel_type_code == D2 else 1.0
+        rsi = rsi_multiplier * (
             ROS_A[fuel_type_code]
             * (1 - math.exp(-ROS_B[fuel_type_code] * isi)) ** ROS_C0[fuel_type_code]
         )

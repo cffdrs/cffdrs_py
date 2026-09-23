@@ -10,6 +10,7 @@ from cffdrs.constants import (
     S2,
     S3,
     D1,
+    D2,
 )
 
 
@@ -28,7 +29,7 @@ def _distance_at_time(fuel_type_code: int, roseq: float, hr: float, cfb: float) 
     :returns: DISTt Head fire spread distance at time t
     """
     # Eq. 72 (FCFDG 1992) - alpha constant for the DISTt calculation
-    if fuel_type_code in (C1, O1A, O1B, S1, S2, S3, D1):
+    if fuel_type_code in (C1, O1A, O1B, S1, S2, S3, D1, D2):
         alpha = 0.115
     else:
         if cfb < 0:
