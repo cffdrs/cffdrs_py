@@ -1,6 +1,6 @@
 import math
 from typing import Literal, NamedTuple
-from cffdrs.constants import D1, S1, S2, S3, O1A, O1B, C6, NF, WA, FUEL_TYPE_CODES
+from cffdrs.constants import D1, D2, S1, S2, S3, O1A, O1B, C6, NF, WA, FUEL_TYPE_CODES
 from cffdrs.fwi import initial_spread_index
 from cffdrs.rate_of_spread import _rate_of_spread_extended
 from cffdrs.slope_calc import _slope_adjustment
@@ -310,12 +310,12 @@ def _fire_behaviour_prediction(
         if (fmc <= 0 or fmc > 120 or math.isnan(fmc))
         else fmc
     )
-    fmc = 0 if fuel_type_code in (D1, S1, S2, S3, O1A, O1B) else fmc
+    fmc = 0 if fuel_type_code in (D1, D2, S1, S2, S3, O1A, O1B) else fmc
 
     # Calculate Surface fuel consumption (SFC)
     sfc = _surface_fuel_consumption(fuel_type_code, ffmc, bui, pc, gfl)
     # Disable BUI Effect if necessary
-    bui_eff = 0 if buieff != 1 else bui
+    bui_eff = -1 if buieff != 1 else bui
     slope_values = _slope_adjustment(
         fuel_type_code, ffmc, bui_eff, ws, waz, gs, saz, fmc, sfc, pc, pdf, cc, cbh, isi
     )

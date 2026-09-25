@@ -17,6 +17,7 @@ from cffdrs.constants import (
     C6,
     C7,
     D1,
+    D2,
     M1,
     M2,
     M3,
@@ -42,7 +43,7 @@ class _SlopeAdjustmentOutput(NamedTuple):
 # Fuel types whose slope-equivalent ISI (isf) is derived directly from the
 # basic a/b/c0 RSI formula (Eq. 41a/41b). M1-M4 and O1A/O1B are handled
 # separately below.
-_IS_BASIC_FUEL_TYPES = (C1, C2, C3, C4, C5, C6, C7, D1, S1, S2, S3)
+_IS_BASIC_FUEL_TYPES = (C1, C2, C3, C4, C5, C6, C7, D1, D2, S1, S2, S3)
 
 
 def _slope_adjustment(
@@ -106,7 +107,7 @@ def _slope_adjustment(
 
     # Eqs. 41a, 41b (Wotton 2009) - Calculate the slope equivalent ISI
     if fuel_type_code in _IS_BASIC_FUEL_TYPES:
-        a_val = ROS_A[fuel_type_code]
+        a_val = 0.2 * ROS_A[fuel_type_code] if fuel_type_code == D2 else ROS_A[fuel_type_code]
         b_val = ROS_B[fuel_type_code]
         c0_val = ROS_C0[fuel_type_code]
         temp = 1 - (rsf / a_val) ** (1 / c0_val)

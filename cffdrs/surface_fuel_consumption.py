@@ -11,6 +11,7 @@ from cffdrs.constants import (
     C6,
     C7,
     D1,
+    D2,
     M1,
     M2,
     M3,
@@ -59,6 +60,11 @@ def _surface_fuel_consumption(
             sfc = 0
         sfc += 1.5 * (1 - math.exp(-0.0201 * bui))
     elif fuel_type_code == D1:
+        sfc = 1.5 * (1 - math.exp(-0.0183 * bui))
+    elif fuel_type_code == D2:
+        # D-2 Green Aspen (Alexander 2010; see cffdrs.constants).
+        if bui < 80:
+            return 0.0
         sfc = 1.5 * (1 - math.exp(-0.0183 * bui))
     elif fuel_type_code in (M1, M2):
         sfc = pc / 100 * (5.0 * (1 - math.exp(-0.0115 * bui))) + (

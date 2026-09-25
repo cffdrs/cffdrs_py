@@ -29,6 +29,10 @@ jobs:
             - name: Install python dependencies
               run: uv sync --frozen
 
+            - name: Build wheel with centralized bytecode cache
+              env:
+                PYTHONPYCACHEPREFIX: python_cache
+              run: uv build --wheel
+
             - name: Run tests
               run: uv run pytest
-                

@@ -4,8 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cffdrs"
-version = "0.2.0"
-authors = [{ name = "Jordan Evens", email = "jordan.evens@nrcan-rncan.gc.ca" }]
+version = "0.3.0"
+authors = [
+    { name = "Jordan Evens", email = "jordan.evens@nrcan-rncan.gc.ca" },
+    { name = "Brett Edwards", email = "brett.1.edwards@gov.bc.ca" },
+    { name = "Conor Brady", email = "conor.brady@gov.bc.ca" },
+]
 description = "A Python package for CFFDRS"
 readme = "README.md"
 requires-python = ">=3.7"
@@ -19,6 +23,10 @@ dependencies = []
 [project.urls]
 "Homepage" = "https://github.com/nrcan-cfs-fire/cffdrs_py"
 "Bug Tracker" = "https://github.com/nrcan-cfs-fire/cffdrs_py/issues"
+
+[tool.setuptools.packages.find]
+include = ["cffdrs", "cffdrs.*"]
+namespaces = false
 
 [dependency-groups]
 dev = ["pytest>=7.4.4", "ruff>=0.14.14"]

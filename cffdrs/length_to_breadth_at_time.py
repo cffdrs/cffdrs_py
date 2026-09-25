@@ -10,6 +10,7 @@ from cffdrs.constants import (
     S2,
     S3,
     D1,
+    D2,
 )
 
 
@@ -28,7 +29,7 @@ def _length_to_breadth_at_time(fuel_type_code: int, lb: float, hr: float, cfb: f
     :returns: Length to Breadth ratio at time since ignition
     """
     # Eq. 72 (FCFDG 1992) - alpha constant value, dependent on fuel type
-    if fuel_type_code in (C1, O1A, O1B, S1, S2, S3, D1):
+    if fuel_type_code in (C1, O1A, O1B, S1, S2, S3, D1, D2):
         alpha = 0.115
     else:
         if cfb < 0:

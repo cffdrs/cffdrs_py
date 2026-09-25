@@ -309,3 +309,9 @@ def test_fbp_core_equivalence_wa(fbp_input_data):
     """Same equivalence check, forcing every row to the WA (water) fuel type."""
     for row in fbp_input_data:
         _assert_core_matches_scalar(FBPInput(**{**row.__dict__, "fuel_type": "WA"}))
+
+
+@pytest.mark.parametrize("bui", [79, 80, 120])
+def test_fbp_core_equivalence_d2(bui):
+    """D2 scalar and integer-code APIs must match across the BUI threshold."""
+    _assert_core_matches_scalar(FBPInput(fuel_type="D2", bui=bui))
