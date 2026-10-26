@@ -1,5 +1,5 @@
 .idea 
 dist 
-cffdrs_py.egg-info 
+*.egg-info/ 
 __pycache__/
 python_cache

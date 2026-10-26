@@ -69,6 +69,7 @@ def fire_behaviour_prediction(
         input.theta,  # Already in radians
         input.accel,
         input.bui_eff,
+        input.c7_cc,
     )
 
     if output == "WSV0":
@@ -267,6 +268,7 @@ def _fire_behaviour_prediction(
     theta_rad: float,
     accel: int,
     buieff: int,
+    c7_cc: float = 100.0,
 ) -> _FBPOutput:
     """
     Vectorization-ready Fire Behaviour Prediction System Calculation.
@@ -317,7 +319,7 @@ def _fire_behaviour_prediction(
     # Disable BUI Effect if necessary
     bui_eff = -1 if buieff != 1 else bui
     slope_values = _slope_adjustment(
-        fuel_type_code, ffmc, bui_eff, ws, waz, gs, saz, fmc, sfc, pc, pdf, cc, cbh, isi
+        fuel_type_code, ffmc, bui_eff, ws, waz, gs, saz, fmc, sfc, pc, pdf, cc, cbh, isi, c7_cc
     )
     # Calculate the net effective windspeed (WSV)
     wsv0 = slope_values.wsv
@@ -328,7 +330,9 @@ def _fire_behaviour_prediction(
     # Calculate or keep Initial Spread Index (ISI)
     isi = isi if isi > 0 else initial_spread_index(ffmc, wsv, True)
     # HACK: C6 ROS depends on CFB so do this to not repeat calculations
-    ros_vars = _rate_of_spread_extended(fuel_type_code, isi, bui_eff, fmc, sfc, pc, pdf, cc, cbh)
+    ros_vars = _rate_of_spread_extended(
+        fuel_type_code, isi, bui_eff, fmc, sfc, pc, pdf, cc, cbh, c7_cc
+    )
     ros = ros_vars.ros
     cfb = ros_vars.cfb if cfl > 0 else 0
     csi = ros_vars.csi
@@ -360,7 +364,9 @@ def _fire_behaviour_prediction(
     lb = _length_to_breadth(fuel_type_code, wsv)
     lbt = lb if accel == 0 else _length_to_breadth_at_time(fuel_type_code, lb, hr_min, cfb)
     # Calculate Back fire rate of spread (BROS)
-    bros = _back_rate_of_spread(fuel_type_code, ffmc, bui_eff, wsv, fmc, sfc, pc, pdf, cc, cbh)
+    bros = _back_rate_of_spread(
+        fuel_type_code, ffmc, bui_eff, wsv, fmc, sfc, pc, pdf, cc, cbh, c7_cc
+    )
     # Calculate Flank fire rate of spread (FROS)
     fros = flank_rate_of_spread(ros, bros, lb)
     # Calculate the eccentricity
