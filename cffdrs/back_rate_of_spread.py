@@ -14,6 +14,7 @@ def _back_rate_of_spread(
     pdf: float,
     cc: float,
     cbh: float,
+    c7_cc: float = 100.0,
 ) -> float:
     """
     Vectorization-ready Back Fire Rate of Spread Calculator.
@@ -36,11 +37,13 @@ def _back_rate_of_spread(
     bisi = 0.208 * bf_w * fF
     # Eq. 77 (FCFDG 1992)
     # Calculate final Back fire spread rate
-    bros = _rate_of_spread(fuel_type_code, bisi, bui, fmc, sfc, pc, pdf, cc, cbh)
+    bros = _rate_of_spread(fuel_type_code, bisi, bui, fmc, sfc, pc, pdf, cc, cbh, c7_cc)
     return bros
 
 
-def back_rate_of_spread(fuel_type: FuelType, ffmc, bui, wsv, fmc, sfc, pc, pdf, cc, cbh):
+def back_rate_of_spread(
+    fuel_type: FuelType, ffmc, bui, wsv, fmc, sfc, pc, pdf, cc, cbh, c7_cc=100.0
+):
     """
     Back Fire Rate of Spread Calculator
 
@@ -58,6 +61,7 @@ def back_rate_of_spread(fuel_type: FuelType, ffmc, bui, wsv, fmc, sfc, pc, pdf, 
     :param pdf: Percent Dead Balsam Fir
     :param cc: Degree of Curing (just "C" in FCFDG 1992)
     :param cbh: Crown Base Height
+    :param c7_cc: Degree of Curing (%) for C7. Default 100 leaves C7 unmodified.
 
     :returns: BROS Back Fire Rate of Spread
     """
@@ -72,4 +76,5 @@ def back_rate_of_spread(fuel_type: FuelType, ffmc, bui, wsv, fmc, sfc, pc, pdf, 
         pdf,
         cc,
         cbh,
+        c7_cc,
     )

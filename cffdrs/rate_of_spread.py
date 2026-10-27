@@ -73,6 +73,19 @@ def _floored_basic_rsi(fuel_type_code: int, isi: float) -> float:
     return rsi if rsi > 0 else 0.000001
 
 
+def _curing_factor(cc: float) -> float:
+    """
+    Eqs. 35a, 35b (Wotton et. al. 2009) - Grass curing factor. Used by O1A/O1B
+    and by C7 (the BCWS "C-7b" grass curing modification). Equals 1.0 at
+    100% curing.
+
+    :param cc: Degree of Curing (%)
+    """
+    if cc < 58.8:
+        return 0.005 * (math.exp(0.061 * cc) - 1)
+    return 0.176 + 0.02 * (cc - 58.8)
+
+
 def _rate_of_spread_extended(
     fuel_type_code: int,
     isi: float,
@@ -83,6 +96,7 @@ def _rate_of_spread_extended(
     pdf: float,
     cc: float,
     cbh: float,
+    c7_cc: float = 100.0,
 ) -> _RateOfSpreadOutput:
     """
     Vectorization-ready Rate of Spread Calculation.
@@ -99,8 +113,9 @@ def _rate_of_spread_extended(
     :param sfc: Surface Fuel Consumption (kg/m^2)
     :param pc: Percent Conifer (%)
     :param pdf: Percent Dead Balsam Fir (%)
-    :param cc: Constant
+    :param cc: Degree of Curing (%) for O1A/O1B
     :param cbh: Crown to base height(m)
+    :param c7_cc: Degree of Curing (%) for C7. Default 100 leaves C7 unmodified.
 
     :returns: _RateOfSpreadOutput with ros, cfb, csi, rso
     """
@@ -113,6 +128,9 @@ def _rate_of_spread_extended(
             ROS_A[fuel_type_code]
             * (1 - math.exp(-ROS_B[fuel_type_code] * isi)) ** ROS_C0[fuel_type_code]
         )
+    # Eq. 36 (FCFDG 1992) - C7 grass curing modification (BCWS "C-7b")
+    if fuel_type_code == C7:
+        rsi = rsi * _curing_factor(c7_cc)
     # Eq. 27 (FCFDG 1992) - Initial Rate of Spread for M1 Mixedwood type
     if fuel_type_code == M1:
         rsi = pc / 100 * _floored_basic_rsi(C2, isi) + (100 - pc) / 100 * _floored_basic_rsi(
@@ -142,10 +160,7 @@ def _rate_of_spread_extended(
     # Eq. 35b (Wotton et. al. 2009) - Calculate Curing function for grass
     cf = -99
     if fuel_type_code in (O1A, O1B):
-        if cc < 58.8:
-            cf = 0.005 * (math.exp(0.061 * cc) - 1)
-        else:
-            cf = 0.176 + 0.02 * (cc - 58.8)
+        cf = _curing_factor(cc)
     # Eq. 36 (FCFDG 1992) - Calculate Initial Rate of Spread for Grass
     if fuel_type_code in (O1A, O1B):
         rsi = (
@@ -195,6 +210,7 @@ def _rate_of_spread(
     pdf: float,
     cc: float,
     cbh: float,
+    c7_cc: float = 100.0,
 ) -> float:
     """
     Vectorization-ready Rate of Spread Calculation (ros only).
@@ -202,7 +218,7 @@ def _rate_of_spread(
     Same as rate_of_spread(), but takes an int fuel_type_code (see
     cffdrs.constants.FUEL_TYPE_CODES) instead of a fuel type string.
     """
-    ros_vars = _rate_of_spread_extended(fuel_type_code, isi, bui, fmc, sfc, pc, pdf, cc, cbh)
+    ros_vars = _rate_of_spread_extended(fuel_type_code, isi, bui, fmc, sfc, pc, pdf, cc, cbh, c7_cc)
     return ros_vars.ros
 
 
@@ -214,7 +230,7 @@ class RateOfSpreadOutput:
     rso: float
 
 
-def rate_of_spread_extended(fuel_type: FuelType, isi, bui, fmc, sfc, pc, pdf, cc, cbh):
+def rate_of_spread_extended(fuel_type: FuelType, isi, bui, fmc, sfc, pc, pdf, cc, cbh, c7_cc=100.0):
     """
     Rate of Spread Calculation
 
@@ -239,19 +255,38 @@ def rate_of_spread_extended(fuel_type: FuelType, isi, bui, fmc, sfc, pc, pdf, cc
     :param sfc: Surface Fuel Consumption (kg/m^2)
     :param pc: Percent Conifer (%)
     :param pdf: Percent Dead Balsam Fir (%)
-    :param cc: Constant
+    :param cc: Degree of Curing (%) for O1A/O1B
     :param cbh: Crown to base height(m)
+    :param c7_cc: Degree of Curing (%) for C7. Default 100 leaves C7 unmodified.
 
     :returns: dict with ROS - Rate of Spread (m/min), CFB, CSI, RSO
     """
     result = _rate_of_spread_extended(
-        FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE), isi, bui, fmc, sfc, pc, pdf, cc, cbh
+        FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE),
+        isi,
+        bui,
+        fmc,
+        sfc,
+        pc,
+        pdf,
+        cc,
+        cbh,
+        c7_cc,
     )
     return RateOfSpreadOutput(ros=result.ros, cfb=result.cfb, csi=result.csi, rso=result.rso)
 
 
-def rate_of_spread(fuel_type: FuelType, isi, bui, fmc, sfc, pc, pdf, cc, cbh):
+def rate_of_spread(fuel_type: FuelType, isi, bui, fmc, sfc, pc, pdf, cc, cbh, c7_cc=100.0):
     # HACK: C6 ROS depends on CFB so do this to not repeat calculations
     return _rate_of_spread(
-        FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE), isi, bui, fmc, sfc, pc, pdf, cc, cbh
+        FUEL_TYPE_CODES.get(fuel_type, UNKNOWN_FUEL_TYPE_CODE),
+        isi,
+        bui,
+        fmc,
+        sfc,
+        pc,
+        pdf,
+        cc,
+        cbh,
+        c7_cc,
     )

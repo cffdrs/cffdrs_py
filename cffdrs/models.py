@@ -23,6 +23,8 @@ class FBPInput:
     pc: float = 50.0
     pdf: float = 35.0
     cc: float = 80.0
+    # Degree of curing (%) for C7 grass (BCWS "C-7b"); 100 leaves C7 unmodified
+    c7_cc: float = 100.0
     gfl: float = 0.35
     cbh: float = 0.0
     cfl: float = 0.0
@@ -153,6 +155,13 @@ class FBPInput:
         if self.cc != original_cc:
             warnings.warn(f"CC ({original_cc}) out of range, clamped to {self.cc}")
         self.cc = 80 if math.isnan(self.cc) else self.cc
+
+        original_c7_cc = self.c7_cc
+        self.c7_cc = (
+            100 if math.isnan(self.c7_cc) or self.c7_cc < 0 or self.c7_cc > 100 else self.c7_cc
+        )
+        if self.c7_cc != original_c7_cc and not math.isnan(original_c7_cc):
+            warnings.warn(f"C7_CC ({original_c7_cc}) out of range, clamped to {self.c7_cc}")
 
         original_gfl = self.gfl
         self.gfl = 0.35 if math.isnan(self.gfl) or self.gfl <= 0 or self.gfl > 100 else self.gfl

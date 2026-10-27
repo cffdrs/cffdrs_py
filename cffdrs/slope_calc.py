@@ -32,7 +32,7 @@ from cffdrs.constants import (
 )
 from cffdrs.fwi import initial_spread_index
 from cffdrs.r_helpers import safe_div
-from cffdrs.rate_of_spread import _rate_of_spread
+from cffdrs.rate_of_spread import _curing_factor, _rate_of_spread
 
 
 class _SlopeAdjustmentOutput(NamedTuple):
@@ -61,6 +61,7 @@ def _slope_adjustment(
     cc: float,
     cbh: float,
     isi: float,
+    c7_cc: float = 100.0,
 ) -> _SlopeAdjustmentOutput:
     """
     Vectorization-ready Slope Adjusted wind speed / direction calculation.
@@ -87,7 +88,7 @@ def _slope_adjustment(
     # ISI with 0 wind on level grounds
     isz = initial_spread_index(ffmc, 0)
     # Surface spread rate with 0 wind on level ground
-    rsz = _rate_of_spread(fuel_type_code, isz, no_bui, fmc, sfc, pc, pdf, cc, cbh)
+    rsz = _rate_of_spread(fuel_type_code, isz, no_bui, fmc, sfc, pc, pdf, cc, cbh, c7_cc)
     # Eq. 40 (FCFDG 1992) - Surface spread rate with 0 wind upslope
     rsf = rsz * sf
 
@@ -108,9 +109,18 @@ def _slope_adjustment(
     # Eqs. 41a, 41b (Wotton 2009) - Calculate the slope equivalent ISI
     if fuel_type_code in _IS_BASIC_FUEL_TYPES:
         a_val = 0.2 * ROS_A[fuel_type_code] if fuel_type_code == D2 else ROS_A[fuel_type_code]
+        # Eqs. 43a, 43b (Wotton 2009) - C7 grass curing modification (BCWS "C-7b")
+        if fuel_type_code == C7:
+            a_val = _curing_factor(c7_cc) * a_val
         b_val = ROS_B[fuel_type_code]
         c0_val = ROS_C0[fuel_type_code]
-        temp = 1 - (rsf / a_val) ** (1 / c0_val)
+        # safe_div: C7 a_val is 0 at 0% curing (CF = 0), mirroring the O1A/O1B branch below.
+        # At 0% curing:
+        #   - rsf > 0, because rsz comes from _rate_of_spread, which floors ROS at 0.000001
+        #   - so rsf / a_val is +Inf, temp is -Inf, and max(temp, 0.01) clamps it to 0.01
+        #   - isf is then the arbitrary log(0.01) / -b, so WSV/RAZ are not meaningful
+        # The resulting head ROS is still the 0.000001 floor, since CF also zeroes RSI.
+        temp = 1 - safe_div(rsf, a_val) ** (1 / c0_val)
         isf = math.log(max(temp, 0.01)) / (-b_val)
 
     # M1/M2 weighted average
@@ -176,10 +186,7 @@ def _slope_adjustment(
 
     # Grass curing factor
     if fuel_type_code in (O1A, O1B):
-        if cc < 58.8:
-            cf = 0.005 * (math.exp(0.061 * cc) - 1)
-        else:
-            cf = 0.176 + 0.02 * (cc - 58.8)
+        cf = _curing_factor(cc)
         a_val = ROS_A[fuel_type_code]
         b_val = ROS_B[fuel_type_code]
         c0_val = ROS_C0[fuel_type_code]
@@ -226,7 +233,7 @@ class SlopeAdjustmentOutput:
 
 
 def slope_adjustment(
-    fuel_type: FuelType, ffmc, bui, ws, waz, gs, saz, fmc, sfc, pc, pdf, cc, cbh, isi
+    fuel_type: FuelType, ffmc, bui, ws, waz, gs, saz, fmc, sfc, pc, pdf, cc, cbh, isi, c7_cc=100.0
 ):
     """
     Slope Adjusted wind speed or slope direction of spread calculation
@@ -257,9 +264,10 @@ def slope_adjustment(
     :param sfc: Surface Fuel Consumption (kg/m^2)
     :param pc: Percent Conifer (%)
     :param pdf: Percent Dead Balsam Fir (%)
-    :param cc: Constant
+    :param cc: Degree of Curing (%) for O1A/O1B
     :param cbh: Crown Base Height (m)
     :param isi: Initial Spread Index
+    :param c7_cc: Degree of Curing (%) for C7. Default 100 leaves C7 unmodified.
 
     :returns: RAZ and WSV - Rate of spread azimuth (degrees) and Wind Slope speed (km/hr)
     """
@@ -278,5 +286,6 @@ def slope_adjustment(
         cc,
         cbh,
         isi,
+        c7_cc,
     )
     return SlopeAdjustmentOutput(wsv=result.wsv, raz=result.raz)

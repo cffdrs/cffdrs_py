@@ -110,6 +110,17 @@ print(all_results[0])
 # Output: FBPAllOutput(id='1', cfb=..., cfc=..., fd='S', hfi=..., raz=..., ros=..., sfc=..., tfc=..., be=..., sf=..., isi=..., ffmc=..., fmc=..., d0=..., rso=..., csi=..., fros=..., bros=..., hrost=..., frost=..., brost=..., fcfb=..., bcfb=..., ffi=..., bfi=..., ftfc=..., btfc=..., ti=..., fti=..., bti=..., lb=..., lbt=..., wsv=..., dh=..., db=..., df=..., tros=..., trost=..., tcfb=..., tfi=..., ttfc=..., tti=...)
 ```
 
+#### C-7 grass curing
+
+C-7 can take a degree of grass curing (`c7_cc`, %), which reduces its rate of spread using the
+O-1 curing coefficient (Eqs. 35a/35b, Wotton et al. 2009). This is the BCWS "C-7b" modification.
+`c7_cc` defaults to 100, which gives the standard C-7 outputs. It is separate from `cc`, which is
+still used only by O-1a/O-1b.
+
+```python
+results = fbp(input=FBPInput(fuel_type="C7", ffmc=90.0, bui=60.0, ws=15.0, c7_cc=70.0))
+```
+
 #### Batch Processing
 
 You can process multiple inputs at once:
